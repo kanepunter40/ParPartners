@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonSpinner } from '@ionic/angular/standalone';
@@ -6,7 +7,7 @@ import { ProfileService } from '../../core/profile.service';
 import { RoundsService } from '../../core/rounds.service';
 import { Course } from '../../core/models';
 import { AvatarComponent } from '../../core/avatar.component';
-import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandicap, toggleWhen } from '../../core/profile-options';
+import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, genderKey, langKey, parseHandicap, toggleWhen } from '../../core/profile-options';
 
 @Component({
   selector: 'app-profile-edit',
@@ -30,43 +31,43 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
   template: `
     <ion-header class="ion-no-border">
       <ion-toolbar>
-        <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/profile" text="Profile"></ion-back-button></ion-buttons>
-        <ion-title>Edit profile</ion-title>
+        <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/profile" [text]="t('tabs.profile')"></ion-back-button></ion-buttons>
+        <ion-title>{{ t('profile.edit') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       @if (loaded()) {
         <div class="page-pad wrap">
           <fieldset>
-            <legend>Photo</legend>
+            <legend>{{ t('edit.photo') }}</legend>
             <div class="photo">
               <app-avatar [name]="name || '?'" [path]="avatar()" [size]="88" />
               <div class="photo-actions">
                 <input #picker type="file" accept="image/*" hidden (change)="pickPhoto($event)">
                 <ion-button fill="outline" size="small" [disabled]="photoBusy()" (click)="picker.click()">
-                  @if (photoBusy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ avatar() ? 'Change photo' : 'Add photo' }} }
+                  @if (photoBusy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ avatar() ? t('edit.changePhoto') : t('edit.addPhoto') }} }
                 </ion-button>
                 @if (avatar() && !photoBusy()) {
-                  <ion-button fill="clear" size="small" color="medium" (click)="removePhoto()">Remove photo</ion-button>
+                  <ion-button fill="clear" size="small" color="medium" (click)="removePhoto()">{{ t('edit.removePhoto') }}</ion-button>
                 }
               </div>
             </div>
             @if (photoError()) { <p role="alert" style="color: #9C5428; margin: 0">{{ photoError() }}</p> }
-            @else if (!avatar()) { <span class="muted" style="font-size: 13px">Without a photo, other players see your initials.</span> }
+            @else if (!avatar()) { <span class="muted" style="font-size: 13px">{{ t('edit.initialsHint') }}</span> }
           </fieldset>
 
           <fieldset>
-            <legend>Name</legend>
-            <ion-input aria-label="Name" autocomplete="name" maxlength="60" [(ngModel)]="name"></ion-input>
+            <legend>{{ t('edit.name') }}</legend>
+            <ion-input [attr.aria-label]="t('edit.name')" autocomplete="name" maxlength="60" [(ngModel)]="name"></ion-input>
           </fieldset>
 
           <fieldset>
-            <legend>Home course</legend>
+            <legend>{{ t('profile.homeCourse') }}</legend>
             @if (homeCourse(); as h) {
               <div class="row on"><strong>{{ h.name }}</strong><small>{{ h.city }}</small></div>
-              <ion-button fill="clear" size="small" color="medium" style="align-self: flex-start" (click)="homeCourse.set(null)">Remove home course</ion-button>
+              <ion-button fill="clear" size="small" color="medium" style="align-self: flex-start" (click)="homeCourse.set(null)">{{ t('edit.removeHome') }}</ion-button>
             }
-            <ion-searchbar [placeholder]="homeCourse() ? 'Search to change course' : 'Search for a course'" [debounce]="250" (ionInput)="searchCourses($event)"></ion-searchbar>
+            <ion-searchbar [placeholder]="homeCourse() ? t('edit.searchChange') : t('find.searchCourse')" [debounce]="250" (ionInput)="searchCourses($event)"></ion-searchbar>
             @for (c of courses(); track c.id) {
               @if (c.id !== homeCourse()?.id) {
                 <button type="button" class="row" (click)="pickCourse(c)"><strong>{{ c.name }}</strong><small>{{ c.city }}</small></button>
@@ -75,57 +76,57 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
           </fieldset>
 
           <fieldset>
-            <legend>Handicap Index</legend>
-            <ion-input aria-label="Handicap Index" inputmode="decimal" placeholder="e.g. 18.4" [disabled]="noHandicap" [(ngModel)]="handicapText"></ion-input>
-            <ion-checkbox [(ngModel)]="noHandicap" labelPlacement="end">I don't have a handicap yet</ion-checkbox>
+            <legend>{{ t('edit.hcpIndex') }}</legend>
+            <ion-input [attr.aria-label]="t('edit.hcpIndex')" inputmode="decimal" [placeholder]="t('edit.hcpPlaceholder')" [disabled]="noHandicap" [(ngModel)]="handicapText"></ion-input>
+            <ion-checkbox [(ngModel)]="noHandicap" labelPlacement="end">{{ t('edit.noHcp') }}</ion-checkbox>
           </fieldset>
 
           <fieldset>
-            <legend>Languages</legend>
+            <legend>{{ t('profile.languages') }}</legend>
             <div class="chips">
               @for (l of languagesList; track l) {
-                <button type="button" class="chip" [class.on]="languages().includes(l)" [attr.aria-pressed]="languages().includes(l)" (click)="toggleLanguage(l)">{{ l }}</button>
+                <button type="button" class="chip" [class.on]="languages().includes(l)" [attr.aria-pressed]="languages().includes(l)" (click)="toggleLanguage(l)">{{ t(langKey(l)) }}</button>
               }
             </div>
           </fieldset>
 
           <fieldset>
-            <legend>About you</legend>
-            <span class="muted" style="margin-top: -6px">Both optional. Other players only see them if you switch it on.</span>
-            <strong>Year of birth</strong>
-            <ion-input aria-label="Year of birth" inputmode="numeric" maxlength="4" placeholder="e.g. 1992" [(ngModel)]="birthYearText"></ion-input>
-            <strong id="gender-label">Gender</strong>
+            <legend>{{ t('edit.aboutYou') }}</legend>
+            <span class="muted" style="margin-top: -6px">{{ t('edit.aboutHint') }}</span>
+            <strong>{{ t('edit.birthYear') }}</strong>
+            <ion-input [attr.aria-label]="t('edit.birthYear')" inputmode="numeric" maxlength="4" [placeholder]="t('edit.birthPlaceholder')" [(ngModel)]="birthYearText"></ion-input>
+            <strong id="gender-label">{{ t('edit.gender') }}</strong>
             <div class="chips" role="group" aria-labelledby="gender-label">
               @for (g of gendersList; track g) {
-                <button type="button" class="chip" [class.on]="gender() === g" [attr.aria-pressed]="gender() === g" (click)="gender.set(gender() === g ? null : g)">{{ g }}</button>
+                <button type="button" class="chip" [class.on]="gender() === g" [attr.aria-pressed]="gender() === g" (click)="gender.set(gender() === g ? null : g)">{{ t(genderKey(g)) }}</button>
               }
             </div>
-            <ion-toggle [(ngModel)]="showAgeGender">Show on my profile</ion-toggle>
+            <ion-toggle [(ngModel)]="showAgeGender">{{ t('edit.showOnProfile') }}</ion-toggle>
           </fieldset>
 
           <fieldset>
-            <legend>When you usually play</legend>
+            <legend>{{ t('edit.whenPlay') }}</legend>
             <div class="chips">
               @for (w of whenList; track w[0]) {
-                <button type="button" class="chip" [class.on]="playTimes().includes(w[0])" [attr.aria-pressed]="playTimes().includes(w[0])" (click)="playTimes.set(toggleWhen(playTimes(), w[0]))">{{ w[1] }}</button>
+                <button type="button" class="chip" [class.on]="playTimes().includes(w[0])" [attr.aria-pressed]="playTimes().includes(w[0])" (click)="playTimes.set(toggleWhen(playTimes(), w[0]))">{{ t(w[1]) }}</button>
               }
             </div>
           </fieldset>
 
           <fieldset>
-            <legend>Round length</legend>
+            <legend>{{ t('edit.roundLength') }}</legend>
             <div class="chips">
               @for (l of lengthList; track l[0]) {
-                <button type="button" class="chip" [class.on]="roundLength() === l[0]" [attr.aria-pressed]="roundLength() === l[0]" (click)="roundLength.set(l[0])">{{ l[1] }}</button>
+                <button type="button" class="chip" [class.on]="roundLength() === l[0]" [attr.aria-pressed]="roundLength() === l[0]" (click)="roundLength.set(l[0])">{{ t(l[1]) }}</button>
               }
             </div>
           </fieldset>
 
           <fieldset>
-            <legend>Your vibe on the course</legend>
+            <legend>{{ t('edit.vibe') }}</legend>
             @for (v of vibeList; track v[0]) {
               <button type="button" class="row" [class.on]="vibe() === v[0]" [attr.aria-pressed]="vibe() === v[0]" (click)="vibe.set(v[0])">
-                <strong>{{ v[1] }}</strong><small>{{ v[2] }}</small>
+                <strong>{{ t(v[1]) }}</strong><small>{{ t(v[2]) }}</small>
               </button>
             }
           </fieldset>
@@ -134,7 +135,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
             @if (problem(); as p) { <p class="muted" style="margin: 0">{{ p }}</p> }
             @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
             <ion-button expand="block" [disabled]="!!problem() || busy()" (click)="save()">
-              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { Save }
+              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ t('common.save') }} }
             </ion-button>
           </div>
         </div>
@@ -147,6 +148,8 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
   `
 })
 export class ProfileEditPage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   private profiles = inject(ProfileService);
   private rounds = inject(RoundsService);
   private router = inject(Router);
@@ -157,6 +160,8 @@ export class ProfileEditPage {
   readonly lengthList = LENGTHS;
   readonly vibeList = VIBES;
   readonly toggleWhen = toggleWhen;
+  readonly langKey = langKey;
+  readonly genderKey = genderKey;
 
   loaded = signal(false);
   busy = signal(false);
@@ -197,7 +202,7 @@ export class ProfileEditPage {
       this.homeCourse.set(d.homeCourseId ? await this.rounds.getCourse(d.homeCourseId) : null);
       this.loaded.set(true);
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not load your profile.');
+      this.error.set(this.i18n.error(e, 'profile.loadError'));
     }
   }
 
@@ -222,7 +227,8 @@ export class ProfileEditPage {
     try {
       await fn();
     } catch (e: any) {
-      this.photoError.set(e?.message ?? 'Could not update your photo.');
+      const m: string | undefined = e?.message;
+      this.photoError.set(this.i18n.error(e, 'photo.updateError'));
     } finally {
       this.photoBusy.set(false);
     }
@@ -249,10 +255,10 @@ export class ProfileEditPage {
 
   /** Why Save is disabled, if it is. */
   problem(): string | null {
-    if (!this.name.trim()) return 'Add your name to save.';
-    if (!this.noHandicap && parseHandicap(this.handicapText) === null) return 'Enter a Handicap Index between -10 and 54, or tick "I don’t have a handicap yet".';
+    if (!this.name.trim()) return this.t('edit.problem.name');
+    if (!this.noHandicap && parseHandicap(this.handicapText) === null) return this.t('edit.problem.hcp');
     const y = this.birthYear();
-    if (this.birthYearText.trim() && (y === null || y < 1900 || y > new Date().getFullYear())) return 'Check the year of birth.';
+    if (this.birthYearText.trim() && (y === null || y < 1900 || y > new Date().getFullYear())) return this.t('edit.problem.year');
     return null;
   }
 
@@ -275,7 +281,7 @@ export class ProfileEditPage {
       });
       await this.router.navigateByUrl('/tabs/profile', { replaceUrl: true });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not save your profile.');
+      this.error.set(this.i18n.error(e, 'edit.saveError'));
     } finally {
       this.busy.set(false);
     }

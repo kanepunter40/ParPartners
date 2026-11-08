@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { I18nService } from './i18n.service';
 import { RouterLink } from '@angular/router';
 import { IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -15,13 +16,15 @@ import { NotificationsService } from './notifications.service';
   `],
   template: `
     <ion-button fill="clear" color="dark" routerLink="/notifications"
-      [attr.aria-label]="notifications.unread() ? 'Notifications, ' + notifications.unread() + ' unread' : 'Notifications'">
+      [attr.aria-label]="notifications.unread() ? t('notifications.unreadLabel', { count: notifications.unread() }) : t('notifications.title')">
       <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
       @if (notifications.unread()) { <span class="dot" aria-hidden="true"></span> }
     </ion-button>
   `
 })
 export class NotificationsBellComponent {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   notifications = inject(NotificationsService);
 
   constructor() {

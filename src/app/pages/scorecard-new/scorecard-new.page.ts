@@ -1,4 +1,5 @@
 import { Component, inject, input, signal } from '@angular/core';
+import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonInput, IonSpinner } from '@ionic/angular/standalone';
@@ -26,7 +27,7 @@ const MAX_GUESTS = 7;
     <ion-header class="ion-no-border">
       <ion-toolbar>
         <ion-buttons slot="start"><ion-back-button [defaultHref]="round() ? '/round/' + round() : '/tabs/scores'" text=""></ion-back-button></ion-buttons>
-        <ion-title>New scorecard</ion-title>
+        <ion-title>{{ t('cardNew.title') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -36,14 +37,14 @@ const MAX_GUESTS = 7;
         <div class="page-pad" style="display: flex; flex-direction: column; gap: 20px">
           @if (round()) {
             <div>
-              <div class="muted" style="font-size: 13px">Scorecard for your round at</div>
+              <div class="muted" style="font-size: 13px">{{ t('cardNew.forRound') }}</div>
               <h2 style="margin: 4px 0 0">{{ course()?.name }}</h2>
-              <p class="muted" style="margin: 6px 0 0; font-size: 13px">Everyone in the round is added. Any of you can enter scores.</p>
+              <p class="muted" style="margin: 6px 0 0; font-size: 13px">{{ t('cardNew.everyone') }}</p>
             </div>
           } @else {
             <div>
-              <strong>Course</strong>
-              <ion-searchbar placeholder="Search for a course" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="search($event)"></ion-searchbar>
+              <strong>{{ t('find.course') }}</strong>
+              <ion-searchbar [placeholder]="t('find.searchCourse')" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="search($event)"></ion-searchbar>
               @if (suggestions().length) {
                 <div style="border: 1px solid #E6DFC9; border-radius: 12px; overflow: hidden">
                   @for (c of suggestions(); track c.id) {
@@ -55,29 +56,29 @@ const MAX_GUESTS = 7;
           }
 
           <div>
-            <strong id="holes-label">Holes</strong>
+            <strong id="holes-label">{{ t('cardNew.holes') }}</strong>
             <div class="opts" role="group" aria-labelledby="holes-label">
               @for (h of holeOptions; track h) {
-                <button type="button" [attr.aria-pressed]="holes() === h" (click)="holes.set(h)">{{ label[h] }}</button>
+                <button type="button" [attr.aria-pressed]="holes() === h" (click)="holes.set(h)">{{ t(label[h]) }}</button>
               }
             </div>
           </div>
 
           @if (!round()) {
             <div style="display: flex; flex-direction: column; gap: 8px">
-              <strong>Players</strong>
-              <div class="me">{{ myName() }} <span class="muted">(you)</span></div>
+              <strong>{{ t('round.players') }}</strong>
+              <div class="me">{{ myName() }} <span class="muted">{{ t('cardNew.you') }}</span></div>
               @for (g of guests(); track $index) {
                 <div class="guest">
-                  <ion-input [value]="g" (ionInput)="setGuest($index, $any($event).detail.value)" placeholder="Player name" maxlength="60" [attr.aria-label]="'Player ' + ($index + 2) + ' name'"></ion-input>
-                  <button type="button" class="remove" [attr.aria-label]="'Remove player ' + ($index + 2)" (click)="removeGuest($index)">&times;</button>
+                  <ion-input [value]="g" (ionInput)="setGuest($index, $any($event).detail.value)" [placeholder]="t('cardNew.playerName')" maxlength="60" [attr.aria-label]="t('cardNew.playerN', { n: $index + 2 })"></ion-input>
+                  <button type="button" class="remove" [attr.aria-label]="t('cardNew.removeN', { n: $index + 2 })" (click)="removeGuest($index)">&times;</button>
                 </div>
                 @if (isMe(g)) {
-                  <p class="muted" style="margin: -4px 0 0; font-size: 13px">You're already on the card. Only add the people you're playing with.</p>
+                  <p class="muted" style="margin: -4px 0 0; font-size: 13px">{{ t('cardNew.alreadyYou') }}</p>
                 }
               }
               @if (guests().length < maxGuests) {
-                <ion-button fill="outline" color="medium" (click)="addGuest()">Add another player</ion-button>
+                <ion-button fill="outline" color="medium" (click)="addGuest()">{{ t('cardNew.addPlayer') }}</ion-button>
               }
               <div class="muted" style="font-size: 13px">Optional. Other players don't need the app.</div>
             </div>
@@ -86,10 +87,10 @@ const MAX_GUESTS = 7;
           @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
 
           <ion-button expand="block" [disabled]="!course() || busy()" (click)="start()">
-            @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { Start scorecard }
+            @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ t('scores.start') }} }
           </ion-button>
           @if (!course()) {
-            <p class="muted" style="margin: -8px 0 0; font-size: 13px; text-align: center">Pick a course from the list to start.</p>
+            <p class="muted" style="margin: -8px 0 0; font-size: 13px; text-align: center">{{ t('cardNew.pickCourse') }}</p>
           }
         </div>
       }
@@ -97,6 +98,8 @@ const MAX_GUESTS = 7;
   `
 })
 export class ScorecardNewPage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   /** ?round=<id> (withComponentInputBinding): start or open the card for that round. */
   round = input<string>();
 
@@ -123,7 +126,7 @@ export class ScorecardNewPage {
     this.error.set('');
     const roundId = this.round();
     if (!roundId) {
-      this.myName.set((await this.profiles.load())?.display_name ?? 'You');
+      this.myName.set((await this.profiles.load())?.display_name ?? this.t('cardNew.youName'));
       this.checking.set(false);
       return;
     }
@@ -137,7 +140,7 @@ export class ScorecardNewPage {
       const r = await this.rounds.getRound(roundId);
       this.course.set({ id: '', name: r.courses.name, city: r.courses.city, lat: 0, lng: 0 });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not open the scorecard.');
+      this.error.set(this.i18n.error(e, 'cardNew.openError'));
     } finally {
       this.checking.set(false);
     }
@@ -175,7 +178,7 @@ export class ScorecardNewPage {
         : await this.scorecards.startSolo(this.course()!.id, this.holes(), this.guests().map((g) => g.trim()).filter(Boolean));
       await this.router.navigate(['/scorecard', id], { replaceUrl: true });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not start the scorecard.');
+      this.error.set(this.i18n.error(e, 'cardNew.startError'));
     } finally {
       this.busy.set(false);
     }

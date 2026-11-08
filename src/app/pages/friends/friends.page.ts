@@ -1,4 +1,5 @@
 import { Component, inject, signal, computed } from '@angular/core';
+import { I18nService } from '../../core/i18n.service';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonSpinner } from '@ionic/angular/standalone';
 import { FriendsService } from '../../core/friends.service';
 import { AvatarComponent } from '../../core/avatar.component';
@@ -22,31 +23,31 @@ import { Friend, FriendStatus } from '../../core/models';
     <ion-header class="ion-no-border">
       <ion-toolbar>
         <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/home" text=""></ion-back-button></ion-buttons>
-        <ion-title>Friends</ion-title>
+        <ion-title>{{ t('home.friends') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <div class="page-pad wrap">
         <section>
-          <ion-searchbar placeholder="Search players by name" [debounce]="300" (ionInput)="search($event)"></ion-searchbar>
+          <ion-searchbar [placeholder]="t('friends.search')" [debounce]="300" (ionInput)="search($event)"></ion-searchbar>
           @if (query().length >= 2) {
             <div class="card" style="margin-top: 10px">
               @for (p of results(); track p.id) {
                 <div class="row">
                   <app-avatar [name]="p.display_name" [path]="p.avatar_url" [size]="36" />
                   <span class="name"><strong>{{ p.display_name }}</strong>
-                    @if (p.handicap_index !== null) { <span class="muted" style="font-size: 13px">HCP {{ p.handicap_index }}</span> }</span>
+                    @if (p.handicap_index !== null) { <span class="muted" style="font-size: 13px">{{ t('common.hcp', { hcp: p.handicap_index }) }}</span> }</span>
                   <span class="actions">
                     @switch (statusOf(p.id)) {
-                      @case ('friends') { <span class="muted" style="font-size: 13px; padding-right: 8px">Friends</span> }
-                      @case ('requested') { <span class="muted" style="font-size: 13px; padding-right: 8px">Requested</span> }
-                      @case ('incoming') { <ion-button size="small" [disabled]="busy() === p.id" (click)="respond(p.id, true)">Accept</ion-button> }
-                      @default { <ion-button size="small" fill="outline" [disabled]="busy() === p.id" (click)="add(p.id)">Add</ion-button> }
+                      @case ('friends') { <span class="muted" style="font-size: 13px; padding-right: 8px">{{ t('friends.isFriend') }}</span> }
+                      @case ('requested') { <span class="muted" style="font-size: 13px; padding-right: 8px">{{ t('friends.requested') }}</span> }
+                      @case ('incoming') { <ion-button size="small" [disabled]="busy() === p.id" (click)="respond(p.id, true)">{{ t('friends.accept') }}</ion-button> }
+                      @default { <ion-button size="small" fill="outline" [disabled]="busy() === p.id" (click)="add(p.id)">{{ t('friends.add') }}</ion-button> }
                     }
                   </span>
                 </div>
               } @empty {
-                <p class="muted" style="margin: 0; padding: 16px">{{ searching() ? 'Searching…' : 'No players called "' + query() + '"' }}</p>
+                <p class="muted" style="margin: 0; padding: 16px">{{ searching() ? t('find.searching') : t('friends.noMatch', { query: query() }) }}</p>
               }
             </div>
           }
@@ -56,15 +57,15 @@ import { Friend, FriendStatus } from '../../core/models';
 
         @if (incoming().length) {
           <section>
-            <span class="label">Friend requests</span>
+            <span class="label">{{ t('friends.requests') }}</span>
             <div class="card">
               @for (f of incoming(); track f.id) {
                 <div class="row">
                   <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="36" />
                   <span class="name"><strong>{{ f.display_name }}</strong></span>
                   <span class="actions">
-                    <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="respond(f.id, false)">Decline</ion-button>
-                    <ion-button size="small" [disabled]="busy() === f.id" (click)="respond(f.id, true)">Accept</ion-button>
+                    <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="respond(f.id, false)">{{ t('friends.decline') }}</ion-button>
+                    <ion-button size="small" [disabled]="busy() === f.id" (click)="respond(f.id, true)">{{ t('friends.accept') }}</ion-button>
                   </span>
                 </div>
               }
@@ -74,34 +75,34 @@ import { Friend, FriendStatus } from '../../core/models';
 
         @if (loaded()) {
           <section>
-            <span class="label">Your friends{{ friends().length ? ' (' + friends().length + ')' : '' }}</span>
+            <span class="label">{{ t('friends.yours') }}{{ friends().length ? ' (' + friends().length + ')' : '' }}</span>
             @if (friends().length) {
               <div class="card">
                 @for (f of friends(); track f.id) {
                   <div class="row">
                     <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="36" />
                     <span class="name"><strong>{{ f.display_name }}</strong>
-                      @if (f.handicap_index !== null) { <span class="muted" style="font-size: 13px">HCP {{ f.handicap_index }}</span> }</span>
+                      @if (f.handicap_index !== null) { <span class="muted" style="font-size: 13px">{{ t('common.hcp', { hcp: f.handicap_index }) }}</span> }</span>
                     <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="remove(f)">
-                      {{ confirmRemove() === f.id ? 'Tap to confirm' : 'Remove' }}
+                      {{ confirmRemove() === f.id ? t('friends.tapConfirm') : t('friends.remove') }}
                     </ion-button>
                   </div>
                 }
               </div>
             } @else {
-              <p class="muted" style="margin: 0">No friends yet. Search for players you've met on the course, or add them from a round's player list.</p>
+              <p class="muted" style="margin: 0">{{ t('friends.empty') }}</p>
             }
           </section>
 
           @if (sent().length) {
             <section>
-              <span class="label">Requests you sent</span>
+              <span class="label">{{ t('friends.sent') }}</span>
               <div class="card">
                 @for (f of sent(); track f.id) {
                   <div class="row">
                     <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="36" />
-                    <span class="name"><strong>{{ f.display_name }}</strong><span class="muted" style="font-size: 13px">Waiting for an answer</span></span>
-                    <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="cancel(f.id)">Cancel</ion-button>
+                    <span class="name"><strong>{{ f.display_name }}</strong><span class="muted" style="font-size: 13px">{{ t('friends.waiting') }}</span></span>
+                    <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="cancel(f.id)">{{ t('common.cancel') }}</ion-button>
                   </div>
                 }
               </div>
@@ -115,6 +116,8 @@ import { Friend, FriendStatus } from '../../core/models';
   `
 })
 export class FriendsPage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   private friendsService = inject(FriendsService);
 
   list = signal<Friend[]>([]);
@@ -138,7 +141,7 @@ export class FriendsPage {
     try {
       this.list.set(await this.friendsService.list());
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not load your friends.');
+      this.error.set(this.i18n.error(e, 'friends.loadError'));
     } finally {
       this.loaded.set(true);
     }
@@ -156,7 +159,7 @@ export class FriendsPage {
     try {
       this.results.set(await this.friendsService.search(q));
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Search failed.');
+      this.error.set(this.i18n.error(e, 'friends.searchError'));
     } finally {
       this.searching.set(false);
     }
@@ -169,7 +172,7 @@ export class FriendsPage {
       await fn();
       await this.load();
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Something went wrong.');
+      this.error.set(this.i18n.error(e, 'common.error'));
     } finally {
       this.busy.set(null);
     }

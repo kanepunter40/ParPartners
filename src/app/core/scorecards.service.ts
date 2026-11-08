@@ -8,7 +8,8 @@ export function holeNumbers(holes: CardHoles): number[] {
   return Array.from({ length: to - from + 1 }, (_, i) => from + i);
 }
 
-export const HOLES_LABEL: Record<CardHoles, string> = { '18': '18 holes', front9: 'Front 9', back9: 'Back 9' };
+/** i18n keys: t(HOLES_LABEL[card.holes]). */
+export const HOLES_LABEL: Record<CardHoles, string> = { '18': 'holes.18', front9: 'holes.front9', back9: 'holes.back9' };
 
 /** "E" for level, "+3" over, "−2" under. */
 export function formatToPar(diff: number): string {

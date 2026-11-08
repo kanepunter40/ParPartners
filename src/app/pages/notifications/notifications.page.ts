@@ -1,14 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { I18nService } from '../../core/i18n.service';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { NotificationsService } from '../../core/notifications.service';
 import { AppNotification } from '../../core/models';
-import { timeAgo } from '../../core/format';
 
 @Component({
   selector: 'app-notifications',
-  imports: [DatePipe, RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonRefresher, IonRefresherContent],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonRefresher, IonRefresherContent],
   styles: [`
     .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
     .row { display: flex; gap: 12px; align-items: flex-start; min-height: 64px; padding: 14px 16px; border-bottom: 1px solid #EFEAD9; text-decoration: none; color: inherit; }
@@ -23,7 +22,7 @@ import { timeAgo } from '../../core/format';
     <ion-header class="ion-no-border">
       <ion-toolbar>
         <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/home" text=""></ion-back-button></ion-buttons>
-        <ion-title>Notifications</ion-title>
+        <ion-title>{{ t('notifications.title') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -36,19 +35,19 @@ import { timeAgo } from '../../core/format';
               <a class="row" [class.unread]="!n.read_at" [routerLink]="link(n)">
                 <span class="dot" aria-hidden="true"></span>
                 <span class="text">
-                  <span>@if (!n.read_at) { <span class="sr-only">New: </span> }{{ message(n) }}</span>
+                  <span>@if (!n.read_at) { <span class="sr-only">{{ t('notifications.new') }} </span> }{{ message(n) }}</span>
                   @if (n.rounds; as r) {
-                    <span class="muted" style="font-size: 13px">{{ r.courses.name }} · {{ r.tee_time | date: 'EEE d MMM · HH:mm' }}</span>
+                    <span class="muted" style="font-size: 13px">{{ r.courses.name }} · {{ i18n.date(r.tee_time) }}</span>
                   }
-                  <span class="muted" style="font-size: 12px">{{ ago(n.created_at) }}</span>
+                  <span class="muted" style="font-size: 12px">{{ i18n.ago(n.created_at) }}</span>
                 </span>
               </a>
             }
           </div>
         } @else if (loaded()) {
           <div style="text-align: center; padding: 64px 16px; display: flex; flex-direction: column; gap: 10px; align-items: center">
-            <h2 style="margin: 0">Nothing new</h2>
-            <p class="muted" style="margin: 0">Friend requests, and players joining or leaving your rounds, show up here.</p>
+            <h2 style="margin: 0">{{ t('notifications.emptyTitle') }}</h2>
+            <p class="muted" style="margin: 0">{{ t('notifications.emptyText') }}</p>
           </div>
         }
       </div>
@@ -56,6 +55,8 @@ import { timeAgo } from '../../core/format';
   `
 })
 export class NotificationsPage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   private notifications = inject(NotificationsService);
   items = signal<AppNotification[]>([]);
   loaded = signal(false);
@@ -72,7 +73,7 @@ export class NotificationsPage {
       this.items.set(await this.notifications.list());
       if (this.items().some((n) => !n.read_at)) await this.notifications.markAllRead();
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not load notifications.');
+      this.error.set(this.i18n.error(e, 'notifications.loadError'));
     } finally {
       this.loaded.set(true);
     }
@@ -89,22 +90,9 @@ export class NotificationsPage {
   }
 
   message(n: AppNotification): string {
-    const who = n.actor?.display_name ?? 'A player';
-    switch (n.type) {
-      case 'request_received': return `${who} asked to join your round`;
-      case 'request_accepted': return `You're in. ${who} accepted your request`;
-      case 'request_declined': return `Your request wasn't accepted this time`;
-      case 'player_joined': return `${who} joined your round`;
-      case 'player_left': return `${who} left your round`;
-      case 'round_cancelled': return `${who} cancelled the round`;
-      case 'friend_request': return `${who} sent you a friend request`;
-      case 'friend_accepted': return `${who} accepted your friend request`;
-      case 'host_handover': return `The host left Par Partners. You're hosting this round now`;
-      default: return 'Update on a round';
-    }
-  }
-
-  ago(iso: string): string {
-    return timeAgo(iso);
+    const who = n.actor?.display_name ?? this.t('notifications.aPlayer');
+    const known = ['request_received', 'request_accepted', 'request_declined', 'player_joined', 'player_left',
+                   'round_cancelled', 'friend_request', 'friend_accepted', 'host_handover'];
+    return this.t(known.includes(n.type) ? `notifications.type.${n.type}` : 'notifications.type.other', { who });
   }
 }

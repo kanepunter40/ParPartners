@@ -55,7 +55,7 @@ export class SocialAuthService {
   }
 
   private async signInNatively(provider: SocialProvider) {
-    if (provider === 'google' && !environment.googleWebClientId) throw new Error('Google sign-in isn’t set up yet.');
+    if (provider === 'google' && !environment.googleWebClientId) throw new Error('auth.googleNotSetUp'); // i18n key
     this.ready ??= SocialLogin.initialize({
       google: environment.googleWebClientId ? { webClientId: environment.googleWebClientId } : undefined,
       apple: this.platform === 'ios' ? { redirectUrl: '' } : undefined
@@ -70,7 +70,7 @@ export class SocialAuthService {
       : await SocialLogin.login({ provider, options: { nonce: hashed, scopes: ['email', 'name'] } });
 
     const idToken = 'idToken' in res.result ? res.result.idToken : null;
-    if (!idToken) throw new Error('Sign-in was cancelled.');
+    if (!idToken) throw new Error('auth.cancelled'); // i18n key
     const { error } = await this.sb.client.auth.signInWithIdToken({ provider, token: idToken, nonce });
     if (error) throw error;
   }

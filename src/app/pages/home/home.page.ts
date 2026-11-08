@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { I18nService } from '../../core/i18n.service';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -11,7 +11,6 @@ import { NotificationsBellComponent } from '../../core/notifications-bell.compon
 import { IllustrationComponent } from '../../core/illustration.component';
 import { SupabaseService } from '../../core/supabase.service';
 import { formatToPar, HOLES_LABEL } from '../../core/scorecards.service';
-import { timeAgo } from '../../core/format';
 import { AvatarComponent } from '../../core/avatar.component';
 import { FeedItem, Friend, MyRound } from '../../core/models';
 
@@ -19,7 +18,7 @@ const PAGE = 30;
 
 @Component({
   selector: 'app-home',
-  imports: [AvatarComponent, DatePipe, RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSpinner],
+  imports: [AvatarComponent, RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSpinner],
   styles: [`
     .home { display: flex; flex-direction: column; gap: 28px; }
     .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; display: block; }
@@ -38,7 +37,7 @@ const PAGE = 30;
       <ion-toolbar>
         <ion-buttons slot="end">
           <ion-button class="head-btn" fill="clear" color="dark" routerLink="/friends"
-            [attr.aria-label]="incoming() ? 'Friends, ' + incoming() + ' new requests' : 'Friends'">
+            [attr.aria-label]="incoming() ? t('home.friendsNew', { count: incoming() }) : t('home.friends')">
             <ion-icon slot="icon-only" name="people-outline"></ion-icon>
             @if (incoming()) { <span class="dot" aria-hidden="true"></span> }
           </ion-button>
@@ -49,22 +48,22 @@ const PAGE = 30;
     <ion-content>
       <ion-refresher slot="fixed" (ionRefresh)="refresh($event)"><ion-refresher-content></ion-refresher-content></ion-refresher>
       <div class="page-pad home">
-        <h1 class="sr-only">Home</h1>
+        <h1 class="sr-only">{{ t('tabs.home') }}</h1>
         @if (next(); as r) {
           <section>
-            <span class="label">Up next</span>
+            <span class="label">{{ t('home.upNext') }}</span>
             <a class="next" [routerLink]="['/round', r.round_id]">
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-                <span class="when">{{ r.tee_time | date: 'EEE d MMM · HH:mm' }}</span>
+                <span class="when">{{ i18n.date(r.tee_time) }}</span>
                 <span style="font-weight: 600">{{ r.course_name }}</span>
-                <small>{{ r.confirmed }} of {{ r.max_players }} in · {{ r.status === 'host' ? 'You host' : 'Hosted by ' + r.host_name }}</small>
+                <small>{{ t('home.inCount', { n: r.confirmed, max: r.max_players }) }} · {{ r.status === 'host' ? t('home.youHost') : t('home.hostedBy', { name: r.host_name }) }}</small>
               </span>
               <span aria-hidden="true" style="font-size: 22px">&#8250;</span>
             </a>
           </section>
         }
 
-        <section aria-label="Updates">
+        <section [attr.aria-label]="t('home.updates')">
           @if (error()) { <p role="alert" style="color: #9C5428; margin: 0 0 12px">{{ error() }}</p> }
 
           @for (f of items(); track $index) {
@@ -72,14 +71,14 @@ const PAGE = 30;
               <app-avatar [name]="f.actor_name" [path]="f.actor_avatar" [size]="40" />
               <span class="body">
                 <span>{{ text(f) }}</span>
-                <span class="muted" style="font-size: 12px">{{ ago(f.at) }}</span>
+                <span class="muted" style="font-size: 12px">{{ i18n.ago(f.at) }}</span>
 
                 @if (f.kind === 'scorecard') {
                   <span class="detail">
                     <span style="display: flex; flex-direction: column; gap: 4px">
                       <strong>{{ f.course_name }}</strong>
                       <span class="muted" style="font-size: 13px">{{ holesLabel(f) }}</span>
-                      @if (f.personal_best) { <span class="pill" style="align-self: flex-start">Personal best</span> }
+                      @if (f.personal_best) { <span class="pill" style="align-self: flex-start">{{ t('home.personalBest') }}</span> }
                     </span>
                     <span style="text-align: right">
                       <span class="score">{{ f.strokes }}</span><br>
@@ -90,9 +89,9 @@ const PAGE = 30;
                   <span class="detail">
                     <span style="display: flex; flex-direction: column; gap: 4px">
                       <strong>{{ f.course_name }}</strong>
-                      <span style="font-size: 13px">{{ f.tee_time | date: 'EEE d MMM · HH:mm' }}</span>
+                      <span style="font-size: 13px">{{ i18n.date(f.tee_time) }}</span>
                     </span>
-                    <span [class]="f.spots_left ? 'pill ok' : 'pill full'">{{ f.spots_left ? f.spots_left + (f.spots_left === 1 ? ' spot' : ' spots') + ' left' : 'Full' }}</span>
+                    <span [class]="f.spots_left ? 'pill ok' : 'pill full'">{{ f.spots_left ? t('home.spotsLeft', { count: f.spots_left }) : t('home.full') }}</span>
                   </span>
                 }
               </span>
@@ -102,12 +101,12 @@ const PAGE = 30;
               <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; padding-bottom: 24px">
                 <app-illustration scene="friends" style="width: 200px" />
                 @if (friendCount()) {
-                  <h3 style="margin: 0">All quiet for now</h3>
-                  <p class="muted" style="margin: 0">When your friends post a round, join one or finish a scorecard, it shows up here.</p>
+                  <h3 style="margin: 0">{{ t('home.quietTitle') }}</h3>
+                  <p class="muted" style="margin: 0">{{ t('home.quietText') }}</p>
                 } @else {
-                  <h3 style="margin: 0">Golf is better with friends</h3>
-                  <p class="muted" style="margin: 0">Add players you've met on the course to see their rounds and scores here.</p>
-                  <ion-button routerLink="/friends">Find friends</ion-button>
+                  <h3 style="margin: 0">{{ t('home.noFriendsTitle') }}</h3>
+                  <p class="muted" style="margin: 0">{{ t('home.noFriendsText') }}</p>
+                  <ion-button routerLink="/friends">{{ t('home.findFriends') }}</ion-button>
                 }
               </div>
             }
@@ -115,7 +114,7 @@ const PAGE = 30;
 
           @if (hasMore()) {
             <ion-button fill="clear" expand="block" [disabled]="loadingMore()" (click)="more()">
-              @if (loadingMore()) { <ion-spinner name="dots"></ion-spinner> } @else { Show older updates }
+              @if (loadingMore()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ t('home.older') }} }
             </ion-button>
           }
         </section>
@@ -124,6 +123,8 @@ const PAGE = 30;
   `
 })
 export class HomePage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   private friends = inject(FriendsService);
   private rounds = inject(RoundsService);
   private notifications = inject(NotificationsService);
@@ -139,7 +140,6 @@ export class HomePage {
   loadingMore = signal(false);
   error = signal('');
 
-  readonly ago = timeAgo;
 
   constructor() {
     addIcons({ peopleOutline });
@@ -159,7 +159,7 @@ export class HomePage {
       this.next.set(mine.find((r) => new Date(r.tee_time).getTime() > Date.now()) ?? null);
       this.friendList.set(friends);
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not load your updates.');
+      this.error.set(this.i18n.error(e, 'home.loadError'));
     } finally {
       this.loaded.set(true);
     }
@@ -174,7 +174,7 @@ export class HomePage {
       this.items.update((list) => [...list, ...older]);
       this.hasMore.set(older.length === PAGE);
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not load older updates.');
+      this.error.set(this.i18n.error(e, 'home.olderError'));
     } finally {
       this.loadingMore.set(false);
     }
@@ -189,18 +189,15 @@ export class HomePage {
     return id === this.sb.session()?.user.id;
   }
 
-  private who(id: string, name: string) {
-    return this.isMe(id) ? 'You' : name;
-  }
-
+  /** "You …" and "Lena …" need different verbs in German, so each sentence has a .me and an .other form. */
   text(f: FeedItem): string {
-    const who = this.who(f.actor_id, f.actor_name);
-    switch (f.kind) {
-      case 'scorecard': return `${who} finished a round`;
-      case 'round_posted': return `${who} is hosting a round`;
-      case 'round_joined': return `${who} joined a round`;
-      case 'new_friend': return `${who} and ${this.who(f.other_id!, f.other_name!)} are now friends`;
+    const me = this.isMe(f.actor_id);
+    if (f.kind === 'new_friend') {
+      // I'm always the actor when I'm in the friendship (see home_feed)
+      return me ? this.t('feed.newFriend.me', { other: f.other_name }) : this.t('feed.newFriend.other', { name: f.actor_name, other: f.other_name });
     }
+    const key = { scorecard: 'feed.scorecard', round_posted: 'feed.posted', round_joined: 'feed.joined' }[f.kind];
+    return this.t(`${key}.${me ? 'me' : 'other'}`, { name: f.actor_name });
   }
 
   /** Rounds open their page. Scorecards open only my own (other players' cards are private to the card). */
@@ -211,7 +208,7 @@ export class HomePage {
   }
 
   holesLabel(f: FeedItem) {
-    return f.holes ? HOLES_LABEL[f.holes] : '';
+    return f.holes ? this.t(HOLES_LABEL[f.holes]) : '';
   }
 
   toPar(f: FeedItem) {

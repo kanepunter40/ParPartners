@@ -1,5 +1,5 @@
 import { Component, inject, input, signal, computed } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner } from '@ionic/angular/standalone';
 import { ScorecardsService, holeNumbers, formatToPar, HOLES_LABEL } from '../../core/scorecards.service';
@@ -11,7 +11,7 @@ const POLL_MS = 20_000;
 
 @Component({
   selector: 'app-scorecard',
-  imports: [DatePipe, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner],
+  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner],
   styles: [`
     .hole-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
     .hole-no { font-family: 'Fraunces', serif; font-size: 44px; line-height: 1; margin: 0; }
@@ -46,13 +46,13 @@ const POLL_MS = 20_000;
     <ion-header class="ion-no-border">
       <ion-toolbar>
         <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/scores" text=""></ion-back-button></ion-buttons>
-        <ion-title>{{ card()?.courses?.name ?? 'Scorecard' }}</ion-title>
+        <ion-title>{{ card()?.courses?.name ?? t('round.scorecard') }}</ion-title>
       </ion-toolbar>
       @if (card()) {
         <ion-toolbar>
           <ion-segment [value]="view()" (ionChange)="view.set($any($event).detail.value)" style="margin: 0 24px; width: auto">
-            <ion-segment-button value="hole"><ion-label>Hole by hole</ion-label></ion-segment-button>
-            <ion-segment-button value="card"><ion-label>Full card</ion-label></ion-segment-button>
+            <ion-segment-button value="hole"><ion-label>{{ t('card.byHole') }}</ion-label></ion-segment-button>
+            <ion-segment-button value="card"><ion-label>{{ t('card.full') }}</ion-label></ion-segment-button>
           </ion-segment>
         </ion-toolbar>
       }
@@ -62,27 +62,27 @@ const POLL_MS = 20_000;
       @if (card(); as c) {
         <div class="page-pad" style="display: flex; flex-direction: column; gap: 16px">
           @if (unsaved()) {
-            <p role="status" class="muted" style="margin: 0; font-size: 13px">{{ unsaved() }} {{ unsaved() === 1 ? 'score' : 'scores' }} not saved yet. They're kept on this phone and will save when you have signal.</p>
+            <p role="status" class="muted" style="margin: 0; font-size: 13px">{{ t('card.unsaved', { count: unsaved() }) }}</p>
           }
           @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
 
           @if (view() === 'hole') {
             <div class="hole-head">
               <div>
-                <div class="muted" style="font-size: 13px">{{ holeIndex() + 1 }} of {{ holes().length }}</div>
-                <h2 class="hole-no" aria-live="polite">Hole {{ hole() }}</h2>
+                <div class="muted" style="font-size: 13px">{{ t('card.nOfM', { n: holeIndex() + 1, m: holes().length }) }}</div>
+                <h2 class="hole-no" aria-live="polite">{{ t('card.hole', { n: hole() }) }}</h2>
               </div>
               <button type="button" class="par-btn" [class.unknown]="!parKnown(hole())" [attr.aria-expanded]="editingPar()" (click)="editingPar.set(!editingPar())">
-                {{ parKnown(hole()) ? 'Par ' + par(hole()) : 'Par ' + par(hole()) + '?' }}
+                {{ t('card.par', { par: par(hole()) }) }}{{ parKnown(hole()) ? '' : '?' }}
               </button>
             </div>
 
             @if (editingPar() || !parKnown(hole())) {
               <div>
                 <div class="muted" style="font-size: 13px; margin-bottom: 6px">
-                  {{ parKnown(hole()) ? 'Change the par for hole ' + hole() + ' (saved for everyone on this course)' : "We don't know this hole's par yet. Set it once and it's saved for everyone on this course." }}
+                  {{ parKnown(hole()) ? t('card.changePar', { n: hole() }) : t('card.unknownPar') }}
                 </div>
-                <div class="pars" role="group" [attr.aria-label]="'Par for hole ' + hole()">
+                <div class="pars" role="group" [attr.aria-label]="t('card.parFor', { n: hole() })">
                   @for (p of [3, 4, 5, 6]; track p) {
                     <button type="button" [attr.aria-pressed]="parKnown(hole()) && par(hole()) === p" (click)="setPar(p)">{{ p }}</button>
                   }
@@ -94,38 +94,38 @@ const POLL_MS = 20_000;
               @for (p of players(); track p.id) {
                 <div class="prow">
                   <span class="pname">
-                    <strong>{{ p.name }}{{ p.profile_id === me() ? ' (you)' : '' }}</strong>
+                    <strong>{{ p.name }}{{ p.profile_id === me() ? ' ' + t('cardNew.you') : '' }}</strong>
                     <span class="muted" style="font-size: 13px">{{ summary(p) }}</span>
                   </span>
                   <span class="stepper">
-                    <button type="button" class="round" [attr.aria-label]="'One stroke fewer for ' + p.name" (click)="step(p, -1)">&minus;</button>
+                    <button type="button" class="round" [attr.aria-label]="t('card.fewer', { name: p.name })" (click)="step(p, -1)">&minus;</button>
                     <button type="button" class="num" [class.empty]="strokes(p.id, hole()) === undefined"
-                      [attr.aria-label]="p.name + ', hole ' + hole() + ': ' + (strokes(p.id, hole()) === undefined ? 'no score. Tap to enter par' : strokes(p.id, hole()) + ' strokes')"
+                      [attr.aria-label]="strokes(p.id, hole()) === undefined ? t('card.noScoreLabel', { name: p.name, n: hole() }) : t('card.scoreLabel', { name: p.name, n: hole(), count: strokes(p.id, hole())! })"
                       (click)="tapNumber(p)">{{ strokes(p.id, hole()) ?? par(hole()) }}</button>
-                    <button type="button" class="round" [attr.aria-label]="'One stroke more for ' + p.name" (click)="step(p, 1)">+</button>
+                    <button type="button" class="round" [attr.aria-label]="t('card.more', { name: p.name })" (click)="step(p, 1)">+</button>
                   </span>
                 </div>
               }
             </div>
-            <p class="muted" style="margin: 0; font-size: 13px">Anyone on this card can enter scores for everyone. Tap the number to score par.</p>
+            <p class="muted" style="margin: 0; font-size: 13px">{{ t('card.hint') }}</p>
           } @else {
-            <div class="muted" style="font-size: 13px">{{ c.played_at | date: 'EEE d MMM y' }} · {{ holesLabel() }}</div>
+            <div class="muted" style="font-size: 13px">{{ i18n.date(c.played_at, 'dayDateYear') }} · {{ holesLabel() }}</div>
             <div class="grid-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th scope="col">Hole</th>
+                    <th scope="col">{{ t('card.holeCol') }}</th>
                     @for (h of holes(); track h) {
-                      <th scope="col"><button type="button" class="hole-link" [attr.aria-label]="'Go to hole ' + h" (click)="goTo(h)">{{ h }}</button></th>
-                      @if (h === 9 && c.holes === '18') { <th scope="col" class="sum">Out</th> }
+                      <th scope="col"><button type="button" class="hole-link" [attr.aria-label]="t('card.goTo', { n: h })" (click)="goTo(h)">{{ h }}</button></th>
+                      @if (h === 9 && c.holes === '18') { <th scope="col" class="sum">{{ t('card.out') }}</th> }
                     }
-                    @if (c.holes === '18') { <th scope="col" class="sum">In</th> }
-                    <th scope="col" class="sum">Total</th>
+                    @if (c.holes === '18') { <th scope="col" class="sum">{{ t('card.in') }}</th> }
+                    <th scope="col" class="sum">{{ t('card.total') }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr class="par-row">
-                    <td>Par</td>
+                    <td>{{ t('card.parRow') }}</td>
                     @for (h of holes(); track h) {
                       <td>{{ parKnown(h) ? par(h) : '–' }}</td>
                       @if (h === 9 && c.holes === '18') { <td class="sum">{{ parSum(1, 9) }}</td> }
@@ -156,30 +156,32 @@ const POLL_MS = 20_000;
               }
             </div>
             @if (c.created_by === me()) {
-              <ion-button fill="clear" color="medium" (click)="remove()">{{ confirmDelete() ? 'Tap again to delete for everyone' : 'Delete this scorecard' }}</ion-button>
+              <ion-button fill="clear" color="medium" (click)="remove()">{{ confirmDelete() ? t('card.deleteConfirm') : t('card.delete') }}</ion-button>
             }
           }
         </div>
       } @else if (loading()) {
         <div style="display: flex; justify-content: center; padding: 64px"><ion-spinner></ion-spinner></div>
       } @else {
-        <p role="alert" class="page-pad" style="color: #9C5428">{{ error() || 'This scorecard is not available.' }}</p>
+        <p role="alert" class="page-pad" style="color: #9C5428">{{ error() || t('card.gone') }}</p>
       }
     </ion-content>
 
     @if (card() && view() === 'hole') {
       <div class="nav">
-        <ion-button fill="outline" color="medium" [disabled]="holeIndex() === 0" (click)="move(-1)">Previous</ion-button>
+        <ion-button fill="outline" color="medium" [disabled]="holeIndex() === 0" (click)="move(-1)">{{ t('card.previous') }}</ion-button>
         @if (holeIndex() < holes().length - 1) {
-          <ion-button (click)="move(1)">Next hole</ion-button>
+          <ion-button (click)="move(1)">{{ t('card.next') }}</ion-button>
         } @else {
-          <ion-button (click)="view.set('card')">See full card</ion-button>
+          <ion-button (click)="view.set('card')">{{ t('card.seeFull') }}</ion-button>
         }
       </div>
     }
   `
 })
 export class ScorecardPage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   /** Bound from the route parameter :id (withComponentInputBinding). */
   id = input.required<string>();
 
@@ -208,7 +210,7 @@ export class ScorecardPage {
   me = computed(() => this.sb.session()?.user.id ?? null);
   holes = computed(() => (this.card() ? holeNumbers(this.card()!.holes) : []));
   holeIndex = computed(() => this.holes().indexOf(this.hole()));
-  holesLabel = computed(() => (this.card() ? HOLES_LABEL[this.card()!.holes] : ''));
+  holesLabel = computed(() => (this.card() ? this.t(HOLES_LABEL[this.card()!.holes]) : ''));
   players = computed(() => [...(this.card()?.scorecard_players ?? [])].sort((a, b) => a.position - b.position));
   /** OpenStreetMap often maps a 9-hole course as holes 1-9; an 18-hole card then plays them twice. */
   private nineHoleCourse = computed(() => this.pars().size > 0 && Math.max(...this.pars().keys()) <= 9);
@@ -246,7 +248,7 @@ export class ScorecardPage {
       }
     } catch (e: any) {
       // Polling failures (no signal) are expected on the course; only report the first load.
-      if (first) this.error.set(e?.message ?? 'Could not load this scorecard.');
+      if (first) this.error.set(this.i18n.error(e, 'card.loadError'));
     } finally {
       this.loading.set(false);
     }
@@ -276,7 +278,7 @@ export class ScorecardPage {
     try {
       await this.scorecards.setPar(card.course_id, key, p);
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not save the par.');
+      this.error.set(this.i18n.error(e, 'card.parError'));
     }
   }
 
@@ -296,10 +298,10 @@ export class ScorecardPage {
   /** "+3 thru 7", "41 · E", or "No score yet". */
   summary(p: ScorecardPlayer) {
     const played = this.holes().filter((h) => this.strokes(p.id, h) !== undefined);
-    if (!played.length) return 'No score yet';
+    if (!played.length) return this.t('card.noScore');
     const strokes = played.reduce((t, h) => t + this.strokes(p.id, h)!, 0);
     const toPar = formatToPar(played.reduce((t, h) => t + this.diff(p.id, h), 0));
-    return played.length === this.holes().length ? `${strokes} · ${toPar}` : `${toPar} thru ${played.length}`;
+    return played.length === this.holes().length ? `${strokes} · ${toPar}` : `${toPar} ${this.t('scores.thru', { n: played.length })}`;
   }
 
   tapNumber(p: ScorecardPlayer) {
@@ -389,7 +391,7 @@ export class ScorecardPage {
       localStorage.removeItem(this.storageKey);
       await this.router.navigateByUrl('/tabs/scores', { replaceUrl: true });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not delete the scorecard.');
+      this.error.set(this.i18n.error(e, 'card.deleteError'));
     }
   }
 }

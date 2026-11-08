@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonProgressBar, IonSpinner } from '@ionic/angular/standalone';
@@ -6,7 +7,7 @@ import { ProfileService } from '../../core/profile.service';
 import { SupabaseService } from '../../core/supabase.service';
 import { RoundsService } from '../../core/rounds.service';
 import { Course } from '../../core/models';
-import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandicap, toggleWhen } from '../../core/profile-options';
+import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandicap, toggleWhen, langKey, genderKey } from '../../core/profile-options';
 
 
 @Component({
@@ -30,7 +31,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
   template: `
     <ion-content>
       <div class="nav">
-        <button type="button" aria-label="Back" [style.visibility]="step() === 0 ? 'hidden' : 'visible'" (click)="back()">&#8592;</button>
+        <button type="button" [attr.aria-label]="t('common.back')" [style.visibility]="step() === 0 ? 'hidden' : 'visible'" (click)="back()">&#8592;</button>
         <ion-progress-bar [value]="(step() + 1) / total"></ion-progress-bar>
         <span class="muted" style="font-size: 13px">{{ step() + 1 }}/{{ total }}</span>
       </div>
@@ -38,13 +39,13 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
       <div class="wrap">
         @switch (step()) {
           @case (0) {
-            <div><div class="eyebrow">Create your profile</div><h2>What should other players call you?</h2></div>
-            <ion-input aria-label="Name" placeholder="e.g. Kane Punter" autocomplete="name" [(ngModel)]="name"></ion-input>
+            <div><div class="eyebrow">{{ t('onboarding.eyebrow') }}</div><h2>{{ t('onboarding.nameQ') }}</h2></div>
+            <ion-input [attr.aria-label]="t('edit.name')" [placeholder]="t('onboarding.namePlaceholder')" autocomplete="name" [(ngModel)]="name"></ion-input>
           }
           @case (1) {
-            <div><div class="eyebrow">Create your profile</div><h2>Where do you usually play?</h2>
-              <p class="muted" style="margin: 0">Your home course helps us show open rounds near you.</p></div>
-            <ion-searchbar placeholder="Search for a course" [debounce]="250" (ionInput)="searchCourses($event)"></ion-searchbar>
+            <div><div class="eyebrow">{{ t('onboarding.eyebrow') }}</div><h2>{{ t('onboarding.courseQ') }}</h2>
+              <p class="muted" style="margin: 0">{{ t('onboarding.courseHint') }}</p></div>
+            <ion-searchbar [placeholder]="t('find.searchCourse')" [debounce]="250" (ionInput)="searchCourses($event)"></ion-searchbar>
             <div style="display: flex; flex-direction: column; gap: 10px">
               @for (c of courses(); track c.id) {
                 <button type="button" class="row" [class.on]="homeCourse()?.id === c.id" [attr.aria-pressed]="homeCourse()?.id === c.id" (click)="homeCourse.set(c)">
@@ -54,53 +55,53 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
             </div>
           }
           @case (2) {
-            <div><div class="eyebrow">Create your profile</div><h2>What's your handicap?</h2>
-              <p class="muted" style="margin: 0">Use your Handicap Index from your club or the DGV. It lets others know what to expect.</p></div>
-            <ion-input aria-label="Handicap Index" inputmode="decimal" placeholder="e.g. 18.4" [disabled]="noHandicap" [(ngModel)]="handicapText"></ion-input>
-            <ion-checkbox [(ngModel)]="noHandicap" labelPlacement="end">I don't have a handicap yet</ion-checkbox>
+            <div><div class="eyebrow">{{ t('onboarding.eyebrow') }}</div><h2>{{ t('onboarding.hcpQ') }}</h2>
+              <p class="muted" style="margin: 0">{{ t('onboarding.hcpHint') }}</p></div>
+            <ion-input [attr.aria-label]="t('edit.hcpIndex')" inputmode="decimal" [placeholder]="t('edit.hcpPlaceholder')" [disabled]="noHandicap" [(ngModel)]="handicapText"></ion-input>
+            <ion-checkbox [(ngModel)]="noHandicap" labelPlacement="end">{{ t('edit.noHcp') }}</ion-checkbox>
           }
           @case (3) {
-            <div><div class="eyebrow">Create your profile</div><h2>Which languages do you speak?</h2>
-              <p class="muted" style="margin: 0">Handy when you play with people from different places.</p></div>
+            <div><div class="eyebrow">{{ t('onboarding.eyebrow') }}</div><h2>{{ t('onboarding.langQ') }}</h2>
+              <p class="muted" style="margin: 0">{{ t('onboarding.langHint') }}</p></div>
             <div class="chips">
               @for (l of languagesList; track l) {
-                <button type="button" class="chip" [class.on]="languages().includes(l)" [attr.aria-pressed]="languages().includes(l)" (click)="toggle(languages, l)">{{ l }}</button>
+                <button type="button" class="chip" [class.on]="languages().includes(l)" [attr.aria-pressed]="languages().includes(l)" (click)="toggle(languages, l)">{{ t(langKey(l)) }}</button>
               }
             </div>
           }
           @case (4) {
-            <div><div class="eyebrow">Create your profile</div><h2>A little about you</h2>
-              <p class="muted" style="margin: 0">Both optional. Other players only see them if you switch it on below.</p></div>
-            <div><strong>Year of birth</strong>
-              <ion-input aria-label="Year of birth" inputmode="numeric" maxlength="4" placeholder="e.g. 1992" [(ngModel)]="birthYearText" style="margin-top: 6px"></ion-input></div>
-            <div><strong id="g">Gender</strong>
+            <div><div class="eyebrow">{{ t('onboarding.eyebrow') }}</div><h2>{{ t('onboarding.aboutQ') }}</h2>
+              <p class="muted" style="margin: 0">{{ t('onboarding.aboutHint') }}</p></div>
+            <div><strong>{{ t('edit.birthYear') }}</strong>
+              <ion-input [attr.aria-label]="t('edit.birthYear')" inputmode="numeric" maxlength="4" [placeholder]="t('edit.birthPlaceholder')" [(ngModel)]="birthYearText" style="margin-top: 6px"></ion-input></div>
+            <div><strong id="g">{{ t('edit.gender') }}</strong>
               <div class="chips" role="group" aria-labelledby="g" style="margin-top: 10px">
                 @for (g of gendersList; track g) {
-                  <button type="button" class="chip" [class.on]="gender() === g" [attr.aria-pressed]="gender() === g" (click)="gender.set(gender() === g ? null : g)">{{ g }}</button>
+                  <button type="button" class="chip" [class.on]="gender() === g" [attr.aria-pressed]="gender() === g" (click)="gender.set(gender() === g ? null : g)">{{ t(genderKey(g)) }}</button>
                 }
               </div></div>
-            <ion-toggle [(ngModel)]="showAgeGender">Show on my profile</ion-toggle>
+            <ion-toggle [(ngModel)]="showAgeGender">{{ t('edit.showOnProfile') }}</ion-toggle>
           }
           @case (5) {
-            <div><div class="eyebrow">Create your profile</div><h2>How do you like to play?</h2>
-              <p class="muted" style="margin: 0">Optional. It helps us match you with the right players.</p></div>
-            <div><strong>When do you usually play?</strong>
+            <div><div class="eyebrow">{{ t('onboarding.eyebrow') }}</div><h2>{{ t('onboarding.playQ') }}</h2>
+              <p class="muted" style="margin: 0">{{ t('onboarding.playHint') }}</p></div>
+            <div><strong>{{ t('onboarding.whenQ') }}</strong>
               <div class="chips" style="margin-top: 10px">
                 @for (w of whenList; track w[0]) {
-                  <button type="button" class="chip" [class.on]="playTimes().includes(w[0])" [attr.aria-pressed]="playTimes().includes(w[0])" (click)="toggleWhen(w[0])">{{ w[1] }}</button>
+                  <button type="button" class="chip" [class.on]="playTimes().includes(w[0])" [attr.aria-pressed]="playTimes().includes(w[0])" (click)="toggleWhen(w[0])">{{ t(w[1]) }}</button>
                 }
               </div></div>
-            <div><strong>Round length</strong>
+            <div><strong>{{ t('edit.roundLength') }}</strong>
               <div class="chips" style="margin-top: 10px">
                 @for (l of lengthList; track l[0]) {
-                  <button type="button" class="chip" [class.on]="roundLength() === l[0]" [attr.aria-pressed]="roundLength() === l[0]" (click)="roundLength.set(l[0])">{{ l[1] }}</button>
+                  <button type="button" class="chip" [class.on]="roundLength() === l[0]" [attr.aria-pressed]="roundLength() === l[0]" (click)="roundLength.set(l[0])">{{ t(l[1]) }}</button>
                 }
               </div></div>
-            <div><strong>Your vibe on the course</strong>
+            <div><strong>{{ t('edit.vibe') }}</strong>
               <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px">
                 @for (v of vibeList; track v[0]) {
                   <button type="button" class="row" [class.on]="vibe() === v[0]" [attr.aria-pressed]="vibe() === v[0]" (click)="vibe.set(v[0])">
-                    <strong>{{ v[1] }}</strong><small>{{ v[2] }}</small>
+                    <strong>{{ t(v[1]) }}</strong><small>{{ t(v[2]) }}</small>
                   </button>
                 }
               </div></div>
@@ -111,10 +112,10 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
 
         <div class="footer">
           <ion-button expand="block" [disabled]="!canContinue() || busy()" (click)="next()">
-            @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ step() === total - 1 ? 'Finish' : 'Continue' }} }
+            @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ step() === total - 1 ? t('onboarding.finish') : t('onboarding.continue') }} }
           </ion-button>
           @if (step() === 1 || step() === 4 || step() === 5) {
-            <ion-button fill="clear" color="medium" (click)="skip()">{{ step() === 1 ? "I don't have a home course" : 'Skip for now' }}</ion-button>
+            <ion-button fill="clear" color="medium" (click)="skip()">{{ step() === 1 ? t('onboarding.noHome') : t('onboarding.skip') }}</ion-button>
           }
         </div>
       </div>
@@ -122,6 +123,8 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
   `
 })
 export class OnboardingPage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   private profiles = inject(ProfileService);
   private rounds = inject(RoundsService);
   private router = inject(Router);
@@ -133,6 +136,8 @@ export class OnboardingPage {
   readonly whenList = WHEN;
   readonly lengthList = LENGTHS;
   readonly vibeList = VIBES;
+  readonly langKey = langKey;
+  readonly genderKey = genderKey;
 
   step = signal(0);
   busy = signal(false);
@@ -207,7 +212,7 @@ export class OnboardingPage {
       });
       await this.router.navigateByUrl('/tabs/find', { replaceUrl: true });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Something went wrong. Please try again.');
+      this.error.set(this.i18n.error(e, 'common.error'));
     } finally {
       this.busy.set(false);
     }

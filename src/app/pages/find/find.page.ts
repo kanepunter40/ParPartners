@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { I18nService } from '../../core/i18n.service';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -28,9 +28,12 @@ function weekendRange(offset: number): { from: Date; to: Date } {
   return { from, to: mon };
 }
 
+/** centreName value meaning the device location (shown translated). */
+const MY_LOCATION = '@me';
+
 @Component({
   selector: 'app-find',
-  imports: [DatePipe, RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon],
+  imports: [RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon],
   styles: [`
     .find { display: flex; flex-direction: column; gap: 28px; }
     .filters { background: #ECE8DA; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -57,22 +60,22 @@ function weekendRange(offset: number): { from: Date; to: Date } {
 
     <ion-content>
       <div class="page-pad find">
-        <h1 class="sr-only">Find a round</h1>
-        <section class="filters" aria-label="Search filters">
+        <h1 class="sr-only">{{ t('find.title') }}</h1>
+        <section class="filters" [attr.aria-label]="t('find.filters')">
           <ion-segment [value]="mode()" (ionChange)="setMode($event)">
-            <ion-segment-button value="near"><ion-label>Near a location</ion-label></ion-segment-button>
-            <ion-segment-button value="course"><ion-label>By course</ion-label></ion-segment-button>
+            <ion-segment-button value="near"><ion-label>{{ t('find.near') }}</ion-label></ion-segment-button>
+            <ion-segment-button value="course"><ion-label>{{ t('find.byCourse') }}</ion-label></ion-segment-button>
           </ion-segment>
           @if (mode() === 'near') {
             <div class="where">
               <div style="flex: 1; min-width: 0">
-                <span class="group-label">Searching around</span>
+                <span class="group-label">{{ t('find.searchingAround') }}</span>
                 <strong style="display: block">{{ centreLabel() }}</strong>
               </div>
-              <ion-button size="small" fill="outline" (click)="useMyLocation()"><ion-icon slot="start" name="locate"></ion-icon>My location</ion-button>
+              <ion-button size="small" fill="outline" (click)="useMyLocation()"><ion-icon slot="start" name="locate"></ion-icon>{{ t('find.myLocation') }}</ion-button>
             </div>
             <div class="group">
-              <span class="group-label" id="radius-label">Distance</span>
+              <span class="group-label" id="radius-label">{{ t('find.distance') }}</span>
               <div class="chips" role="group" aria-labelledby="radius-label">
                 @for (r of radii; track r) {
                   <button type="button" class="chip" [class.on]="radius() === r" [attr.aria-pressed]="radius() === r" (click)="setRadius(r)">{{ r }} km</button>
@@ -81,8 +84,8 @@ function weekendRange(offset: number): { from: Date; to: Date } {
             </div>
           } @else {
             <div class="group">
-              <span class="group-label">Course</span>
-              <ion-searchbar placeholder="Search for a course" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="searchCourse($event)"></ion-searchbar>
+              <span class="group-label">{{ t('find.course') }}</span>
+              <ion-searchbar [placeholder]="t('find.searchCourse')" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="searchCourse($event)"></ion-searchbar>
               @if (suggestions().length) {
                 <div style="border: 1px solid #E6DFC9; border-radius: 12px; overflow: hidden">
                   @for (c of suggestions(); track c.id) {
@@ -93,17 +96,17 @@ function weekendRange(offset: number): { from: Date; to: Date } {
               @if (homeCourse(); as h) {
                 @if (course()?.id !== h.id) {
                   <button type="button" class="home-chip" (click)="pickCourse(h)">
-                    <ion-icon name="home" aria-hidden="true"></ion-icon><span>Home course · {{ h.name }}</span>
+                    <ion-icon name="home" aria-hidden="true"></ion-icon><span>{{ t('find.homeCourse', { name: h.name }) }}</span>
                   </button>
                 }
               }
             </div>
           }
           <div class="group">
-            <span class="group-label" id="when-label">When</span>
+            <span class="group-label" id="when-label">{{ t('find.when') }}</span>
             <div class="chips" role="group" aria-labelledby="when-label">
               @for (w of whens; track w[0]) {
-                <button type="button" class="chip" [class.on]="when() === w[0]" [attr.aria-pressed]="when() === w[0]" (click)="setWhen(w[0])">{{ w[1] }}</button>
+                <button type="button" class="chip" [class.on]="when() === w[0]" [attr.aria-pressed]="when() === w[0]" (click)="setWhen(w[0])">{{ t(w[1]) }}</button>
               }
             </div>
           </div>
@@ -111,9 +114,9 @@ function weekendRange(offset: number): { from: Date; to: Date } {
 
         <section aria-labelledby="results-title">
           <div class="results-head">
-            <h2 id="results-title">Open rounds</h2>
+            <h2 id="results-title">{{ t('find.openRounds') }}</h2>
             @if (mode() === 'near' || course()) {
-              <span class="muted" style="font-size: 13px" aria-live="polite">{{ loading() ? 'Searching…' : results().length ? results().length + ' · ' + areaLabel() : areaLabel() }}</span>
+              <span class="muted" style="font-size: 13px" aria-live="polite">{{ loading() ? t('find.searching') : results().length ? results().length + ' · ' + areaLabel() : areaLabel() }}</span>
             }
           </div>
 
@@ -123,25 +126,25 @@ function weekendRange(offset: number): { from: Date; to: Date } {
           @for (r of results(); track r.round_id) {
             <a class="result" [routerLink]="['/round', r.round_id]">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px">
-                <span class="pill">{{ r.spots_left }} {{ r.spots_left === 1 ? 'spot' : 'spots' }} left</span>
-                @if (r.distance_km !== null) { <span class="muted" style="font-size: 13px">{{ r.distance_km }} km away</span> }
+                <span class="pill">{{ t('home.spotsLeft', { count: r.spots_left }) }}</span>
+                @if (r.distance_km !== null) { <span class="muted" style="font-size: 13px">{{ t('find.kmAway', { km: r.distance_km }) }}</span> }
               </div>
               <h3 style="margin: 0 0 6px; font-size: 18px">{{ r.course_name }}</h3>
-              <strong style="font-size: 14px">{{ r.tee_time | date: 'EEE d MMM · HH:mm' }}</strong>
+              <strong style="font-size: 14px">{{ i18n.date(r.tee_time) }}</strong>
               <div style="display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EFEAD9">
-                <span class="muted" style="font-size: 13px">{{ r.host_name }}{{ r.host_handicap !== null ? ' · HCP ' + r.host_handicap : '' }}</span>
-                <span style="font-size: 13px; font-weight: 600; color: #2E5F5A">View &amp; join</span>
+                <span class="muted" style="font-size: 13px">{{ r.host_name }}{{ r.host_handicap !== null ? ' · ' + t('common.hcp', { hcp: r.host_handicap }) : '' }}</span>
+                <span style="font-size: 13px; font-weight: 600; color: #2E5F5A">{{ t('find.viewJoin') }}</span>
               </div>
             </a>
           }
           @if (mode() === 'course' && !course()) {
-            <p class="muted" style="text-align: center; padding: 32px 8px; margin: 0">Search for a course to see its open rounds.</p>
+            <p class="muted" style="text-align: center; padding: 32px 8px; margin: 0">{{ t('find.pickCourseHint') }}</p>
           } @else if (!loading() && !results().length && !error()) {
             <div style="text-align: center; padding: 8px 8px 32px; display: flex; flex-direction: column; align-items: center; gap: 10px">
               <app-illustration scene="search" style="width: 180px" />
-              <h3 style="margin: 0">No open rounds here yet</h3>
-              <p class="muted" style="margin: 0; font-size: 14px">Try a wider radius or another date, or post your own round and let players find you.</p>
-              <ion-button routerLink="/create">Post a round</ion-button>
+              <h3 style="margin: 0">{{ t('find.emptyTitle') }}</h3>
+              <p class="muted" style="margin: 0; font-size: 14px">{{ t('find.emptyText') }}</p>
+              <ion-button routerLink="/create">{{ t('rounds.post') }}</ion-button>
             </div>
           }
         </div>
@@ -152,13 +155,15 @@ function weekendRange(offset: number): { from: Date; to: Date } {
   `
 })
 export class FindPage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   private rounds = inject(RoundsService);
   private location = inject(LocationService);
   private profiles = inject(ProfileService);
   private notifications = inject(NotificationsService);
 
   readonly radii = RADII;
-  readonly whens: [When, string][] = [['any', 'Any date'], ['this', 'This weekend'], ['next', 'Next weekend']];
+  readonly whens: [When, string][] = [['any', 'find.anyDate'], ['this', 'find.thisWeekend'], ['next', 'find.nextWeekend']];
 
   mode = signal<Mode>('near');
   radius = signal(25);
@@ -196,28 +201,29 @@ export class FindPage {
     const c = this.homeCourse();
     if (c) {
       this.centre.set({ lat: c.lat, lng: c.lng });
-      this.centreName.set('Near ' + c.name);
+      this.centreName.set(c.name);
       return;
     }
     try { await this.useMyLocation(false); } catch { /* leave unset; the user can tap "My location" */ }
   }
 
   centreLabel() {
-    return this.centreName() || 'Choose a location';
+    const name = this.centreName();
+    return name === MY_LOCATION ? this.t('find.yourLocation') : name ? this.t('find.nearName', { name }) : this.t('find.chooseLocation');
   }
 
   areaLabel() {
-    return this.mode() === 'course' ? (this.course()?.name ?? 'Pick a course') : `Within ${this.radius()} km`;
+    return this.mode() === 'course' ? (this.course()?.name ?? this.t('find.pickCourse')) : this.t('find.within', { km: this.radius() });
   }
 
   async useMyLocation(reload = true) {
     try {
       this.centre.set(await this.location.current());
-      this.centreName.set('Your location');
+      this.centreName.set(MY_LOCATION);
       this.error.set('');
       if (reload) this.load();
     } catch {
-      this.error.set('Could not get your location. Check the permission, or search by course.');
+      this.error.set(this.t('find.locationError'));
     }
   }
 
@@ -262,7 +268,7 @@ export class FindPage {
         })
       );
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not load rounds.');
+      this.error.set(this.i18n.error(e, 'find.loadError'));
     } finally {
       this.loading.set(false);
     }

@@ -1,5 +1,5 @@
 import { Component, inject, input, signal, computed } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { I18nService } from '../../core/i18n.service';
 import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { RoundsService } from '../../core/rounds.service';
@@ -10,7 +10,7 @@ import { AvatarComponent } from '../../core/avatar.component';
 
 @Component({
   selector: 'app-round-detail',
-  imports: [AvatarComponent, DatePipe, RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner],
+  imports: [AvatarComponent, RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner],
   styles: [`
     .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
     .player { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 6px 16px; border-bottom: 1px solid #EFEAD9; }
@@ -18,60 +18,60 @@ import { AvatarComponent } from '../../core/avatar.component';
   `],
   template: `
     <ion-header class="ion-no-border">
-      <ion-toolbar><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/rounds" text="Rounds"></ion-back-button></ion-buttons></ion-toolbar>
+      <ion-toolbar><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/rounds" [text]="t('tabs.rounds')"></ion-back-button></ion-buttons></ion-toolbar>
     </ion-header>
     <ion-content>
       @if (round(); as r) {
         <div class="page-pad" style="display: flex; flex-direction: column; gap: 20px">
           @if (cancelled()) {
-            <p role="status" style="margin: 0; padding: 12px 16px; border-radius: 12px; background: #F3E4D6; color: #9C5428; font-weight: 600">This round was cancelled by the host.</p>
+            <p role="status" style="margin: 0; padding: 12px 16px; border-radius: 12px; background: #F3E4D6; color: #9C5428; font-weight: 600">{{ t('round.cancelled') }}</p>
           }
           <div>
-            <div style="font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em">Hosted by {{ isHost() ? 'you' : r.host.display_name }}</div>
+            <div style="font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em">{{ isHost() ? t('rounds.hostedByYou') : t('home.hostedBy', { name: r.host.display_name }) }}</div>
             <h2 style="font-size: 26px; margin: 6px 0">{{ r.courses.name }}</h2>
-            <div class="muted">{{ r.tee_time | date: 'EEEE, d MMMM · HH:mm' }}</div>
+            <div class="muted">{{ i18n.date(r.tee_time, 'longDayTime') }}</div>
           </div>
 
           <div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px">
-              <strong>Players</strong>
-              <span class="muted">{{ confirmed().length }} of {{ r.max_players }} in</span>
+              <strong>{{ t('round.players') }}</strong>
+              <span class="muted">{{ t('home.inCount', { n: confirmed().length, max: r.max_players }) }}</span>
             </div>
             <div class="card">
               @for (p of confirmed(); track p.player_id) {
                 <div class="player">
-                  <span style="display: flex; align-items: center"><app-avatar [name]="p.profiles.display_name" [path]="p.profiles.avatar_url" [size]="36" style="margin-right: 10px" />{{ p.profiles.display_name }}{{ p.status === 'host' ? ' (host)' : '' }}</span>
+                  <span style="display: flex; align-items: center"><app-avatar [name]="p.profiles.display_name" [path]="p.profiles.avatar_url" [size]="36" style="margin-right: 10px" />{{ p.profiles.display_name }}{{ p.status === 'host' ? ' ' + t('round.hostTag') : '' }}</span>
                   <span style="display: flex; align-items: center; gap: 8px">
-                    <span class="muted" style="font-size: 13px">{{ p.profiles.handicap_index !== null ? 'HCP ' + p.profiles.handicap_index : '' }}</span>
+                    <span class="muted" style="font-size: 13px">{{ p.profiles.handicap_index !== null ? t('common.hcp', { hcp: p.profiles.handicap_index }) : '' }}</span>
                     @if (p.player_id !== me()) {
                       @switch (friendStatus().get(p.player_id) ?? 'none') {
-                        @case ('friends') { <span class="pill ok">Friend</span> }
-                        @case ('requested') { <span class="pill full">Requested</span> }
-                        @case ('incoming') { <ion-button size="small" fill="outline" [disabled]="busy()" (click)="addFriend(p.player_id)" [attr.aria-label]="'Accept friend request from ' + p.profiles.display_name">Accept</ion-button> }
-                        @default { <ion-button size="small" fill="outline" [disabled]="busy()" (click)="addFriend(p.player_id)" [attr.aria-label]="'Add ' + p.profiles.display_name + ' as a friend'">Add friend</ion-button> }
+                        @case ('friends') { <span class="pill ok">{{ t('round.friend') }}</span> }
+                        @case ('requested') { <span class="pill full">{{ t('friends.requested') }}</span> }
+                        @case ('incoming') { <ion-button size="small" fill="outline" [disabled]="busy()" (click)="addFriend(p.player_id)" [attr.aria-label]="t('round.acceptFrom', { name: p.profiles.display_name })">{{ t('friends.accept') }}</ion-button> }
+                        @default { <ion-button size="small" fill="outline" [disabled]="busy()" (click)="addFriend(p.player_id)" [attr.aria-label]="t('round.addAs', { name: p.profiles.display_name })">{{ t('round.addFriend') }}</ion-button> }
                       }
                     }
                   </span>
                 </div>
               }
               @for (i of emptySpots(); track i) {
-                <div class="player muted"><span>Open spot</span></div>
+                <div class="player muted"><span>{{ t('round.openSpot') }}</span></div>
               }
             </div>
           </div>
 
           @if (r.notes) {
-            <div><strong>Notes</strong><p class="muted" style="margin: 6px 0 0">{{ r.notes }}</p></div>
+            <div><strong>{{ t('round.notes') }}</strong><p class="muted" style="margin: 6px 0 0">{{ r.notes }}</p></div>
           }
 
           @if (!cancelled() && (isHost() || myStatus() === 'confirmed')) {
-            <ion-button expand="block" [routerLink]="['/scorecard/new']" [queryParams]="{ round: r.id }">Scorecard</ion-button>
+            <ion-button expand="block" [routerLink]="['/scorecard/new']" [queryParams]="{ round: r.id }">{{ t('round.scorecard') }}</ion-button>
           }
 
           @if (isHost() && !cancelled()) {
-            <ion-button fill="outline" expand="block" (click)="share()">{{ copied() ? 'Link copied' : 'Share invite link' }}</ion-button>
+            <ion-button fill="outline" expand="block" (click)="share()">{{ copied() ? t('round.copied') : t('round.share') }}</ion-button>
             <ion-button fill="clear" color="medium" expand="block" [disabled]="busy()" (click)="deleteRound()">
-              {{ confirmDelete() ? (confirmed().length > 1 ? 'Tap again to delete. Players will be told' : 'Tap again to delete') : 'Delete round' }}
+              {{ confirmDelete() ? (confirmed().length > 1 ? t('round.deleteConfirmPlayers') : t('round.deleteConfirm')) : t('round.delete') }}
             </ion-button>
           }
 
@@ -80,19 +80,19 @@ import { AvatarComponent } from '../../core/avatar.component';
       } @else if (loading()) {
         <div style="display: flex; justify-content: center; padding: 64px"><ion-spinner></ion-spinner></div>
       } @else {
-        <p role="alert" class="page-pad" style="color: #9C5428">{{ error() || 'This round is no longer available.' }}</p>
+        <p role="alert" class="page-pad" style="color: #9C5428">{{ error() || t('round.gone') }}</p>
       }
     </ion-content>
 
     @if (round() && !isHost() && !cancelled()) {
       <div style="padding: 14px 24px 28px; background: #F4F1E8; border-top: 1px solid #E6DFC9">
         @if (started()) {
-          <p class="muted" style="margin: 0; text-align: center">This round has started</p>
+          <p class="muted" style="margin: 0; text-align: center">{{ t('round.started') }}</p>
         } @else if (myStatus() === 'confirmed') {
-          <ion-button expand="block" color="medium" fill="outline" [disabled]="busy()" (click)="leave()">Leave round</ion-button>
+          <ion-button expand="block" color="medium" fill="outline" [disabled]="busy()" (click)="leave()">{{ t('round.leave') }}</ion-button>
         } @else {
           <ion-button expand="block" [disabled]="busy() || spotsLeft() <= 0 || round()!.status !== 'open'" (click)="join()">
-            {{ spotsLeft() <= 0 ? 'Round is full' : 'Join round' }}
+            {{ spotsLeft() <= 0 ? t('round.full') : t('round.join') }}
           </ion-button>
         }
       </div>
@@ -100,6 +100,8 @@ import { AvatarComponent } from '../../core/avatar.component';
   `
 })
 export class RoundDetailPage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   /** Bound from the route parameter :id (withComponentInputBinding). */
   id = input.required<string>();
 
@@ -136,7 +138,7 @@ export class RoundDetailPage {
       this.round.set(round);
       this.friendStatus.set(await this.friends.statuses(round.round_players.map((p) => p.player_id)));
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not load this round.');
+      this.error.set(this.i18n.error(e, 'round.loadError'));
     } finally {
       this.loading.set(false);
     }
@@ -149,7 +151,7 @@ export class RoundDetailPage {
       await fn();
       await this.load();
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Something went wrong.');
+      this.error.set(this.i18n.error(e, 'common.error'));
       await this.load(); // the round may have changed under us (e.g. now full)
     } finally {
       this.busy.set(false);
@@ -175,7 +177,7 @@ export class RoundDetailPage {
       await this.rounds.deleteRound(this.id());
       await this.router.navigateByUrl('/tabs/rounds', { replaceUrl: true });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'Could not delete the round.');
+      this.error.set(this.i18n.error(e, 'round.deleteError'));
     } finally {
       this.busy.set(false);
       this.confirmDelete.set(false);
@@ -187,7 +189,7 @@ export class RoundDetailPage {
     if (!r) return;
     const url = `${window.location.origin}/join/${r.invite_code}`;
     if (navigator.share) {
-      await navigator.share({ title: 'Join my round', text: `Play ${r.courses.name} with me`, url }).catch(() => {});
+      await navigator.share({ title: this.t('round.shareTitle'), text: this.t('round.shareText', { course: r.courses.name }), url }).catch(() => {});
     } else {
       await navigator.clipboard?.writeText(url);
       this.copied.set(true);

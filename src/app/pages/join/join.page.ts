@@ -1,4 +1,5 @@
 import { Component, inject, input, signal } from '@angular/core';
+import { I18nService } from '../../core/i18n.service';
 import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { RoundsService } from '../../core/rounds.service';
@@ -10,18 +11,20 @@ import { RoundsService } from '../../core/rounds.service';
     <ion-content>
       <div class="page-pad" style="text-align: center; padding-top: 96px; display: flex; flex-direction: column; gap: 12px; align-items: center">
         @if (error()) {
-          <h2 style="margin: 0">Can't join this round</h2>
+          <h2 style="margin: 0">{{ t('join.cant') }}</h2>
           <p role="alert" class="muted" style="margin: 0">{{ error() }}</p>
-          <ion-button routerLink="/tabs/rounds" [replaceUrl]="true">Go to my rounds</ion-button>
+          <ion-button routerLink="/tabs/rounds" [replaceUrl]="true">{{ t('join.myRounds') }}</ion-button>
         } @else {
           <ion-spinner></ion-spinner>
-          <p class="muted" style="margin: 0">Joining the round…</p>
+          <p class="muted" style="margin: 0">{{ t('join.joining') }}</p>
         }
       </div>
     </ion-content>
   `
 })
 export class JoinPage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   /** Bound from the route parameter :code (withComponentInputBinding). */
   code = input.required<string>();
 
@@ -37,10 +40,10 @@ export class JoinPage {
     } catch (e: any) {
       const msg: string = e?.message ?? '';
       this.error.set(
-        msg.includes('full') ? 'This round is already full.'
-        : msg.includes('started') ? 'This round has already started.'
-        : msg.includes('not found') ? 'This invite link is no longer valid. The round may have been cancelled.'
-        : 'Something went wrong. Please try the link again.'
+        msg.includes('full') ? this.t('join.full')
+        : msg.includes('started') ? this.t('join.started')
+        : msg.includes('not found') ? this.t('join.invalid')
+        : this.t('join.error')
       );
     }
   }

@@ -47,8 +47,8 @@ export class SupabaseService {
   }
 
   /** Returns a session straight away if email confirmation is off; otherwise a code is emailed. */
-  signUp(email: string, password: string) {
-    return this.client.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
+  signUp(email: string, password: string, lang: string) {
+    return this.client.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin, data: { lang } } });
   }
 
   resendSignupCode(email: string) {

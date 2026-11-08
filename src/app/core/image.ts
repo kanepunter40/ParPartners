@@ -7,7 +7,7 @@ export async function squareJpeg(file: Blob, size = 512, quality = 0.85): Promis
   try {
     bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
   } catch {
-    throw new Error('That picture couldn’t be opened. Try a JPEG or PNG.');
+    throw new Error('photo.openError'); // i18n key
   }
   const side = Math.min(bitmap.width, bitmap.height);
   const out = Math.min(size, side);
@@ -18,6 +18,6 @@ export async function squareJpeg(file: Blob, size = 512, quality = 0.85): Promis
   ctx.drawImage(bitmap, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side, 0, 0, out, out);
   bitmap.close();
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
-  if (!blob) throw new Error('That picture couldn’t be processed.');
+  if (!blob) throw new Error('photo.processError'); // i18n key
   return blob;
 }

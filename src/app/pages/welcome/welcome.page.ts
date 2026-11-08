@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { I18nService } from '../../core/i18n.service';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonButton, IonInput, IonInputPasswordToggle, IonSpinner, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -18,7 +19,7 @@ const MIN_PASSWORD = 8;
 
 @Component({
   selector: 'app-welcome',
-  imports: [FormsModule, IonContent, IonButton, IonInput, IonInputPasswordToggle, IonSpinner, IonIcon],
+  imports: [RouterLink, FormsModule, IonContent, IonButton, IonInput, IonInputPasswordToggle, IonSpinner, IonIcon],
   styles: [`
     .hero { background: #2E5F5A; color: #F4F1E8; padding: calc(var(--ion-safe-area-top, 0px) + 56px) 32px 44px; text-align: center; }
     .hero .mark { display: block; width: 96px; height: 96px; margin: 0 auto 8px; }
@@ -56,43 +57,43 @@ const MIN_PASSWORD = 8;
           <g fill="#2E5F5A" opacity=".3"><circle cx="43" cy="63" r="1.9"/><circle cx="49" cy="61" r="1.9"/><circle cx="52" cy="67" r="1.9"/><circle cx="44" cy="70" r="1.9"/><circle cx="49" cy="72" r="1.9"/></g>
         </svg>
         <h1 aria-label="Par Partners"><span aria-hidden="true"><b style="font-weight: 700; letter-spacing: .02em;">PAR</b><span style="font-weight: 600;">tners</span></span></h1>
-        <p>Find playing partners near you, or post a round and fill the last spot.</p>
+        <p>{{ t('welcome.tagline') }}</p>
       </div>
 
       <div class="sheet">
         @switch (view()) {
           @case ('start') {
-            <div class="tabs" role="tablist" aria-label="Sign in or create an account">
-              <button type="button" role="tab" [class.on]="tab() === 'signin'" [attr.aria-selected]="tab() === 'signin'" (click)="setTab('signin')">Sign in</button>
-              <button type="button" role="tab" [class.on]="tab() === 'signup'" [attr.aria-selected]="tab() === 'signup'" (click)="setTab('signup')">Create account</button>
+            <div class="tabs" role="tablist" [attr.aria-label]="t('welcome.tabsLabel')">
+              <button type="button" role="tab" [class.on]="tab() === 'signin'" [attr.aria-selected]="tab() === 'signin'" (click)="setTab('signin')">{{ t('welcome.signIn') }}</button>
+              <button type="button" role="tab" [class.on]="tab() === 'signup'" [attr.aria-selected]="tab() === 'signup'" (click)="setTab('signup')">{{ t('welcome.createAccount') }}</button>
             </div>
 
             <button type="button" class="sso google" [disabled]="busy()" (click)="social('google')">
               <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-              Continue with Google
+              {{ t('welcome.google') }}
             </button>
             @if (showApple) {
               <button type="button" class="sso apple" [disabled]="busy()" (click)="social('apple')">
-                <ion-icon name="logo-apple" aria-hidden="true"></ion-icon> Continue with Apple
+                <ion-icon name="logo-apple" aria-hidden="true"></ion-icon> {{ t('welcome.apple') }}
               </button>
             }
 
-            <div class="or">or with email</div>
+            <div class="or">{{ t('welcome.orEmail') }}</div>
 
             <div class="field">
-              <label for="email">Email</label>
-              <ion-input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" [(ngModel)]="email"></ion-input>
+              <label for="email">{{ t('welcome.email') }}</label>
+              <ion-input id="email" type="email" inputmode="email" autocomplete="email" [placeholder]="t('welcome.emailPlaceholder')" [(ngModel)]="email"></ion-input>
             </div>
             <div class="field">
-              <label for="password">Password</label>
+              <label for="password">{{ t('welcome.password') }}</label>
               <ion-input id="password" type="password" [autocomplete]="tab() === 'signup' ? 'new-password' : 'current-password'"
-                [placeholder]="tab() === 'signup' ? 'At least 8 characters' : ''" [(ngModel)]="password" (keyup.enter)="submit()">
+                [placeholder]="tab() === 'signup' ? t('welcome.passwordHint') : ''" [(ngModel)]="password" (keyup.enter)="submit()">
                 <ion-input-password-toggle slot="end" color="medium"></ion-input-password-toggle>
               </ion-input>
             </div>
             @if (tab() === 'signup') {
               <div class="field">
-                <label for="confirm-password">Confirm password</label>
+                <label for="confirm-password">{{ t('welcome.confirmPassword') }}</label>
                 <ion-input id="confirm-password" type="password" autocomplete="new-password" [(ngModel)]="confirm" (keyup.enter)="submit()">
                   <ion-input-password-toggle slot="end" color="medium"></ion-input-password-toggle>
                 </ion-input>
@@ -101,63 +102,63 @@ const MIN_PASSWORD = 8;
 
             @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
             <ion-button expand="block" [disabled]="busy() || !email.trim() || !password || (tab() === 'signup' && !confirm)" (click)="submit()">
-              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ tab() === 'signin' ? 'Sign in' : 'Create account' }} }
+              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ tab() === 'signin' ? t('welcome.signIn') : t('welcome.createAccount') }} }
             </ion-button>
 
             @if (tab() === 'signin') {
-              <button type="button" class="link" style="align-self: flex-start" (click)="go('forgot')">Forgot password?</button>
+              <button type="button" class="link" style="align-self: flex-start" (click)="go('forgot')">{{ t('welcome.forgot') }}</button>
             } @else {
-              <p class="muted" style="font-size: 13px; text-align: center; margin: 0">We'll email you a code to confirm it's you.</p>
+              <p class="muted" style="font-size: 13px; text-align: center; margin: 0; line-height: 1.5">{{ t('welcome.signupNote') }} {{ t('welcome.agreeBefore') }}<a routerLink="/legal/terms">{{ t('welcome.terms') }}</a>{{ t('welcome.agreeAnd') }}<a routerLink="/legal/privacy">{{ t('welcome.privacy') }}</a>{{ t('welcome.agreeAfter') }}</p>
             }
           }
 
           @case ('code') {
-            <h2 style="margin: 0">Check your inbox</h2>
-            <p class="muted" style="margin: 0">We sent a 6-digit code to <strong>{{ email }}</strong> to confirm your account.</p>
+            <h2 style="margin: 0">{{ t('welcome.checkInbox') }}</h2>
+            <p class="muted" style="margin: 0">{{ t('welcome.codeSentBefore') }}<strong>{{ email }}</strong>{{ t('welcome.codeSentAfter') }}</p>
             <div class="field">
-              <label for="code">Code</label>
+              <label for="code">{{ t('welcome.code') }}</label>
               <ion-input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" [(ngModel)]="code" (keyup.enter)="verify()"></ion-input>
             </div>
             @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
             @if (notice()) { <p class="muted" role="status" style="margin: 0; font-size: 14px">{{ notice() }}</p> }
             <ion-button expand="block" [disabled]="busy() || code.trim().length < 6" (click)="verify()">
-              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { Confirm }
+              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ t('welcome.confirm') }} }
             </ion-button>
             <div class="links">
-              <button type="button" class="link" (click)="go('start')">Back</button>
-              <button type="button" class="link" [disabled]="busy()" (click)="resend()">Send a new code</button>
+              <button type="button" class="link" (click)="go('start')">{{ t('common.back') }}</button>
+              <button type="button" class="link" [disabled]="busy()" (click)="resend()">{{ t('welcome.newCode') }}</button>
             </div>
           }
 
           @case ('forgot') {
-            <h2 style="margin: 0">Reset your password</h2>
-            <p class="muted" style="margin: 0">We'll email you a code, then you can choose a new password.</p>
+            <h2 style="margin: 0">{{ t('welcome.resetTitle') }}</h2>
+            <p class="muted" style="margin: 0">{{ t('welcome.resetIntro') }}</p>
             <div class="field">
-              <label for="reset-email">Email</label>
-              <ion-input id="reset-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" [(ngModel)]="email" (keyup.enter)="sendReset()"></ion-input>
+              <label for="reset-email">{{ t('welcome.email') }}</label>
+              <ion-input id="reset-email" type="email" inputmode="email" autocomplete="email" [placeholder]="t('welcome.emailPlaceholder')" [(ngModel)]="email" (keyup.enter)="sendReset()"></ion-input>
             </div>
             @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
             <ion-button expand="block" [disabled]="busy() || !email.trim()" (click)="sendReset()">
-              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { Email me a code }
+              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ t('welcome.emailMeCode') }} }
             </ion-button>
-            <button type="button" class="link" style="align-self: flex-start" (click)="go('start')">Back to sign in</button>
+            <button type="button" class="link" style="align-self: flex-start" (click)="go('start')">{{ t('welcome.backToSignIn') }}</button>
           }
 
           @case ('reset') {
-            <h2 style="margin: 0">Choose a new password</h2>
-            <p class="muted" style="margin: 0">Enter the code we sent to <strong>{{ email }}</strong> and your new password.</p>
+            <h2 style="margin: 0">{{ t('welcome.newPasswordTitle') }}</h2>
+            <p class="muted" style="margin: 0">{{ t('welcome.resetCodeBefore') }}<strong>{{ email }}</strong>{{ t('welcome.resetCodeAfter') }}</p>
             <div class="field">
-              <label for="reset-code">Code</label>
+              <label for="reset-code">{{ t('welcome.code') }}</label>
               <ion-input id="reset-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" [(ngModel)]="code"></ion-input>
             </div>
             <div class="field">
-              <label for="new-password">New password</label>
-              <ion-input id="new-password" type="password" autocomplete="new-password" placeholder="At least 8 characters" [(ngModel)]="password" (keyup.enter)="reset()">
+              <label for="new-password">{{ t('welcome.newPassword') }}</label>
+              <ion-input id="new-password" type="password" autocomplete="new-password" [placeholder]="t('welcome.passwordHint')" [(ngModel)]="password" (keyup.enter)="reset()">
                 <ion-input-password-toggle slot="end" color="medium"></ion-input-password-toggle>
               </ion-input>
             </div>
             <div class="field">
-              <label for="confirm-new-password">Confirm new password</label>
+              <label for="confirm-new-password">{{ t('welcome.confirmNewPassword') }}</label>
               <ion-input id="confirm-new-password" type="password" autocomplete="new-password" [(ngModel)]="confirm" (keyup.enter)="reset()">
                 <ion-input-password-toggle slot="end" color="medium"></ion-input-password-toggle>
               </ion-input>
@@ -165,11 +166,11 @@ const MIN_PASSWORD = 8;
             @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
             @if (notice()) { <p class="muted" role="status" style="margin: 0; font-size: 14px">{{ notice() }}</p> }
             <ion-button expand="block" [disabled]="busy() || code.trim().length < 6 || !password || !confirm" (click)="reset()">
-              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { Save and sign in }
+              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ t('welcome.saveAndSignIn') }} }
             </ion-button>
             <div class="links">
-              <button type="button" class="link" (click)="go('forgot')">Back</button>
-              <button type="button" class="link" [disabled]="busy()" (click)="sendReset()">Send a new code</button>
+              <button type="button" class="link" (click)="go('forgot')">{{ t('common.back') }}</button>
+              <button type="button" class="link" [disabled]="busy()" (click)="sendReset()">{{ t('welcome.newCode') }}</button>
             </div>
           }
         }
@@ -178,6 +179,8 @@ const MIN_PASSWORD = 8;
   `
 })
 export class WelcomePage {
+  readonly i18n = inject(I18nService);
+  readonly t = this.i18n.t;
   private sb = inject(SupabaseService);
   private socialAuth = inject(SocialAuthService);
   private router = inject(Router);
@@ -230,10 +233,11 @@ export class WelcomePage {
 
   private message(e: unknown): string {
     const m = (e as Error)?.message ?? '';
-    if (/invalid login credentials/i.test(m)) return 'Wrong email or password. If you signed up with an email code and never set a password, use “Forgot password?” to set one.';
-    if (/token has expired|invalid/i.test(m) && this.view() !== 'start') return 'That code didn’t work. Check it, or send a new one.';
-    if (/rate limit|security purposes/i.test(m)) return 'Too many emails in a short time. Wait a minute and try again.';
-    return m || 'Something went wrong. Try again.';
+    if (m.startsWith('auth.')) return this.t(m);
+    if (/invalid login credentials/i.test(m)) return this.t('welcome.err.wrongPassword');
+    if (/token has expired|invalid/i.test(m) && this.view() !== 'start') return this.t('welcome.err.badCode');
+    if (/rate limit|security purposes/i.test(m)) return this.t('welcome.err.rateLimit');
+    return m || this.t('common.error');
   }
 
   private done() {
@@ -242,8 +246,8 @@ export class WelcomePage {
 
   /** Checks a new password before it's sent; shows what's wrong. */
   private badNewPassword(): boolean {
-    if (this.password.length < MIN_PASSWORD) this.error.set(`Use at least ${MIN_PASSWORD} characters for your password.`);
-    else if (this.password !== this.confirm) this.error.set('The passwords don’t match.');
+    if (this.password.length < MIN_PASSWORD) this.error.set(this.t('welcome.err.short', { min: MIN_PASSWORD }));
+    else if (this.password !== this.confirm) this.error.set(this.t('welcome.err.mismatch'));
     else return false;
     return true;
   }
@@ -274,8 +278,8 @@ export class WelcomePage {
     if (this.badNewPassword()) return;
     let session = false;
     const ok = await this.attempt(async () => {
-      const res = await this.sb.signUp(email, this.password);
-      if (res.data.user && !res.data.user.identities?.length) throw new Error('There’s already an account with this email. Sign in instead, or use “Forgot password?”.');
+      const res = await this.sb.signUp(email, this.password, this.i18n.lang());
+      if (res.data.user && !res.data.user.identities?.length) throw new Error(this.t('welcome.err.exists'));
       session = !!res.data.session;
       return res;
     });
@@ -287,7 +291,7 @@ export class WelcomePage {
   async resend() {
     const email = this.email.trim();
     const ok = await this.attempt(() => this.sb.resendSignupCode(email));
-    if (ok) this.notice.set('New code sent.');
+    if (ok) this.notice.set(this.t('welcome.codeResent'));
   }
 
   async verify() {
@@ -296,7 +300,7 @@ export class WelcomePage {
 
   async sendReset() {
     if (await this.attempt(() => this.sb.sendPasswordReset(this.email.trim()))) {
-      if (this.view() === 'reset') this.notice.set('New code sent.');
+      if (this.view() === 'reset') this.notice.set(this.t('welcome.codeResent'));
       else this.go('reset');
     }
   }
