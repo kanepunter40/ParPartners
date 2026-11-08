@@ -5,11 +5,12 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton,
 import { ProfileService } from '../../core/profile.service';
 import { RoundsService } from '../../core/rounds.service';
 import { Course } from '../../core/models';
+import { AvatarComponent } from '../../core/avatar.component';
 import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandicap, toggleWhen } from '../../core/profile-options';
 
 @Component({
   selector: 'app-profile-edit',
-  imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonSpinner],
+  imports: [AvatarComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonSpinner],
   styles: [`
     .wrap { display: flex; flex-direction: column; gap: 28px; }
     fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
@@ -22,6 +23,8 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
     .row small { color: #5F5B4E; }
     ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; min-height: 48px; }
     ion-searchbar { padding: 0; }
+    .photo { display: flex; align-items: center; gap: 18px; }
+    .photo-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
     .footer { position: sticky; bottom: 0; padding: 14px 0 24px; background: #F4F1E8; display: flex; flex-direction: column; gap: 6px; }
   `],
   template: `
@@ -34,6 +37,24 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
     <ion-content>
       @if (loaded()) {
         <div class="page-pad wrap">
+          <fieldset>
+            <legend>Photo</legend>
+            <div class="photo">
+              <app-avatar [name]="name || '?'" [path]="avatar()" [size]="88" />
+              <div class="photo-actions">
+                <input #picker type="file" accept="image/*" hidden (change)="pickPhoto($event)">
+                <ion-button fill="outline" size="small" [disabled]="photoBusy()" (click)="picker.click()">
+                  @if (photoBusy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ avatar() ? 'Change photo' : 'Add photo' }} }
+                </ion-button>
+                @if (avatar() && !photoBusy()) {
+                  <ion-button fill="clear" size="small" color="medium" (click)="removePhoto()">Remove photo</ion-button>
+                }
+              </div>
+            </div>
+            @if (photoError()) { <p role="alert" style="color: #9C5428; margin: 0">{{ photoError() }}</p> }
+            @else if (!avatar()) { <span class="muted" style="font-size: 13px">Without a photo, other players see your initials.</span> }
+          </fieldset>
+
           <fieldset>
             <legend>Name</legend>
             <ion-input aria-label="Name" autocomplete="name" maxlength="60" [(ngModel)]="name"></ion-input>
@@ -142,6 +163,10 @@ export class ProfileEditPage {
   error = signal('');
 
   name = '';
+  /** Storage path of my picture; saved straight away, separately from the Save button. */
+  avatar = signal<string | null>(null);
+  photoBusy = signal(false);
+  photoError = signal('');
   courses = signal<Course[]>([]);
   homeCourse = signal<Course | null>(null);
   handicapText = '';
@@ -157,7 +182,8 @@ export class ProfileEditPage {
   async ionViewWillEnter() {
     this.error.set('');
     try {
-      const d = await this.profiles.details();
+      const [d, me] = await Promise.all([this.profiles.details(), this.profiles.load(true)]);
+      this.avatar.set(me?.avatar_url ?? null);
       this.name = d.displayName;
       this.handicapText = d.handicap !== null ? String(d.handicap) : '';
       this.noHandicap = d.noHandicap;
@@ -172,6 +198,33 @@ export class ProfileEditPage {
       this.loaded.set(true);
     } catch (e: any) {
       this.error.set(e?.message ?? 'Could not load your profile.');
+    }
+  }
+
+  async pickPhoto(ev: Event) {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    await this.photo(async () => this.avatar.set(await this.profiles.setAvatar(file)));
+  }
+
+  async removePhoto() {
+    await this.photo(async () => {
+      await this.profiles.clearAvatar();
+      this.avatar.set(null);
+    });
+  }
+
+  private async photo(fn: () => Promise<void>) {
+    this.photoBusy.set(true);
+    this.photoError.set('');
+    try {
+      await fn();
+    } catch (e: any) {
+      this.photoError.set(e?.message ?? 'Could not update your photo.');
+    } finally {
+      this.photoBusy.set(false);
     }
   }
 

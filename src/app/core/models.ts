@@ -32,8 +32,8 @@ export interface RoundDetail {
   invite_code: string;
   status: 'open' | 'full' | 'cancelled' | 'played';
   courses: { name: string; city: string | null };
-  host: { display_name: string; handicap_index: number | null };
-  round_players: { player_id: string; status: PlayerStatus; profiles: { display_name: string; handicap_index: number | null } }[];
+  host: { display_name: string; avatar_url: string | null; handicap_index: number | null };
+  round_players: { player_id: string; status: PlayerStatus; profiles: { display_name: string; avatar_url: string | null; handicap_index: number | null } }[];
 }
 
 export interface MyRound {
@@ -49,6 +49,8 @@ export interface MyRound {
 export interface Profile {
   id: string;
   display_name: string;
+  /** Storage path of the profile picture, or null for initials. */
+  avatar_url: string | null;
   handicap_index: number | null;
   no_handicap: boolean;
   home_course_id: string | null;
@@ -60,6 +62,7 @@ export interface Profile {
 export interface PlayerCard {
   id: string;
   display_name: string;
+  avatar_url: string | null;
   home_course_id: string | null;
   handicap_index: number | null;
   languages: string[];
@@ -124,6 +127,7 @@ export type FriendStatus = 'none' | 'requested' | 'incoming' | 'friends';
 export interface Friend {
   id: string;
   display_name: string;
+  avatar_url: string | null;
   handicap_index: number | null;
   status: FriendStatus;
 }
@@ -134,6 +138,8 @@ export interface FeedItem {
   at: string;
   actor_id: string;
   actor_name: string;
+  /** Filled in by FriendsService.feed (not part of home_feed). */
+  actor_avatar?: string | null;
   other_id: string | null;
   other_name: string | null;
   round_id: string | null;

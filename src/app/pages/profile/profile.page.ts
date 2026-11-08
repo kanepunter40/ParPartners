@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, effect, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { ProfileService } from '../../core/profile.service';
@@ -8,17 +8,17 @@ import { SupabaseService } from '../../core/supabase.service';
 import { FriendsService } from '../../core/friends.service';
 import { VIBES } from '../../core/profile-options';
 import { IllustrationComponent } from '../../core/illustration.component';
+import { AvatarComponent } from '../../core/avatar.component';
 import { Friend, PlayerCard, ScorecardSummary } from '../../core/models';
 
 @Component({
   selector: 'app-profile',
-  imports: [RouterLink, IllustrationComponent, IonContent, IonButton, IonSpinner],
+  imports: [AvatarComponent, RouterLink, IllustrationComponent, IonContent, IonButton, IonSpinner],
   styles: [`
     .section { display: flex; flex-direction: column; gap: 8px; }
     .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; }
     .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
     .who { display: flex; align-items: center; gap: 12px; }
-    .avatar { width: 52px; height: 52px; border-radius: 999px; background: #2E5F5A; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px; flex: none; }
     .facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; font-size: 15px; }
     .facts dt { color: #5F5B4E; }
     .facts dd { margin: 0; }
@@ -40,7 +40,7 @@ import { Friend, PlayerCard, ScorecardSummary } from '../../core/models';
             <span class="label">What other players see</span>
             <div class="card">
               <div class="who">
-                <span class="avatar" aria-hidden="true">{{ initials(c.display_name) }}</span>
+                <app-avatar [name]="c.display_name" [path]="c.avatar_url" [size]="56" />
                 <span style="display: flex; flex-direction: column; gap: 2px">
                   <strong style="font-size: 20px">{{ c.display_name }}</strong>
                   <span class="muted">{{ c.handicap_index !== null ? 'Handicap ' + c.handicap_index : 'No handicap yet' }}</span>
@@ -134,7 +134,18 @@ export class ProfilePage {
   confirmDelete = signal(false);
   deleting = signal(false);
 
-  async ionViewWillEnter() {
+  constructor() {
+    // Coming back from Edit profile doesn't fire ionViewWillEnter on this tab, so reload on changes too
+    effect(() => {
+      if (this.profiles.version()) untracked(() => this.load());
+    });
+  }
+
+  ionViewWillEnter() {
+    this.load();
+  }
+
+  async load() {
     this.error.set('');
     try {
       const [card, cards, friends] = await Promise.all([this.profiles.myCard(), this.scorecards.history(), this.friends.list()]);
@@ -145,10 +156,6 @@ export class ProfilePage {
     } catch (e: any) {
       this.error.set(e?.message ?? 'Could not load your profile.');
     }
-  }
-
-  initials(name: string) {
-    return name.split(/\s+/).map((s) => s[0]).slice(0, 2).join('').toUpperCase();
   }
 
   vibeLabel(v: PlayerCard['vibe']) {

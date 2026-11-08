@@ -1,19 +1,18 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonSpinner } from '@ionic/angular/standalone';
 import { FriendsService } from '../../core/friends.service';
-import { initials } from '../../core/format';
+import { AvatarComponent } from '../../core/avatar.component';
 import { Friend, FriendStatus } from '../../core/models';
 
 @Component({
   selector: 'app-friends',
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonSpinner],
+  imports: [AvatarComponent, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonSpinner],
   styles: [`
     .wrap { display: flex; flex-direction: column; gap: 24px; }
     .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; display: block; }
     .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
     .row { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 12px 8px 16px; border-bottom: 1px solid #EFEAD9; }
     .row:last-child { border-bottom: 0; }
-    .avatar { width: 36px; height: 36px; border-radius: 999px; background: #2E5F5A; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; flex: none; }
     .name { flex: 1; min-width: 0; display: flex; flex-direction: column; }
     .actions { display: flex; gap: 4px; flex: none; }
     ion-searchbar { padding: 0; --background: #fff; }
@@ -34,7 +33,7 @@ import { Friend, FriendStatus } from '../../core/models';
             <div class="card" style="margin-top: 10px">
               @for (p of results(); track p.id) {
                 <div class="row">
-                  <span class="avatar" aria-hidden="true">{{ initials(p.display_name) }}</span>
+                  <app-avatar [name]="p.display_name" [path]="p.avatar_url" [size]="36" />
                   <span class="name"><strong>{{ p.display_name }}</strong>
                     @if (p.handicap_index !== null) { <span class="muted" style="font-size: 13px">HCP {{ p.handicap_index }}</span> }</span>
                   <span class="actions">
@@ -61,7 +60,7 @@ import { Friend, FriendStatus } from '../../core/models';
             <div class="card">
               @for (f of incoming(); track f.id) {
                 <div class="row">
-                  <span class="avatar" aria-hidden="true">{{ initials(f.display_name) }}</span>
+                  <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="36" />
                   <span class="name"><strong>{{ f.display_name }}</strong></span>
                   <span class="actions">
                     <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="respond(f.id, false)">Decline</ion-button>
@@ -80,7 +79,7 @@ import { Friend, FriendStatus } from '../../core/models';
               <div class="card">
                 @for (f of friends(); track f.id) {
                   <div class="row">
-                    <span class="avatar" aria-hidden="true">{{ initials(f.display_name) }}</span>
+                    <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="36" />
                     <span class="name"><strong>{{ f.display_name }}</strong>
                       @if (f.handicap_index !== null) { <span class="muted" style="font-size: 13px">HCP {{ f.handicap_index }}</span> }</span>
                     <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="remove(f)">
@@ -100,7 +99,7 @@ import { Friend, FriendStatus } from '../../core/models';
               <div class="card">
                 @for (f of sent(); track f.id) {
                   <div class="row">
-                    <span class="avatar" aria-hidden="true">{{ initials(f.display_name) }}</span>
+                    <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="36" />
                     <span class="name"><strong>{{ f.display_name }}</strong><span class="muted" style="font-size: 13px">Waiting for an answer</span></span>
                     <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="cancel(f.id)">Cancel</ion-button>
                   </div>
@@ -123,14 +122,13 @@ export class FriendsPage {
   incoming = computed(() => this.list().filter((f) => f.status === 'incoming'));
   sent = computed(() => this.list().filter((f) => f.status === 'requested'));
   query = signal('');
-  results = signal<{ id: string; display_name: string; handicap_index: number | null }[]>([]);
+  results = signal<{ id: string; display_name: string; avatar_url: string | null; handicap_index: number | null }[]>([]);
   searching = signal(false);
   loaded = signal(false);
   busy = signal<string | null>(null);
   confirmRemove = signal<string | null>(null);
   error = signal('');
 
-  readonly initials = initials;
 
   ionViewWillEnter() {
     this.load();

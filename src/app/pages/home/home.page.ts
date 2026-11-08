@@ -11,14 +11,15 @@ import { NotificationsBellComponent } from '../../core/notifications-bell.compon
 import { IllustrationComponent } from '../../core/illustration.component';
 import { SupabaseService } from '../../core/supabase.service';
 import { formatToPar, HOLES_LABEL } from '../../core/scorecards.service';
-import { initials, timeAgo } from '../../core/format';
+import { timeAgo } from '../../core/format';
+import { AvatarComponent } from '../../core/avatar.component';
 import { FeedItem, Friend, MyRound } from '../../core/models';
 
 const PAGE = 30;
 
 @Component({
   selector: 'app-home',
-  imports: [DatePipe, RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSpinner],
+  imports: [AvatarComponent, DatePipe, RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSpinner],
   styles: [`
     .home { display: flex; flex-direction: column; gap: 28px; }
     .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; display: block; }
@@ -26,7 +27,6 @@ const PAGE = 30;
     .next .when { font-family: 'Fraunces', serif; font-size: 20px; }
     .next small { color: #D5E3DF; font-size: 13px; }
     .item { display: flex; gap: 12px; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; text-decoration: none; color: inherit; }
-    .avatar { width: 40px; height: 40px; border-radius: 999px; background: #2E5F5A; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex: none; }
     .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
     .detail { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 6px; padding-top: 10px; border-top: 1px solid #EFEAD9; font-size: 14px; }
     .score { font-family: 'Fraunces', serif; font-size: 24px; line-height: 1; }
@@ -69,7 +69,7 @@ const PAGE = 30;
 
           @for (f of items(); track $index) {
             <a class="item" [routerLink]="link(f)">
-              <span class="avatar" aria-hidden="true">{{ initials(f.actor_name) }}</span>
+              <app-avatar [name]="f.actor_name" [path]="f.actor_avatar" [size]="40" />
               <span class="body">
                 <span>{{ text(f) }}</span>
                 <span class="muted" style="font-size: 12px">{{ ago(f.at) }}</span>
@@ -139,7 +139,6 @@ export class HomePage {
   loadingMore = signal(false);
   error = signal('');
 
-  readonly initials = initials;
   readonly ago = timeAgo;
 
   constructor() {

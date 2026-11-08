@@ -69,8 +69,8 @@ export class RoundsService {
       .select(
         `id, host_id, tee_time, max_players, visibility, notes, invite_code, status,
          courses(name, city),
-         host:profiles!rounds_host_id_fkey(display_name, handicap_index),
-         round_players(player_id, status, profiles(display_name, handicap_index))`
+         host:profiles!rounds_host_id_fkey(display_name, avatar_url, handicap_index),
+         round_players(player_id, status, profiles(display_name, avatar_url, handicap_index))`
       )
       .eq('id', id)
       .single();

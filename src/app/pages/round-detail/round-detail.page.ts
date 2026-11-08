@@ -6,15 +6,15 @@ import { RoundsService } from '../../core/rounds.service';
 import { SupabaseService } from '../../core/supabase.service';
 import { FriendsService } from '../../core/friends.service';
 import { FriendStatus, RoundDetail } from '../../core/models';
+import { AvatarComponent } from '../../core/avatar.component';
 
 @Component({
   selector: 'app-round-detail',
-  imports: [DatePipe, RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner],
+  imports: [AvatarComponent, DatePipe, RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner],
   styles: [`
     .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
     .player { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 6px 16px; border-bottom: 1px solid #EFEAD9; }
     .player:last-child { border-bottom: 0; }
-    .avatar { width: 36px; height: 36px; border-radius: 999px; background: #2E5F5A; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; margin-right: 10px; }
   `],
   template: `
     <ion-header class="ion-no-border">
@@ -40,7 +40,7 @@ import { FriendStatus, RoundDetail } from '../../core/models';
             <div class="card">
               @for (p of confirmed(); track p.player_id) {
                 <div class="player">
-                  <span style="display: flex; align-items: center"><span class="avatar">{{ initials(p.profiles.display_name) }}</span>{{ p.profiles.display_name }}{{ p.status === 'host' ? ' (host)' : '' }}</span>
+                  <span style="display: flex; align-items: center"><app-avatar [name]="p.profiles.display_name" [path]="p.profiles.avatar_url" [size]="36" style="margin-right: 10px" />{{ p.profiles.display_name }}{{ p.status === 'host' ? ' (host)' : '' }}</span>
                   <span style="display: flex; align-items: center; gap: 8px">
                     <span class="muted" style="font-size: 13px">{{ p.profiles.handicap_index !== null ? 'HCP ' + p.profiles.handicap_index : '' }}</span>
                     @if (p.player_id !== me()) {
@@ -128,10 +128,6 @@ export class RoundDetailPage {
 
   ionViewWillEnter() {
     this.load();
-  }
-
-  initials(name: string) {
-    return name.split(/\s+/).map((s) => s[0]).slice(0, 2).join('').toUpperCase();
   }
 
   async load() {

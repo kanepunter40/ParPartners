@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { PlayerCard, Profile } from './models';
 import { RoundLength, Vibe } from './profile-options';
+import { squareJpeg } from './image';
 
 /** Everything a player fills in about themselves, in onboarding or when editing. */
 export interface ProfileData {
@@ -22,12 +23,19 @@ export interface ProfileData {
 export class ProfileService {
   private sb = inject(SupabaseService);
   private cache: Profile | null = null;
+  /** Goes up whenever I change my profile or picture, so screens that are already open can reload. */
+  readonly version = signal(0);
+
+  private changed() {
+    this.cache = null;
+    this.version.update((v) => v + 1);
+  }
 
   async load(force = false): Promise<Profile | null> {
     if (this.cache && !force) return this.cache;
     const { data, error } = await this.sb.client
       .from('profiles')
-      .select('id, display_name, handicap_index, no_handicap, home_course_id, languages, onboarded')
+      .select('id, display_name, avatar_url, handicap_index, no_handicap, home_course_id, languages, onboarded')
       .eq('id', this.sb.userId)
       .maybeSingle();
     if (error) throw error;
@@ -68,15 +76,52 @@ export class ProfileService {
   async myCard(): Promise<PlayerCard | null> {
     const { data, error } = await this.sb.client
       .from('player_cards')
-      .select('id, display_name, home_course_id, handicap_index, languages, vibe, age, gender')
+      .select('id, display_name, avatar_url, home_course_id, handicap_index, languages, vibe, age, gender')
       .eq('id', this.sb.userId)
       .maybeSingle();
     if (error) throw error;
     return data as PlayerCard | null;
   }
 
+  /** Shrinks the picture, uploads it and makes it my profile picture. Returns the new storage path. */
+  async setAvatar(file: Blob): Promise<string> {
+    const id = this.sb.userId;
+    const jpeg = await squareJpeg(file);
+    // A new name each time, so phones don't keep showing the old picture from their cache
+    const path = `${id}/${Date.now()}.jpg`;
+    const bucket = this.sb.client.storage.from('avatars');
+    const up = await bucket.upload(path, jpeg, { contentType: 'image/jpeg', cacheControl: '31536000' });
+    if (up.error) throw up.error;
+    const { error } = await this.sb.client.from('profiles').update({ avatar_url: path }).eq('id', id);
+    if (error) {
+      await bucket.remove([path]);
+      throw error;
+    }
+    await this.removeAvatarFiles(path).catch(() => undefined);
+    this.changed();
+    return path;
+  }
+
+  /** Back to initials. */
+  async clearAvatar() {
+    const { error } = await this.sb.client.from('profiles').update({ avatar_url: null }).eq('id', this.sb.userId);
+    if (error) throw error;
+    await this.removeAvatarFiles().catch(() => undefined);
+    this.changed();
+  }
+
+  /** Tidies my folder in the bucket; failures only leave an unused file behind. */
+  private async removeAvatarFiles(keep?: string) {
+    const id = this.sb.userId;
+    const bucket = this.sb.client.storage.from('avatars');
+    const { data } = await bucket.list(id);
+    const old = (data ?? []).map((f) => `${id}/${f.name}`).filter((p) => p !== keep);
+    if (old.length) await bucket.remove(old);
+  }
+
   /** Permanent. Rounds I host with others in them pass to the next player; the rest goes. */
   async deleteAccount() {
+    await this.removeAvatarFiles().catch(() => undefined);
     const { error } = await this.sb.client.rpc('delete_account');
     if (error) throw error;
     this.cache = null;
@@ -104,6 +149,6 @@ export class ProfileService {
       show_age_gender: d.showAgeGender
     });
     if (e2) throw e2;
-    this.cache = null;
+    this.changed();
   }
 }

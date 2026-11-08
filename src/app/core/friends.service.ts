@@ -6,8 +6,8 @@ interface FriendshipRow {
   requester_id: string;
   addressee_id: string;
   status: 'pending' | 'accepted' | 'declined' | 'removed';
-  requester: { display_name: string; handicap_index: number | null };
-  addressee: { display_name: string; handicap_index: number | null };
+  requester: { display_name: string; avatar_url: string | null; handicap_index: number | null };
+  addressee: { display_name: string; avatar_url: string | null; handicap_index: number | null };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,14 +28,14 @@ export class FriendsService {
     const { data, error } = await this.sb.client
       .from('friendships')
       .select(`requester_id, addressee_id, status,
-               requester:profiles!friendships_requester_id_fkey(display_name, handicap_index),
-               addressee:profiles!friendships_addressee_id_fkey(display_name, handicap_index)`)
+               requester:profiles!friendships_requester_id_fkey(display_name, avatar_url, handicap_index),
+               addressee:profiles!friendships_addressee_id_fkey(display_name, avatar_url, handicap_index)`)
       .in('status', ['pending', 'accepted', 'declined']);
     if (error) throw error;
     return (data as unknown as FriendshipRow[])
       .map((r) => {
         const other = r.requester_id === me ? r.addressee : r.requester;
-        return { id: r.requester_id === me ? r.addressee_id : r.requester_id, display_name: other.display_name, handicap_index: other.handicap_index, status: this.statusOf(r, me) };
+        return { id: r.requester_id === me ? r.addressee_id : r.requester_id, display_name: other.display_name, avatar_url: other.avatar_url, handicap_index: other.handicap_index, status: this.statusOf(r, me) };
       })
       .filter((f) => f.status !== 'none')
       .sort((a, b) => a.display_name.localeCompare(b.display_name));
@@ -55,12 +55,12 @@ export class FriendsService {
   }
 
   /** Players by name, not including me. */
-  async search(query: string): Promise<{ id: string; display_name: string; handicap_index: number | null }[]> {
+  async search(query: string): Promise<{ id: string; display_name: string; avatar_url: string | null; handicap_index: number | null }[]> {
     const q = query.trim().replace(/[%_\,()]/g, '');
     if (q.length < 2) return [];
     const { data, error } = await this.sb.client
       .from('profiles')
-      .select('id, display_name, handicap_index')
+      .select('id, display_name, avatar_url, handicap_index')
       .ilike('display_name', `%${q}%`)
       .neq('id', this.sb.userId)
       .eq('onboarded', true)
@@ -91,6 +91,14 @@ export class FriendsService {
   async feed(before: string | null = null): Promise<FeedItem[]> {
     const { data, error } = await this.sb.client.rpc('home_feed', { p_before: before, p_limit: 30 });
     if (error) throw error;
-    return data as FeedItem[];
+    const items = data as FeedItem[];
+    // home_feed only returns names; look up the pictures in one go
+    const ids = [...new Set(items.map((i) => i.actor_id))];
+    if (ids.length) {
+      const { data: pics } = await this.sb.client.from('profiles').select('id, avatar_url').in('id', ids);
+      const byId = new Map((pics ?? []).map((p) => [p.id, p.avatar_url as string | null]));
+      for (const i of items) i.actor_avatar = byId.get(i.actor_id) ?? null;
+    }
+    return items;
   }
 }

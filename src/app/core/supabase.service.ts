@@ -20,6 +20,11 @@ export class SupabaseService {
     return id;
   }
 
+  /** Public URL of a profile picture from its storage path (profiles.avatar_url), or null. */
+  avatarUrl(path: string | null | undefined): string | null {
+    return path ? this.client.storage.from('avatars').getPublicUrl(path).data.publicUrl : null;
+  }
+
   /** `signup` to confirm a new account, `recovery` for a password reset. */
   verifyEmailCode(email: string, token: string, type: 'signup' | 'recovery') {
     return this.client.auth.verifyOtp({ email, token, type });
