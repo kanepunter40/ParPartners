@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonProgressBar, IonSpinner } from '@ionic/angular/standalone';
 import { ProfileService } from '../../core/profile.service';
+import { SupabaseService } from '../../core/supabase.service';
 import { RoundsService } from '../../core/rounds.service';
 import { Course } from '../../core/models';
 import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandicap, toggleWhen } from '../../core/profile-options';
@@ -124,6 +125,7 @@ export class OnboardingPage {
   private profiles = inject(ProfileService);
   private rounds = inject(RoundsService);
   private router = inject(Router);
+  private sb = inject(SupabaseService);
 
   readonly total = 6;
   readonly languagesList = LANGUAGES;
@@ -150,6 +152,9 @@ export class OnboardingPage {
   vibe = signal<Vibe>('relaxed');
 
   constructor() {
+    // Google and Apple pass the player's name along; start from it
+    const meta = this.sb.session()?.user.user_metadata ?? {};
+    this.name = meta['full_name'] ?? meta['name'] ?? '';
     this.rounds.searchCourses(null).then((c) => this.courses.set(c)).catch(() => {});
   }
 

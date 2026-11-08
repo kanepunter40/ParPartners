@@ -20,12 +20,35 @@ export class SupabaseService {
     return id;
   }
 
+  /** Passwordless: emails a sign-in code (and link). Also creates the account for a new email. */
   signInWithEmail(email: string) {
     return this.client.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin } });
   }
 
-  verifyEmailCode(email: string, token: string) {
-    return this.client.auth.verifyOtp({ email, token, type: 'email' });
+  /** `email` for sign-in codes, `signup` to confirm a new account, `recovery` for a password reset. */
+  verifyEmailCode(email: string, token: string, type: 'email' | 'signup' | 'recovery' = 'email') {
+    return this.client.auth.verifyOtp({ email, token, type });
+  }
+
+  signInWithPassword(email: string, password: string) {
+    return this.client.auth.signInWithPassword({ email, password });
+  }
+
+  /** Returns a session straight away if email confirmation is off; otherwise a code is emailed. */
+  signUp(email: string, password: string) {
+    return this.client.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
+  }
+
+  resendSignupCode(email: string) {
+    return this.client.auth.resend({ type: 'signup', email });
+  }
+
+  sendPasswordReset(email: string) {
+    return this.client.auth.resetPasswordForEmail(email);
+  }
+
+  setPassword(password: string) {
+    return this.client.auth.updateUser({ password });
   }
 
   signOut() {

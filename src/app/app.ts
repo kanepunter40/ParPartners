@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { SocialAuthService } from './core/social-auth.service';
 
 @Component({
   selector: 'app-root',
   imports: [IonApp, IonRouterOutlet],
   template: `<ion-app><ion-router-outlet></ion-router-outlet></ion-app>`
 })
-export class App {}
+export class App {
+  constructor() {
+    inject(SocialAuthService).listenForCallback();
+  }
+}
