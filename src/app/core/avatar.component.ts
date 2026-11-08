@@ -34,9 +34,17 @@ export class AvatarComponent {
 
   failed = signal(false);
   letters = computed(() => initials(this.name()));
-  url = computed(() => this.sb.avatarUrl(this.path()));
+  url = signal<string | null>(null);
 
   constructor() {
-    effect(() => { this.path(); this.failed.set(false); });
+    effect(() => {
+      const path = this.path();
+      this.failed.set(false);
+      this.url.set(null);
+      if (!path) return;
+      this.sb.avatarUrl(path).then((url) => {
+        if (this.path() === path) this.url.set(url);
+      });
+    });
   }
 }

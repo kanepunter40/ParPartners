@@ -20,9 +20,21 @@ export class SupabaseService {
     return id;
   }
 
-  /** Public URL of a profile picture from its storage path (profiles.avatar_url), or null. */
-  avatarUrl(path: string | null | undefined): string | null {
-    return path ? this.client.storage.from('avatars').getPublicUrl(path).data.publicUrl : null;
+  /** Signed links to profile pictures, kept for the session so each picture is fetched (and cached) once. */
+  private avatarLinks = new Map<string, { at: number; url: Promise<string | null> }>();
+
+  /**
+   * A temporary link to a profile picture (the bucket is private: signed-in players only).
+   * Links last 24 hours; a fresh one is asked for after 12.
+   */
+  avatarUrl(path: string): Promise<string | null> {
+    const hit = this.avatarLinks.get(path);
+    if (hit && Date.now() - hit.at < 12 * 3600_000) return hit.url;
+    const url = this.client.storage.from('avatars').createSignedUrl(path, 24 * 3600)
+      .then(({ data }) => data?.signedUrl ?? null)
+      .catch(() => null);
+    this.avatarLinks.set(path, { at: Date.now(), url });
+    return url;
   }
 
   /** `signup` to confirm a new account, `recovery` for a password reset. */
@@ -52,6 +64,7 @@ export class SupabaseService {
   }
 
   signOut() {
+    this.avatarLinks.clear();
     return this.client.auth.signOut();
   }
 }
