@@ -5,16 +5,8 @@ import { IonContent, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, 
 import { ProfileService } from '../../core/profile.service';
 import { RoundsService } from '../../core/rounds.service';
 import { Course } from '../../core/models';
+import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandicap, toggleWhen } from '../../core/profile-options';
 
-const LANGUAGES = ['English', 'German', 'French', 'Spanish', 'Italian', 'Portuguese', 'Dutch', 'Polish', 'Turkish', 'Arabic'];
-const GENDERS = ['Woman', 'Man', 'Non-binary', 'Self-describe', 'Prefer not to say'];
-const WHEN: [string, string][] = [['weekday_morning', 'Weekday mornings'], ['weekday_evening', 'Weekday evenings'], ['weekend', 'Weekends'], ['anytime', 'Anytime']];
-const LENGTHS: ['nine' | 'eighteen' | 'either', string][] = [['nine', '9 holes'], ['eighteen', '18 holes'], ['either', 'Either']];
-const VIBES: ['relaxed' | 'competitive' | 'very_competitive', string, string][] = [
-  ['relaxed', 'Relaxed', 'Here for the walk and the chat'],
-  ['competitive', 'A bit competitive', 'Keeping score, still having fun'],
-  ['very_competitive', 'Very competitive', 'Every shot counts']
-];
 
 @Component({
   selector: 'app-onboarding',
@@ -154,8 +146,8 @@ export class OnboardingPage {
   gender = signal<string | null>(null);
   showAgeGender = false;
   playTimes = signal<string[]>(['weekend']);
-  roundLength = signal<'nine' | 'eighteen' | 'either'>('eighteen');
-  vibe = signal<'relaxed' | 'competitive' | 'very_competitive'>('relaxed');
+  roundLength = signal<RoundLength>('eighteen');
+  vibe = signal<Vibe>('relaxed');
 
   constructor() {
     this.rounds.searchCourses(null).then((c) => this.courses.set(c)).catch(() => {});
@@ -170,24 +162,14 @@ export class OnboardingPage {
     sig.update((list) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]));
   }
 
-  /** "Anytime" is exclusive: it clears the specific times, and picking a time clears it. */
   toggleWhen(key: string) {
-    this.playTimes.update((list) => {
-      if (key === 'anytime') return list.includes('anytime') ? [] : ['anytime'];
-      const rest = list.filter((x) => x !== 'anytime');
-      return rest.includes(key) ? rest.filter((x) => x !== key) : [...rest, key];
-    });
-  }
-
-  private handicap(): number | null {
-    const n = parseFloat(this.handicapText.replace(',', '.'));
-    return Number.isFinite(n) ? n : null;
+    this.playTimes.update((list) => toggleWhen(list, key));
   }
 
   canContinue(): boolean {
     switch (this.step()) {
       case 0: return this.name.trim().length > 0;
-      case 2: return this.noHandicap || (this.handicap() !== null && this.handicap()! >= -10 && this.handicap()! <= 54);
+      case 2: return this.noHandicap || parseHandicap(this.handicapText) !== null;
       default: return true;
     }
   }
@@ -205,10 +187,10 @@ export class OnboardingPage {
     this.error.set('');
     try {
       const year = parseInt(this.birthYearText, 10);
-      await this.profiles.saveOnboarding({
+      await this.profiles.save({
         displayName: this.name,
         homeCourseId: this.homeCourse()?.id ?? null,
-        handicap: this.handicap(),
+        handicap: parseHandicap(this.handicapText),
         noHandicap: this.noHandicap,
         languages: this.languages(),
         birthYear: Number.isFinite(year) && year > 1900 ? year : null,

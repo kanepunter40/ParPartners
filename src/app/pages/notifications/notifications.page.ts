@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { NotificationsService } from '../../core/notifications.service';
 import { AppNotification } from '../../core/models';
+import { timeAgo } from '../../core/format';
 
 @Component({
   selector: 'app-notifications',
@@ -21,7 +22,7 @@ import { AppNotification } from '../../core/models';
   template: `
     <ion-header class="ion-no-border">
       <ion-toolbar>
-        <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/rounds" text=""></ion-back-button></ion-buttons>
+        <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/home" text=""></ion-back-button></ion-buttons>
         <ion-title>Notifications</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -32,7 +33,7 @@ import { AppNotification } from '../../core/models';
         @if (items().length) {
           <div class="card">
             @for (n of items(); track n.id) {
-              <a class="row" [class.unread]="!n.read_at" [routerLink]="n.round_id ? ['/round', n.round_id] : null">
+              <a class="row" [class.unread]="!n.read_at" [routerLink]="link(n)">
                 <span class="dot" aria-hidden="true"></span>
                 <span class="text">
                   <span>@if (!n.read_at) { <span class="sr-only">New: </span> }{{ message(n) }}</span>
@@ -47,7 +48,7 @@ import { AppNotification } from '../../core/models';
         } @else if (loaded()) {
           <div style="text-align: center; padding: 64px 16px; display: flex; flex-direction: column; gap: 10px; align-items: center">
             <h2 style="margin: 0">Nothing new</h2>
-            <p class="muted" style="margin: 0">When players join or leave your rounds, it shows up here.</p>
+            <p class="muted" style="margin: 0">Friend requests, and players joining or leaving your rounds, show up here.</p>
           </div>
         }
       </div>
@@ -82,6 +83,11 @@ export class NotificationsPage {
     (ev as CustomEvent).detail.complete?.() ?? (ev.target as any).complete();
   }
 
+  link(n: AppNotification): string[] | null {
+    if (n.type === 'friend_request' || n.type === 'friend_accepted') return ['/friends'];
+    return n.round_id ? ['/round', n.round_id] : null;
+  }
+
   message(n: AppNotification): string {
     const who = n.actor?.display_name ?? 'A player';
     switch (n.type) {
@@ -91,17 +97,14 @@ export class NotificationsPage {
       case 'player_joined': return `${who} joined your round`;
       case 'player_left': return `${who} left your round`;
       case 'round_cancelled': return `${who} cancelled the round`;
+      case 'friend_request': return `${who} sent you a friend request`;
+      case 'friend_accepted': return `${who} accepted your friend request`;
+      case 'host_handover': return `The host left Par Partners. You're hosting this round now`;
       default: return 'Update on a round';
     }
   }
 
   ago(iso: string): string {
-    const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
-    if (mins < 1) return 'Just now';
-    if (mins < 60) return `${mins} min ago`;
-    const hours = Math.round(mins / 60);
-    if (hours < 24) return `${hours} h ago`;
-    const days = Math.round(hours / 24);
-    return days === 1 ? 'Yesterday' : `${days} days ago`;
+    return timeAgo(iso);
   }
 }

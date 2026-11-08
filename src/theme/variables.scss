@@ -38,6 +38,10 @@ h1, h2, h3, ion-title { font-family: 'Fraunces', serif; }
 ion-button { --border-radius: 999px; min-height: 48px; font-weight: 600; text-transform: none; letter-spacing: 0; }
 ion-card { margin: 0 0 12px; border-radius: 16px; box-shadow: none; border: 1px solid #E6DFC9; background: #fff; }
 .page-pad { padding: 8px 24px 24px; }
+/* For pages without a header bar: keep clear of the status bar / notch */
+.page-pad.top-safe { padding-top: calc(var(--ion-safe-area-top, 0px) + 20px); }
+/* Visually hidden, still read by screen readers */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .muted { color: var(--ion-color-medium); }
 .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; background: #F3E4D6; color: #9C5428; }
 .pill.ok { background: #E3ECE9; color: #2E5F5A; }

@@ -4,7 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { RoundsService } from '../../core/rounds.service';
 import { SupabaseService } from '../../core/supabase.service';
-import { RoundDetail } from '../../core/models';
+import { FriendsService } from '../../core/friends.service';
+import { FriendStatus, RoundDetail } from '../../core/models';
 
 @Component({
   selector: 'app-round-detail',
@@ -40,7 +41,17 @@ import { RoundDetail } from '../../core/models';
               @for (p of confirmed(); track p.player_id) {
                 <div class="player">
                   <span style="display: flex; align-items: center"><span class="avatar">{{ initials(p.profiles.display_name) }}</span>{{ p.profiles.display_name }}{{ p.status === 'host' ? ' (host)' : '' }}</span>
-                  <span class="muted" style="font-size: 13px">{{ p.profiles.handicap_index !== null ? 'HCP ' + p.profiles.handicap_index : '' }}</span>
+                  <span style="display: flex; align-items: center; gap: 8px">
+                    <span class="muted" style="font-size: 13px">{{ p.profiles.handicap_index !== null ? 'HCP ' + p.profiles.handicap_index : '' }}</span>
+                    @if (p.player_id !== me()) {
+                      @switch (friendStatus().get(p.player_id) ?? 'none') {
+                        @case ('friends') { <span class="pill ok">Friend</span> }
+                        @case ('requested') { <span class="pill full">Requested</span> }
+                        @case ('incoming') { <ion-button size="small" fill="outline" [disabled]="busy()" (click)="addFriend(p.player_id)" [attr.aria-label]="'Accept friend request from ' + p.profiles.display_name">Accept</ion-button> }
+                        @default { <ion-button size="small" fill="outline" [disabled]="busy()" (click)="addFriend(p.player_id)" [attr.aria-label]="'Add ' + p.profiles.display_name + ' as a friend'">Add friend</ion-button> }
+                      }
+                    }
+                  </span>
                 </div>
               }
               @for (i of emptySpots(); track i) {
@@ -95,6 +106,7 @@ export class RoundDetailPage {
   private rounds = inject(RoundsService);
   private sb = inject(SupabaseService);
   private router = inject(Router);
+  private friends = inject(FriendsService);
 
   round = signal<RoundDetail | null>(null);
   loading = signal(true);
@@ -102,6 +114,8 @@ export class RoundDetailPage {
   error = signal('');
   copied = signal(false);
   confirmDelete = signal(false);
+  friendStatus = signal<Map<string, FriendStatus>>(new Map());
+  me = computed(() => this.sb.session()?.user.id);
   cancelled = computed(() => this.round()?.status === 'cancelled');
 
   isHost = computed(() => this.round()?.host_id === this.sb.session()?.user.id);
@@ -122,7 +136,9 @@ export class RoundDetailPage {
 
   async load() {
     try {
-      this.round.set(await this.rounds.getRound(this.id()));
+      const round = await this.rounds.getRound(this.id());
+      this.round.set(round);
+      this.friendStatus.set(await this.friends.statuses(round.round_players.map((p) => p.player_id)));
     } catch (e: any) {
       this.error.set(e?.message ?? 'Could not load this round.');
     } finally {
@@ -143,6 +159,9 @@ export class RoundDetailPage {
       this.busy.set(false);
     }
   }
+
+  /** Sends a request, or accepts theirs if they asked first. */
+  addFriend(playerId: string) { return this.run(() => this.friends.add(playerId)); }
 
   join() { return this.run(() => this.rounds.join(this.id())); }
   leave() { return this.run(() => this.rounds.leave(this.id())); }

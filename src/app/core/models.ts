@@ -56,7 +56,20 @@ export interface Profile {
   onboarded: boolean;
 }
 
-export type NotificationType = 'request_received' | 'request_accepted' | 'request_declined' | 'player_joined' | 'player_left' | 'round_cancelled';
+/** What other players can see about someone (the player_cards view). */
+export interface PlayerCard {
+  id: string;
+  display_name: string;
+  home_course_id: string | null;
+  handicap_index: number | null;
+  languages: string[];
+  vibe: 'relaxed' | 'competitive' | 'very_competitive';
+  /** null unless the player shares age and gender */
+  age: number | null;
+  gender: string | null;
+}
+
+export type NotificationType = 'request_received' | 'request_accepted' | 'request_declined' | 'player_joined' | 'player_left' | 'round_cancelled' | 'host_handover' | 'friend_request' | 'friend_accepted';
 
 export interface AppNotification {
   id: string;
@@ -103,6 +116,35 @@ export interface ScorecardSummary {
   holes_played: number;
   /** par over the same holes (unknown pars count as 4) */
   par_played: number;
+}
+
+/** Where I stand with another player. 'incoming' = they asked me. */
+export type FriendStatus = 'none' | 'requested' | 'incoming' | 'friends';
+
+export interface Friend {
+  id: string;
+  display_name: string;
+  handicap_index: number | null;
+  status: FriendStatus;
+}
+
+/** One update on the Home feed (the home_feed function). Fields not used by a kind are null. */
+export interface FeedItem {
+  kind: 'scorecard' | 'round_posted' | 'round_joined' | 'new_friend';
+  at: string;
+  actor_id: string;
+  actor_name: string;
+  other_id: string | null;
+  other_name: string | null;
+  round_id: string | null;
+  scorecard_id: string | null;
+  course_name: string | null;
+  tee_time: string | null;
+  spots_left: number | null;
+  holes: CardHoles | null;
+  strokes: number | null;
+  to_par: number | null;
+  personal_best: boolean;
 }
 
 export interface Position {

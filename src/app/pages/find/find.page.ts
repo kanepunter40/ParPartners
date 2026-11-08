@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonFab, IonFabButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { add, locate } from 'ionicons/icons';
+import { locate, home } from 'ionicons/icons';
 import { RoundsService } from '../../core/rounds.service';
 import { NotificationsService } from '../../core/notifications.service';
 import { NotificationsBellComponent } from '../../core/notifications-bell.component';
+import { IllustrationComponent } from '../../core/illustration.component';
 import { LocationService } from '../../core/location.service';
 import { ProfileService } from '../../core/profile.service';
 import { Course, Position, RoundResult } from '../../core/models';
@@ -29,64 +30,94 @@ function weekendRange(offset: number): { from: Date; to: Date } {
 
 @Component({
   selector: 'app-find',
-  imports: [DatePipe, RouterLink, NotificationsBellComponent, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonFab, IonFabButton],
+  imports: [DatePipe, RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon],
   styles: [`
-    .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
-    .chip { flex-shrink: 0; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
+    .find { display: flex; flex-direction: column; gap: 28px; }
+    .filters { background: #ECE8DA; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+    .where { display: flex; align-items: center; gap: 12px; }
+    .group { display: flex; flex-direction: column; gap: 8px; }
+    .group-label { font-size: 12px; font-weight: 600; color: #5F5B4E; text-transform: uppercase; letter-spacing: .04em; }
+    /* Equal-width chips, so each row fits the panel without scrolling */
+    .chips { display: flex; gap: 8px; }
+    .chip { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 0 6px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
     .chip.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
-    .chip.radius.on { background: #E3ECE9; color: #2E5F5A; }
+    .results-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+    .results-head h2 { margin: 0; font-size: 22px; }
+    ion-searchbar { padding: 0; --background: #fff; }
+    ion-segment { --background: #fff; }
+    .home-chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; max-width: 100%; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #2E5F5A; font: 600 13px 'Work Sans', sans-serif; }
+    .home-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .course-opt { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid #EFEAD9; background: #fff; font-family: inherit; color: #1F3532; }
     .result { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; }
   `],
   template: `
     <ion-header class="ion-no-border">
-      <ion-toolbar><ion-title>Find a round</ion-title><ion-buttons slot="end"><app-notifications-bell /></ion-buttons></ion-toolbar>
-      <ion-toolbar>
-        <ion-segment [value]="mode()" (ionChange)="setMode($event)" style="margin: 0 24px; width: auto">
-          <ion-segment-button value="near"><ion-label>Near a location</ion-label></ion-segment-button>
-          <ion-segment-button value="course"><ion-label>By course</ion-label></ion-segment-button>
-        </ion-segment>
-      </ion-toolbar>
+      <ion-toolbar><ion-buttons slot="end"><app-notifications-bell /></ion-buttons></ion-toolbar>
     </ion-header>
 
     <ion-content>
-      <div class="page-pad" style="display: flex; flex-direction: column; gap: 12px">
-        @if (mode() === 'near') {
-          <div style="display: flex; align-items: center; gap: 8px">
-            <div style="flex: 1">
-              <strong>{{ centreLabel() }}</strong>
-              <div class="muted" style="font-size: 12px">Rounds within the radius of this point</div>
+      <div class="page-pad find">
+        <h1 class="sr-only">Find a round</h1>
+        <section class="filters" aria-label="Search filters">
+          <ion-segment [value]="mode()" (ionChange)="setMode($event)">
+            <ion-segment-button value="near"><ion-label>Near a location</ion-label></ion-segment-button>
+            <ion-segment-button value="course"><ion-label>By course</ion-label></ion-segment-button>
+          </ion-segment>
+          @if (mode() === 'near') {
+            <div class="where">
+              <div style="flex: 1; min-width: 0">
+                <span class="group-label">Searching around</span>
+                <strong style="display: block">{{ centreLabel() }}</strong>
+              </div>
+              <ion-button size="small" fill="outline" (click)="useMyLocation()"><ion-icon slot="start" name="locate"></ion-icon>My location</ion-button>
             </div>
-            <ion-button size="small" fill="outline" (click)="useMyLocation()"><ion-icon slot="start" name="locate"></ion-icon>My location</ion-button>
-          </div>
-          <div class="chips" role="group" aria-label="Radius">
-            @for (r of radii; track r) {
-              <button type="button" class="chip radius" [class.on]="radius() === r" [attr.aria-pressed]="radius() === r" (click)="setRadius(r)">{{ r }} km</button>
-            }
-          </div>
-        } @else {
-          <ion-searchbar placeholder="Search for a course" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="searchCourse($event)"></ion-searchbar>
-          @if (suggestions().length) {
-            <div style="border: 1px solid #E6DFC9; border-radius: 12px; overflow: hidden">
-              @for (c of suggestions(); track c.id) {
-                <button type="button" class="course-opt" (click)="pickCourse(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px">{{ c.city }}</span></button>
+            <div class="group">
+              <span class="group-label" id="radius-label">Distance</span>
+              <div class="chips" role="group" aria-labelledby="radius-label">
+                @for (r of radii; track r) {
+                  <button type="button" class="chip" [class.on]="radius() === r" [attr.aria-pressed]="radius() === r" (click)="setRadius(r)">{{ r }} km</button>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="group">
+              <span class="group-label">Course</span>
+              <ion-searchbar placeholder="Search for a course" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="searchCourse($event)"></ion-searchbar>
+              @if (suggestions().length) {
+                <div style="border: 1px solid #E6DFC9; border-radius: 12px; overflow: hidden">
+                  @for (c of suggestions(); track c.id) {
+                    <button type="button" class="course-opt" (click)="pickCourse(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px">{{ c.city }}</span></button>
+                  }
+                </div>
+              }
+              @if (homeCourse(); as h) {
+                @if (course()?.id !== h.id) {
+                  <button type="button" class="home-chip" (click)="pickCourse(h)">
+                    <ion-icon name="home" aria-hidden="true"></ion-icon><span>Home course · {{ h.name }}</span>
+                  </button>
+                }
               }
             </div>
           }
-        }
+          <div class="group">
+            <span class="group-label" id="when-label">When</span>
+            <div class="chips" role="group" aria-labelledby="when-label">
+              @for (w of whens; track w[0]) {
+                <button type="button" class="chip" [class.on]="when() === w[0]" [attr.aria-pressed]="when() === w[0]" (click)="setWhen(w[0])">{{ w[1] }}</button>
+              }
+            </div>
+          </div>
+        </section>
 
-        <div class="chips" role="group" aria-label="When">
-          @for (w of whens; track w[0]) {
-            <button type="button" class="chip" [class.on]="when() === w[0]" [attr.aria-pressed]="when() === w[0]" (click)="setWhen(w[0])">{{ w[1] }}</button>
-          }
-        </div>
+        <section aria-labelledby="results-title">
+          <div class="results-head">
+            <h2 id="results-title">Open rounds</h2>
+            @if (mode() === 'near' || course()) {
+              <span class="muted" style="font-size: 13px" aria-live="polite">{{ loading() ? 'Searching…' : results().length ? results().length + ' · ' + areaLabel() : areaLabel() }}</span>
+            }
+          </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px">
-          <strong>{{ mode() === 'course' && !course() ? '' : loading() ? 'Searching…' : results().length === 1 ? '1 open round' : results().length + ' open rounds' }}</strong>
-          <span class="muted" style="font-size: 12px">{{ areaLabel() }}</span>
-        </div>
-
-        @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+          @if (error()) { <p role="alert" style="color: #9C5428; margin: 0 0 12px">{{ error() }}</p> }
 
         <div>
           @for (r of results(); track r.round_id) {
@@ -99,25 +130,24 @@ function weekendRange(offset: number): { from: Date; to: Date } {
               <strong style="font-size: 14px">{{ r.tee_time | date: 'EEE d MMM · HH:mm' }}</strong>
               <div style="display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EFEAD9">
                 <span class="muted" style="font-size: 13px">{{ r.host_name }}{{ r.host_handicap !== null ? ' · HCP ' + r.host_handicap : '' }}</span>
-                <span style="font-size: 13px; font-weight: 600; color: #2E5F5A">View &amp; request</span>
+                <span style="font-size: 13px; font-weight: 600; color: #2E5F5A">View &amp; join</span>
               </div>
             </a>
           }
           @if (mode() === 'course' && !course()) {
             <p class="muted" style="text-align: center; padding: 32px 8px; margin: 0">Search for a course to see its open rounds.</p>
           } @else if (!loading() && !results().length && !error()) {
-            <div style="text-align: center; padding: 32px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+            <div style="text-align: center; padding: 8px 8px 32px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+              <app-illustration scene="search" style="width: 180px" />
               <h3 style="margin: 0">No open rounds here yet</h3>
-              <p class="muted" style="margin: 0; font-size: 14px">Try a wider radius or another date. Or post your own round and let players find you.</p>
+              <p class="muted" style="margin: 0; font-size: 14px">Try a wider radius or another date, or post your own round and let players find you.</p>
               <ion-button routerLink="/create">Post a round</ion-button>
             </div>
           }
         </div>
+        </section>
       </div>
 
-      <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button routerLink="/create" aria-label="Post a round"><ion-icon name="add"></ion-icon></ion-fab-button>
-      </ion-fab>
     </ion-content>
   `
 })
@@ -136,35 +166,40 @@ export class FindPage {
   centre = signal<Position | null>(null);
   centreName = signal('');
   course = signal<Course | null>(null);
+  homeCourse = signal<Course | null>(null);
   suggestions = signal<Course[]>([]);
   results = signal<RoundResult[]>([]);
   loading = signal(false);
   error = signal('');
 
   constructor() {
-    addIcons({ add, locate });
+    addIcons({ locate, home });
   }
 
   async ionViewWillEnter() {
     this.notifications.refreshUnread();
+    await this.loadHomeCourse();
     if (!this.centre()) await this.setDefaultCentre();
     this.load();
   }
 
+  /** Re-read on every visit, since the home course can change in Edit profile. */
+  private async loadHomeCourse() {
+    try {
+      const id = (await this.profiles.load())?.home_course_id;
+      if (id !== this.homeCourse()?.id) this.homeCourse.set(id ? await this.rounds.getCourse(id) : null);
+    } catch { /* the shortcut just doesn't show */ }
+  }
+
   /** Default search centre: the player's home course, falling back to the device location. */
   private async setDefaultCentre() {
-    try {
-      const profile = await this.profiles.load();
-      if (profile?.home_course_id) {
-        const c = await this.rounds.getCourse(profile.home_course_id);
-        if (c) {
-          this.centre.set({ lat: c.lat, lng: c.lng });
-          this.centreName.set('Near ' + c.name);
-          return;
-        }
-      }
-      await this.useMyLocation(false);
-    } catch { /* leave unset; the user can tap "My location" */ }
+    const c = this.homeCourse();
+    if (c) {
+      this.centre.set({ lat: c.lat, lng: c.lng });
+      this.centreName.set('Near ' + c.name);
+      return;
+    }
+    try { await this.useMyLocation(false); } catch { /* leave unset; the user can tap "My location" */ }
   }
 
   centreLabel() {
@@ -188,6 +223,8 @@ export class FindPage {
 
   setMode(ev: Event) {
     this.mode.set((ev as CustomEvent).detail.value as Mode);
+    // Start "By course" on the home course, so it's one tap away
+    if (this.mode() === 'course' && !this.course() && this.homeCourse()) this.course.set(this.homeCourse());
     this.load();
   }
   setRadius(r: number) { this.radius.set(r); this.load(); }

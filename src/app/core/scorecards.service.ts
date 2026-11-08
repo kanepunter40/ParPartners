@@ -15,6 +15,20 @@ export function formatToPar(diff: number): string {
   return diff === 0 ? 'E' : diff > 0 ? `+${diff}` : `−${-diff}`;
 }
 
+export function isComplete(s: ScorecardSummary): boolean {
+  return s.holes_played === holeNumbers(s.holes).length;
+}
+
+/** Stats over finished 18-hole cards. average and best are null when there are none. */
+export function cardStats(items: ScorecardSummary[]) {
+  const done = items.filter((s) => s.holes === '18' && isComplete(s));
+  return {
+    rounds18: done.length,
+    average: done.length ? (done.reduce((t, s) => t + s.strokes, 0) / done.length).toFixed(1) : null,
+    best: done.length ? Math.min(...done.map((s) => s.strokes)) : null
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class ScorecardsService {
   private sb = inject(SupabaseService);

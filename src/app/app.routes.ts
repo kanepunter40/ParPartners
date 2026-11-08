@@ -9,13 +9,16 @@ export const routes: Routes = [
     canActivate: [authGuard, onboardedGuard],
     loadComponent: () => import('./pages/tabs/tabs.page').then((m) => m.TabsPage),
     children: [
+      { path: 'home', loadComponent: () => import('./pages/home/home.page').then((m) => m.HomePage) },
       { path: 'rounds', loadComponent: () => import('./pages/rounds/rounds.page').then((m) => m.RoundsPage) },
       { path: 'find', loadComponent: () => import('./pages/find/find.page').then((m) => m.FindPage) },
       { path: 'scores', loadComponent: () => import('./pages/scores/scores.page').then((m) => m.ScoresPage) },
       { path: 'profile', loadComponent: () => import('./pages/profile/profile.page').then((m) => m.ProfilePage) },
-      { path: '', redirectTo: 'rounds', pathMatch: 'full' }
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },
+  { path: 'friends', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/friends/friends.page').then((m) => m.FriendsPage) },
+  { path: 'profile/edit', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/profile-edit/profile-edit.page').then((m) => m.ProfileEditPage) },
   { path: 'create', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/create-round/create-round.page').then((m) => m.CreateRoundPage) },
   { path: 'round/:id', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/round-detail/round-detail.page').then((m) => m.RoundDetailPage) },
   { path: 'scorecard/new', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/scorecard-new/scorecard-new.page').then((m) => m.ScorecardNewPage) },

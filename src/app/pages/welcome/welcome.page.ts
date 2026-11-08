@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonButton, IonInput, IonSpinner } from '@ionic/angular/standalone';
 import { SupabaseService } from '../../core/supabase.service';
@@ -27,11 +28,17 @@ import { SupabaseService } from '../../core/supabase.service';
           <ion-button expand="block" [disabled]="busy() || !email" (click)="send()">
             @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { Email me a sign-in link }
           </ion-button>
-          <p class="muted" style="font-size: 13px; text-align: center; margin: 0">New here? The same link creates your account.</p>
+          <p class="muted" style="font-size: 13px; text-align: center; margin: 0">New here? The same email creates your account.</p>
         } @else {
           <h2 style="margin: 0">Check your inbox</h2>
-          <p class="muted" style="margin: 0">We sent a sign-in link to <strong>{{ email }}</strong>. Open it on this device.</p>
-          <ion-button fill="clear" (click)="sent.set(false)">Use a different email</ion-button>
+          <p class="muted" style="margin: 0">We sent a sign-in code to <strong>{{ email }}</strong>. Enter it here, or open the link in the email on this device.</p>
+          <label for="code"><strong>Code</strong></label>
+          <ion-input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" [(ngModel)]="code" (keyup.enter)="verify()"></ion-input>
+          @if (error()) { <p class="muted" role="alert">{{ error() }}</p> }
+          <ion-button expand="block" [disabled]="busy() || code.trim().length < 6" (click)="verify()">
+            @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { Sign in }
+          </ion-button>
+          <ion-button fill="clear" (click)="sent.set(false); code = ''; error.set('')">Use a different email</ion-button>
         }
       </div>
     </ion-content>
@@ -39,7 +46,9 @@ import { SupabaseService } from '../../core/supabase.service';
 })
 export class WelcomePage {
   private sb = inject(SupabaseService);
+  private router = inject(Router);
   email = '';
+  code = '';
   busy = signal(false);
   sent = signal(false);
   error = signal('');
@@ -52,5 +61,15 @@ export class WelcomePage {
     this.busy.set(false);
     if (error) this.error.set(error.message);
     else this.sent.set(true);
+  }
+
+  /** The code works anywhere, including the installed app, where the link can't come back to. */
+  async verify() {
+    this.busy.set(true);
+    this.error.set('');
+    const { error } = await this.sb.verifyEmailCode(this.email.trim(), this.code.trim());
+    this.busy.set(false);
+    if (error) this.error.set('That code didn’t work. Check it, or send a new one.');
+    else this.router.navigateByUrl('/tabs', { replaceUrl: true });
   }
 }

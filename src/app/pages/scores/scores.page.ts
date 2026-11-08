@@ -1,15 +1,13 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonFab, IonFabButton, IonIcon, IonRefresher, IonRefresherContent, IonButton } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
-import { ScorecardsService, formatToPar, HOLES_LABEL, holeNumbers } from '../../core/scorecards.service';
+import { IonContent, IonRefresher, IonRefresherContent, IonButton } from '@ionic/angular/standalone';
+import { ScorecardsService, cardStats, formatToPar, HOLES_LABEL, isComplete } from '../../core/scorecards.service';
 import { ScorecardSummary } from '../../core/models';
 
 @Component({
   selector: 'app-scores',
-  imports: [DatePipe, RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonFab, IonFabButton, IonIcon, IonRefresher, IonRefresherContent, IonButton],
+  imports: [DatePipe, RouterLink, IonContent, IonRefresher, IonRefresherContent, IonButton],
   styles: [`
     .item { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; text-decoration: none; color: inherit; }
     .score { text-align: right; flex: none; }
@@ -19,16 +17,16 @@ import { ScorecardSummary } from '../../core/models';
     .stat strong { display: block; font-family: 'Fraunces', serif; font-size: 22px; }
   `],
   template: `
-    <ion-header class="ion-no-border"><ion-toolbar><ion-title>Scorecards</ion-title></ion-toolbar></ion-header>
     <ion-content>
       <ion-refresher slot="fixed" (ionRefresh)="refresh($event)"><ion-refresher-content></ion-refresher-content></ion-refresher>
-      <div class="page-pad">
+      <div class="page-pad top-safe">
+        <h1 class="sr-only">Scorecards</h1>
         @if (error()) { <p role="alert" style="color: #9C5428">{{ error() }}</p> }
-        @if (completed18().length) {
+        @if (stats().rounds18) {
           <div class="stats">
-            <div class="stat"><span class="muted" style="font-size: 13px">18-hole rounds</span><strong>{{ completed18().length }}</strong></div>
-            <div class="stat"><span class="muted" style="font-size: 13px">Average</span><strong>{{ average() }}</strong></div>
-            <div class="stat"><span class="muted" style="font-size: 13px">Best</span><strong>{{ best() }}</strong></div>
+            <div class="stat"><span class="muted" style="font-size: 13px">18-hole rounds</span><strong>{{ stats().rounds18 }}</strong></div>
+            <div class="stat"><span class="muted" style="font-size: 13px">Average</span><strong>{{ stats().average }}</strong></div>
+            <div class="stat"><span class="muted" style="font-size: 13px">Best</span><strong>{{ stats().best }}</strong></div>
           </div>
         }
         @for (s of items(); track s.id) {
@@ -55,10 +53,10 @@ import { ScorecardSummary } from '../../core/models';
             </div>
           }
         }
+        @if (items().length) {
+          <ion-button fill="outline" expand="block" routerLink="/scorecard/new" style="margin-top: 4px">Start a scorecard</ion-button>
+        }
       </div>
-      <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button routerLink="/scorecard/new" aria-label="Start a scorecard"><ion-icon name="add"></ion-icon></ion-fab-button>
-      </ion-fab>
     </ion-content>
   `
 })
@@ -69,17 +67,7 @@ export class ScoresPage {
   loaded = signal(false);
   error = signal('');
 
-  /** Finished 18-hole cards, for the stats row. */
-  completed18 = computed(() => this.items().filter((s) => s.holes === '18' && this.complete(s)));
-  average = computed(() => {
-    const done = this.completed18();
-    return done.length ? (done.reduce((t, s) => t + s.strokes, 0) / done.length).toFixed(1) : '';
-  });
-  best = computed(() => Math.min(...this.completed18().map((s) => s.strokes)));
-
-  constructor() {
-    addIcons({ add });
-  }
+  stats = computed(() => cardStats(this.items()));
 
   ionViewWillEnter() {
     this.load();
@@ -102,7 +90,7 @@ export class ScoresPage {
   }
 
   complete(s: ScorecardSummary) {
-    return s.holes_played === holeNumbers(s.holes).length;
+    return isComplete(s);
   }
 
   toPar(s: ScorecardSummary) {

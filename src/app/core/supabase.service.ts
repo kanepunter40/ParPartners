@@ -24,6 +24,10 @@ export class SupabaseService {
     return this.client.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin } });
   }
 
+  verifyEmailCode(email: string, token: string) {
+    return this.client.auth.verifyOtp({ email, token, type: 'email' });
+  }
+
   signOut() {
     return this.client.auth.signOut();
   }
