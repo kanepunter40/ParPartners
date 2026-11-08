@@ -66,7 +66,7 @@ import { Course } from '../../core/models';
 
         <div>
           <strong>Notes</strong>
-          <ion-textarea [(ngModel)]="notes" rows="3" maxlength="500" placeholder="Meeting point, trolley, anything to flag" style="margin-top: 6px; --background: #fff; border: 1px solid #D9D2BA; border-radius: 12px; --padding-start: 12px"></ion-textarea>
+          <ion-textarea [(ngModel)]="notes" rows="3" maxlength="500" placeholder="Meeting point, trolley, anything to flag" style="margin-top: 6px; --background: #fff; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; --padding-start: 12px"></ion-textarea>
         </div>
 
         @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }

@@ -18,7 +18,7 @@ const MAX_GUESTS = 7;
     .opts button[aria-pressed="true"] { background: #E3ECE9; border-color: #2E5F5A; color: #2E5F5A; }
     .sug { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid #EFEAD9; background: #fff; font-family: inherit; color: #1F3532; }
     .guest { display: flex; gap: 8px; align-items: center; }
-    .guest ion-input { --background: #fff; border: 1px solid #D9D2BA; border-radius: 12px; --padding-start: 12px; min-height: 48px; }
+    .guest ion-input { --background: #fff; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; --padding-start: 12px; min-height: 48px; }
     .me { display: flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 14px; border: 1px solid #E6DFC9; border-radius: 12px; background: #fff; font-weight: 600; }
     .remove { min-width: 44px; min-height: 44px; border: 0; background: none; font-size: 22px; color: #5F5B4E; }
   `],

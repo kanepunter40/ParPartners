@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonButton, IonInput, IonInputPasswordToggle, IonSpinner, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { logoApple } from 'ionicons/icons';
+
+/** Apple needs a paid Apple Developer account and the Supabase provider set up; flip this on once it is. */
+const SHOW_APPLE = false;
 import { SupabaseService } from '../../core/supabase.service';
 import { SocialAuthService, SocialProvider, isCancel } from '../../core/social-auth.service';
 
 type Tab = 'signin' | 'signup';
-/** start: providers + email/password. code: type the emailed code. forgot: ask for a reset code. reset: code + new password. */
+/** start: providers + email/password. code: confirm a new account with the emailed code. forgot: ask for a reset code. reset: code + new password. */
 type View = 'start' | 'code' | 'forgot' | 'reset';
-type CodeType = 'email' | 'signup';
 
 const MIN_PASSWORD = 8;
 
@@ -19,6 +21,7 @@ const MIN_PASSWORD = 8;
   imports: [FormsModule, IonContent, IonButton, IonInput, IonInputPasswordToggle, IonSpinner, IonIcon],
   styles: [`
     .hero { background: #2E5F5A; color: #F4F1E8; padding: calc(var(--ion-safe-area-top, 0px) + 56px) 32px 44px; text-align: center; }
+    .hero .mark { display: block; width: 96px; height: 96px; margin: 0 auto 8px; }
     .hero h1 { font-size: 38px; margin: 0 0 10px; }
     .hero p { margin: 0 auto; max-width: 280px; line-height: 1.5; color: #E3ECE9; }
     .sheet { background: #F4F1E8; border-radius: 28px 28px 0 0; margin-top: -24px; padding: 24px 24px 40px; display: flex; flex-direction: column; gap: 14px; }
@@ -34,7 +37,7 @@ const MIN_PASSWORD = 8;
     .or::before, .or::after { content: ''; flex: 1; height: 1px; background: #D9D2BA; }
     .field { display: flex; flex-direction: column; gap: 6px; }
     .field label { font-weight: 600; font-size: 14px; }
-    ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; min-height: 48px; }
+    ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; min-height: 48px; }
     .links { display: flex; justify-content: space-between; gap: 12px; }
     .link { background: none; border: 0; padding: 8px 0; color: #2E5F5A; font: 600 14px 'Work Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; }
     .error { color: #9C5428; margin: 0; font-size: 14px; }
@@ -42,6 +45,16 @@ const MIN_PASSWORD = 8;
   template: `
     <ion-content [fullscreen]="true">
       <div class="hero">
+        <svg class="mark" viewBox="0 0 100 100" aria-hidden="true">
+          <ellipse cx="50" cy="74" rx="42" ry="13" fill="#F4F1E8" opacity=".28"/>
+          <ellipse cx="68" cy="73" rx="9" ry="3.5" fill="#1F3532"/>
+          <rect x="66.5" y="14" width="3.5" height="59" rx="1.75" fill="#F4F1E8"/>
+          <path d="M70 15 L88 22.5 L70 30 Z" fill="#C97B4A"/>
+          <circle cx="27" cy="62" r="11" fill="#F4F1E8"/>
+          <g fill="#2E5F5A" opacity=".35"><circle cx="23" cy="58" r="1.9"/><circle cx="29" cy="56" r="1.9"/><circle cx="32" cy="62" r="1.9"/><circle cx="24" cy="65" r="1.9"/><circle cx="29" cy="67" r="1.9"/></g>
+          <circle cx="47" cy="67" r="11" fill="#C97B4A"/>
+          <g fill="#2E5F5A" opacity=".3"><circle cx="43" cy="63" r="1.9"/><circle cx="49" cy="61" r="1.9"/><circle cx="52" cy="67" r="1.9"/><circle cx="44" cy="70" r="1.9"/><circle cx="49" cy="72" r="1.9"/></g>
+        </svg>
         <h1 aria-label="Par Partners"><span aria-hidden="true"><b style="font-weight: 700; letter-spacing: .02em;">PAR</b><span style="font-weight: 600;">tners</span></span></h1>
         <p>Find playing partners near you, or post a round and fill the last spot.</p>
       </div>
@@ -58,9 +71,11 @@ const MIN_PASSWORD = 8;
               <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
               Continue with Google
             </button>
-            <button type="button" class="sso apple" [disabled]="busy()" (click)="social('apple')">
-              <ion-icon name="logo-apple" aria-hidden="true"></ion-icon> Continue with Apple
-            </button>
+            @if (showApple) {
+              <button type="button" class="sso apple" [disabled]="busy()" (click)="social('apple')">
+                <ion-icon name="logo-apple" aria-hidden="true"></ion-icon> Continue with Apple
+              </button>
+            }
 
             <div class="or">or with email</div>
 
@@ -90,10 +105,7 @@ const MIN_PASSWORD = 8;
             </ion-button>
 
             @if (tab() === 'signin') {
-              <div class="links">
-                <button type="button" class="link" (click)="go('forgot')">Forgot password?</button>
-                <button type="button" class="link" [disabled]="busy()" (click)="sendCode()">Email me a code instead</button>
-              </div>
+              <button type="button" class="link" style="align-self: flex-start" (click)="go('forgot')">Forgot password?</button>
             } @else {
               <p class="muted" style="font-size: 13px; text-align: center; margin: 0">We'll email you a code to confirm it's you.</p>
             }
@@ -101,7 +113,7 @@ const MIN_PASSWORD = 8;
 
           @case ('code') {
             <h2 style="margin: 0">Check your inbox</h2>
-            <p class="muted" style="margin: 0">We sent a 6-digit code to <strong>{{ email }}</strong>{{ codeType() === 'signup' ? ' to confirm your account' : '' }}.</p>
+            <p class="muted" style="margin: 0">We sent a 6-digit code to <strong>{{ email }}</strong> to confirm your account.</p>
             <div class="field">
               <label for="code">Code</label>
               <ion-input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" [(ngModel)]="code" (keyup.enter)="verify()"></ion-input>
@@ -109,7 +121,7 @@ const MIN_PASSWORD = 8;
             @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
             @if (notice()) { <p class="muted" role="status" style="margin: 0; font-size: 14px">{{ notice() }}</p> }
             <ion-button expand="block" [disabled]="busy() || code.trim().length < 6" (click)="verify()">
-              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ codeType() === 'signup' ? 'Confirm' : 'Sign in' }} }
+              @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { Confirm }
             </ion-button>
             <div class="links">
               <button type="button" class="link" (click)="go('start')">Back</button>
@@ -170,9 +182,9 @@ export class WelcomePage {
   private socialAuth = inject(SocialAuthService);
   private router = inject(Router);
 
+  readonly showApple = SHOW_APPLE;
   tab = signal<Tab>('signin');
   view = signal<View>('start');
-  codeType = signal<CodeType>('email');
   busy = signal(false);
   error = signal('');
   notice = signal('');
@@ -218,7 +230,7 @@ export class WelcomePage {
 
   private message(e: unknown): string {
     const m = (e as Error)?.message ?? '';
-    if (/invalid login credentials/i.test(m)) return 'Wrong email or password. If you’ve only signed in with a code before, use “Forgot password?” to set one.';
+    if (/invalid login credentials/i.test(m)) return 'Wrong email or password. If you signed up with an email code and never set a password, use “Forgot password?” to set one.';
     if (/token has expired|invalid/i.test(m) && this.view() !== 'start') return 'That code didn’t work. Check it, or send a new one.';
     if (/rate limit|security purposes/i.test(m)) return 'Too many emails in a short time. Wait a minute and try again.';
     return m || 'Something went wrong. Try again.';
@@ -254,7 +266,7 @@ export class WelcomePage {
       });
       if (unconfirmed) {
         // Signed up but never confirmed: send a fresh code and pick up from there
-        if (await this.attempt(() => this.sb.resendSignupCode(email))) this.showCode('signup');
+        if (await this.attempt(() => this.sb.resendSignupCode(email))) this.go('code');
       } else if (ok) this.done();
       return;
     }
@@ -269,27 +281,17 @@ export class WelcomePage {
     });
     if (!ok) return;
     if (session) this.done();
-    else this.showCode('signup');
-  }
-
-  async sendCode() {
-    if (!this.email.trim()) { this.error.set('Enter your email first.'); return; }
-    if (await this.attempt(() => this.sb.signInWithEmail(this.email.trim()))) this.showCode('email');
-  }
-
-  private showCode(type: CodeType) {
-    this.codeType.set(type);
-    this.go('code');
+    else this.go('code');
   }
 
   async resend() {
     const email = this.email.trim();
-    const ok = await this.attempt(() => this.codeType() === 'signup' ? this.sb.resendSignupCode(email) : this.sb.signInWithEmail(email));
+    const ok = await this.attempt(() => this.sb.resendSignupCode(email));
     if (ok) this.notice.set('New code sent.');
   }
 
   async verify() {
-    if (await this.attempt(() => this.sb.verifyEmailCode(this.email.trim(), this.code.trim(), this.codeType()))) this.done();
+    if (await this.attempt(() => this.sb.verifyEmailCode(this.email.trim(), this.code.trim(), 'signup'))) this.done();
   }
 
   async sendReset() {

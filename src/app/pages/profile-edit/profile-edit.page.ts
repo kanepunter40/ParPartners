@@ -20,7 +20,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
     .row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: 14px; border: 1px solid #E6DFC9; background: #fff; text-align: left; color: #1F3532; font-family: inherit; }
     .row.on { background: #E3ECE9; border-color: #2E5F5A; }
     .row small { color: #5F5B4E; }
-    ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; min-height: 48px; }
+    ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; min-height: 48px; }
     ion-searchbar { padding: 0; }
     .footer { position: sticky; bottom: 0; padding: 14px 0 24px; background: #F4F1E8; display: flex; flex-direction: column; gap: 6px; }
   `],
