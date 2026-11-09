@@ -36,6 +36,7 @@ import { AppNotification } from '../../core/models';
                 <span class="dot" aria-hidden="true"></span>
                 <span class="text">
                   <span>@if (!n.read_at) { <span class="sr-only">{{ t('notifications.new') }} </span> }{{ message(n) }}</span>
+                  @if (n.detail) { <span style="font-size: 14px; overflow-wrap: anywhere">“{{ n.detail }}”</span> }
                   @if (n.rounds; as r) {
                     <span class="muted" style="font-size: 13px">{{ r.courses.name }} · {{ i18n.date(r.tee_time) }}</span>
                   }
@@ -86,13 +87,15 @@ export class NotificationsPage {
 
   link(n: AppNotification): string[] | null {
     if (n.type === 'friend_request' || n.type === 'friend_accepted') return ['/friends'];
+    if (n.type === 'round_message' && n.round_id) return ['/round', n.round_id, 'chat'];
     return n.round_id ? ['/round', n.round_id] : null;
   }
 
   message(n: AppNotification): string {
     const who = n.actor?.display_name ?? this.t('notifications.aPlayer');
     const known = ['request_received', 'request_accepted', 'request_declined', 'player_joined', 'player_left',
-                   'round_cancelled', 'friend_request', 'friend_accepted', 'host_handover', 'round_reminder', 'report_received'];
+                   'round_cancelled', 'friend_request', 'friend_accepted', 'host_handover', 'round_reminder', 'report_received',
+                   'round_alert', 'round_invite', 'round_message', 'waitlist_promoted'];
     return this.t(known.includes(n.type) ? `notifications.type.${n.type}` : 'notifications.type.other', { who });
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { CardHoles, Scorecard, ScorecardSummary } from './models';
+import { RoundFormat } from './round-format';
 
 /** Hole numbers on a card, in playing order. */
 export function holeNumbers(holes: CardHoles): number[] {
@@ -23,6 +24,8 @@ export function isComplete(s: ScorecardSummary): boolean {
 /** Stats over finished 18-hole cards. average and best are null when there are none. */
 /** How many recent 18-hole rounds the trend graph shows. */
 const TREND_ROUNDS = 10;
+/** How long "New best!" stays on the Best tile after the round that set it. */
+const NEW_BEST_DAYS = 14;
 
 const mean = (xs: number[]) => xs.reduce((t, x) => t + x, 0) / xs.length;
 
@@ -33,7 +36,9 @@ export function cardStats(items: ScorecardSummary[]) {
     .sort((a, b) => a.played_at.localeCompare(b.played_at));
   const strokes = done.map((s) => s.strokes);
   const best = strokes.length ? Math.min(...strokes) : null;
-  const latest = strokes.at(-1);
+  // The round that first set the best: every round before it scored higher
+  const bestIndex = best === null ? -1 : strokes.indexOf(best);
+  const bestAt = bestIndex >= 0 ? new Date(done[bestIndex].played_at).getTime() : 0;
   // Last few scores for the graph; trend = recent half minus earlier half (negative = scoring lower = better)
   const recent = strokes.slice(-TREND_ROUNDS);
   const half = Math.floor(recent.length / 2);
@@ -42,8 +47,8 @@ export function cardStats(items: ScorecardSummary[]) {
     rounds18: done.length,
     average: done.length ? mean(strokes).toFixed(1) : null,
     best,
-    /** the latest round beat every earlier one */
-    newBest: strokes.length >= 2 && latest === best && strokes.slice(0, -1).every((s) => s > latest),
+    /** the best beat an earlier round and was set in the last NEW_BEST_DAYS days (rounds played since don't hide it) */
+    newBest: bestIndex >= 1 && Date.now() - bestAt <= NEW_BEST_DAYS * 86400_000,
     recent,
     trend
   };
@@ -71,7 +76,7 @@ export class ScorecardsService {
   async get(id: string): Promise<Scorecard> {
     const { data, error } = await this.sb.client
       .from('scorecards')
-      .select('id, course_id, round_id, holes, played_at, created_by, courses(name), scorecard_players(id, profile_id, name, position, scores(hole, strokes))')
+      .select('id, course_id, round_id, holes, played_at, created_by, format, rounds(format), courses(name), scorecard_players(id, profile_id, name, position, scores(hole, strokes))')
       .eq('id', id)
       .single();
     if (error) throw error;
@@ -88,6 +93,12 @@ export class ScorecardsService {
   /** strokes = null clears the hole. */
   async setScore(scorecardPlayerId: string, hole: number, strokes: number | null) {
     const { error } = await this.sb.client.rpc('set_score', { p_scorecard_player_id: scorecardPlayerId, p_hole: hole, p_strokes: strokes });
+    if (error) throw error;
+  }
+
+  /** null = back to the round's format. */
+  async setFormat(scorecardId: string, format: RoundFormat | null) {
+    const { error } = await this.sb.client.rpc('set_scorecard_format', { p_scorecard_id: scorecardId, p_format: format });
     if (error) throw error;
   }
 

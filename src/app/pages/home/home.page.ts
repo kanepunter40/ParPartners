@@ -156,7 +156,7 @@ export class HomePage {
       const [feed, mine, friends] = await Promise.all([this.friends.feed(), this.rounds.myRounds(), this.friends.list()]);
       this.items.set(feed);
       this.hasMore.set(feed.length === PAGE);
-      this.next.set(mine.find((r) => new Date(r.tee_time).getTime() > Date.now()) ?? null);
+      this.next.set(mine.find((r) => (r.status === 'host' || r.status === 'confirmed') && new Date(r.tee_time).getTime() > Date.now()) ?? null);
       this.friendList.set(friends);
     } catch (e: any) {
       this.error.set(this.i18n.error(e, 'home.loadError'));

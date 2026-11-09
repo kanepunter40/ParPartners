@@ -128,7 +128,11 @@
       "host_handover": "The host left PARtners. You're hosting this round now",
       "other": "Update on a round",
       "round_reminder": "Reminder: your round is coming up",
-      "report_received": "New report about {who}. Review it in Supabase > reports"
+      "report_received": "New report about {who}. Review it in Supabase > reports",
+      "round_alert": "{who} posted a round that matches your alert",
+      "round_invite": "{who} invited you to their round",
+      "round_message": "{who} wrote in the round chat",
+      "waitlist_promoted": "A spot opened up. You're in the round"
     }
   },
   "rounds": {
@@ -137,7 +141,9 @@
     "hostedByYou": "Hosted by you",
     "emptyTitle": "No rounds yet",
     "emptyText": "Join an open round from Find, or post your own and let other players join.",
-    "post": "Post a round"
+    "post": "Post a round",
+    "waitlisted": "On the waitlist",
+    "invited": "Invited"
   },
   "find": {
     "title": "Find a round",
@@ -167,7 +173,8 @@
     "emptyTitle": "No open rounds here yet",
     "emptyText": "Try a wider radius or another date, or post your own round and let players find you.",
     "locationError": "Could not get your location. Check the permission, or search by course.",
-    "loadError": "Could not load rounds."
+    "loadError": "Could not load rounds.",
+    "fullWaitlist": "Full · waitlist open"
   },
   "scores": {
     "title": "Scorecards",
@@ -348,7 +355,22 @@
     "loadError": "Could not load this round.",
     "deleteError": "Could not delete the round.",
     "shareTitle": "Join my round",
-    "shareText": "Play {course} with me"
+    "shareText": "Play {course} with me",
+    "invitedBy": "{name} invited you to this round. Join if you can make it.",
+    "waitlistPos": "You're number {n} on the waitlist. If a spot opens, you'll be moved in and told.",
+    "onWaitlist": "You're on the waitlist. If a spot opens, you'll be moved in and told.",
+    "calendar": "Add to calendar",
+    "calendarTitle": "Golf at {course}",
+    "calendarText": "PARtners round with {players}",
+    "calendarError": "Could not open your calendar.",
+    "waitlist_one": "Waitlist ({count})",
+    "waitlist_other": "Waitlist ({count})",
+    "invitedList": "Invited",
+    "invitedPill": "Invited",
+    "leaveWaitlist": "Leave waitlist",
+    "joinWaitlist": "Join waitlist",
+    "waitlistHint": "The round is full. Join the waitlist and you'll be moved in if someone drops out.",
+    "decline": "No thanks"
   },
   "create": {
     "dateTime": "Date and tee time",
@@ -413,7 +435,21 @@
     "loadError": "Could not load this scorecard.",
     "parError": "Could not save the par.",
     "noScore": "No score yet",
-    "deleteError": "Could not delete the scorecard."
+    "deleteError": "Could not delete the scorecard.",
+    "scoring": "Scoring",
+    "stablefordNote": "Points without handicap strokes: the course has no stroke index yet.",
+    "scrambleHint": "Scramble: enter the team's score for each team on one player's line.",
+    "bestBallNeeds": "Best ball needs at least 3 players: players 1 and 2 play against 3 and 4.",
+    "matchNeeds": "Match play needs 2 players.",
+    "points_one": "{count} pt",
+    "points_other": "{count} pts",
+    "vs": "vs",
+    "matchNotStarted": "Match not started",
+    "halved": "Match halved",
+    "winsAnd": "{name} win {up}&{left}",
+    "winsUp": "{name} win {up} up",
+    "up": "{name} {up} up thru {n}",
+    "allSquare": "All square thru {n}"
   },
   "join": {
     "cant": "Can't join this round",
@@ -480,7 +516,12 @@
     "started": "This round has already started.",
     "self": "You can’t add yourself.",
     "offline": "No connection. Check your signal and try again.",
-    "tooManyReports": "You’ve sent a lot of reports today. Please email us instead."
+    "tooManyReports": "You’ve sent a lot of reports today. Please email us instead.",
+    "alertLimit": "You can keep up to 10 alerts. Delete one first.",
+    "freeDay": "Pick a day in the next 30 days.",
+    "freeLimit": "You can have up to 10 days posted.",
+    "tooManyInvites": "You've sent a lot of invites today. Try again tomorrow.",
+    "slowDown": "Slow down a little before sending more."
   },
   "safety": {
     "optionsFor": "More options for {name}",
@@ -533,5 +574,79 @@
       "best_ball": "Teams of two: the better score on each hole counts.",
       "scramble": "Everyone tees off, the team plays from the best shot."
     }
+  },
+  "weather": {
+    "label": "Weather at tee time",
+    "clear": "Sunny",
+    "cloudy": "Cloudy",
+    "fog": "Fog",
+    "rain": "Rain",
+    "snow": "Snow",
+    "storm": "Thunderstorms",
+    "detail": "{rain}% chance of rain · wind {wind} km/h"
+  },
+  "chat": {
+    "open": "Chat",
+    "title": "Round chat",
+    "emptyTitle": "No messages yet",
+    "emptyText": "Sort out the details here: where to meet, walking or cart, running late.",
+    "placeholder": "Message",
+    "send": "Send",
+    "loadError": "Could not load the chat. Only players in this round can see it.",
+    "sendError": "Could not send. Try again."
+  },
+  "alerts": {
+    "title": "Round alerts",
+    "intro": "You'll be told when someone posts a round that matches one of these searches.",
+    "inAppOnly": "Alerts show under Notifications. In the phone app they also arrive as push notifications.",
+    "delete": "Delete alert for {name}",
+    "emptyTitle": "No alerts yet",
+    "emptyText": "In Find, set up a search and tap “Alert me” to hear about new rounds.",
+    "goFind": "Go to Find",
+    "loadError": "Could not load your alerts.",
+    "anArea": "A saved area",
+    "atCourse": "At this course",
+    "days": {
+      "any": "Any day",
+      "weekend": "Weekends",
+      "weekday": "Weekdays"
+    },
+    "save": "Alert me",
+    "saved": "Alert saved",
+    "manage": "My alerts",
+    "myArea": "my area",
+    "saveError": "Could not save the alert."
+  },
+  "free": {
+    "cta": "I'm free to play",
+    "title": "I'm free to play",
+    "intro": "No course or tee time in mind? Say which day you could play. Hosts nearby can invite you to their round.",
+    "day": "Day",
+    "when": "Time of day",
+    "part": {
+      "any": "Any time",
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening"
+    },
+    "where": "Around",
+    "travel": "How far would you travel?",
+    "note": "Note (optional)",
+    "notePlaceholder": "e.g. happy to walk, 18 holes",
+    "saved": "Posted. Hosts nearby can see you now.",
+    "update": "Update this day",
+    "post": "Post",
+    "mine": "Your days",
+    "upTo": "up to {km} km",
+    "remove": "Remove {day}",
+    "aroundMe": "my location",
+    "postError": "Could not post. Try again.",
+    "findTitle": "Free to play",
+    "invited": "Invited",
+    "invite": "Invite",
+    "noneHere": "Nobody has posted that they're free here yet.",
+    "inviteTo": "Invite {name} to",
+    "postForThem": "Post a new round",
+    "inviteError": "Could not send the invite."
   }
 }

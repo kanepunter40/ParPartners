@@ -22,7 +22,12 @@ import { MyRound } from '../../core/models';
           <a [routerLink]="['/round', r.round_id]" style="text-decoration: none; color: inherit; display: block">
             <div style="background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px">
               <div style="display: flex; justify-content: space-between; align-items: center">
-                <span class="pill ok">{{ r.status === 'host' ? t('home.youHost') : t('rounds.youreIn') }}</span>
+                @switch (r.status) {
+                  @case ('host') { <span class="pill ok">{{ t('home.youHost') }}</span> }
+                  @case ('waitlisted') { <span class="pill full">{{ t('rounds.waitlisted') }}</span> }
+                  @case ('invited') { <span class="pill" style="background: #F3E4D6; color: #7A4220">{{ t('rounds.invited') }}</span> }
+                  @default { <span class="pill ok">{{ t('rounds.youreIn') }}</span> }
+                }
                 <span style="font-size: 13px; font-weight: 600">{{ t('home.inCount', { n: r.confirmed, max: r.max_players }) }}</span>
               </div>
               <h3 style="margin: 0; font-size: 18px">{{ r.course_name }}</h3>
@@ -44,6 +49,7 @@ import { MyRound } from '../../core/models';
         @if (items().length) {
           <ion-button fill="outline" expand="block" routerLink="/create" style="margin-top: 4px">{{ t('rounds.post') }}</ion-button>
         }
+        <ion-button fill="clear" expand="block" routerLink="/free" style="margin-top: 4px">{{ t('free.cta') }}</ion-button>
       </div>
     </ion-content>
   `

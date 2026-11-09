@@ -73,9 +73,9 @@ export class RoundsService {
       .from('rounds')
       .select(
         `id, host_id, tee_time, max_players, visibility, notes, invite_code, status, format,
-         courses(name, city),
+         courses(id, name, city),
          host:profiles!rounds_host_id_fkey(display_name, avatar_url, handicap_index),
-         round_players(player_id, status, profiles(display_name, avatar_url, handicap_index))`
+         round_players(player_id, status, created_at, profiles(display_name, avatar_url, handicap_index))`
       )
       .eq('id', id)
       .single();
@@ -83,6 +83,7 @@ export class RoundsService {
     return data as unknown as RoundDetail;
   }
 
+  /** Rounds I'm in, plus ones I'm waitlisted or invited for (status tells which). */
   async myRounds(): Promise<MyRound[]> {
     const { data, error } = await this.sb.client
       .from('round_players')
@@ -91,7 +92,7 @@ export class RoundsService {
          rounds(tee_time, max_players, status, courses(name), host:profiles!rounds_host_id_fkey(display_name), round_players(status))`
       )
       .eq('player_id', this.sb.userId)
-      .in('status', ['host', 'confirmed']);
+      .in('status', ['host', 'confirmed', 'waitlisted', 'invited']);
     if (error) throw error;
     const now = Date.now();
     return (data as any[])
@@ -124,6 +125,32 @@ export class RoundsService {
   async deleteRound(roundId: string) {
     const { error } = await this.sb.client.rpc('delete_round', { p_round_id: roundId });
     if (error) throw error;
+  }
+
+  /** My place on the waitlist (1 = next in), or null if I'm not on it. */
+  async waitlistPosition(roundId: string): Promise<number | null> {
+    const { data, error } = await this.sb.client.rpc('waitlist_position', { p_round_id: roundId });
+    if (error) throw error;
+    return (data as number | null) ?? null;
+  }
+
+  /** Host only: invites a player (from Free to play). They can then see the round and join. */
+  async invite(roundId: string, playerId: string) {
+    const { error } = await this.sb.client.rpc('invite_to_round', { p_round_id: roundId, p_player_id: playerId });
+    if (error) throw error;
+  }
+
+  /** My upcoming rounds that still have room: the ones I can invite someone to. */
+  async myOpenHostedRounds(): Promise<{ id: string; tee_time: string; course_name: string }[]> {
+    const { data, error } = await this.sb.client
+      .from('rounds')
+      .select('id, tee_time, courses(name)')
+      .eq('host_id', this.sb.userId)
+      .eq('status', 'open')
+      .gt('tee_time', new Date().toISOString())
+      .order('tee_time');
+    if (error) throw error;
+    return (data as any[]).map((r) => ({ id: r.id, tee_time: r.tee_time, course_name: r.courses.name }));
   }
 
   /** Returns the round id. */

@@ -30,6 +30,10 @@ const TEXT: Record<Locale, Record<string, string>> = {
     host_handover: "The host left PARtners. You're hosting this round now",
     round_reminder: 'Reminder: you tee off {when}',
     report_received: 'New report about {who}. Review it in Supabase > reports',
+    round_alert: 'New round {when2} that matches your alert. Posted by {who}',
+    round_invite: '{who} invited you to their round {when2}',
+    round_message: '{who}: {detail}',
+    waitlist_promoted: "A spot opened up. You're in the round {when2}",
     other: 'Update on a round',
     aPlayer: 'A player'
   },
@@ -45,6 +49,10 @@ const TEXT: Record<Locale, Record<string, string>> = {
     host_handover: 'Der Gastgeber hat PARtners verlassen. Du bist jetzt Gastgeber dieser Runde',
     round_reminder: 'Erinnerung: Abschlag {when}',
     report_received: 'Neue Meldung über {who}. Prüfe sie in Supabase > reports',
+    round_alert: 'Neue Runde {when2}, passend zu deinem Alarm. Eingestellt von {who}',
+    round_invite: '{who} hat dich zu einer Runde {when2} eingeladen',
+    round_message: '{who}: {detail}',
+    waitlist_promoted: 'Ein Platz ist frei geworden. Du bist {when2} dabei',
     other: 'Neuigkeit zu einer Runde',
     aPlayer: 'Ein Spieler'
   }
@@ -59,6 +67,16 @@ function when(teeTime: string, locale: Locale): string {
   const today = day(new Date()) === day(tee);
   if (locale === 'de') return `${today ? 'heute' : 'morgen'} um ${time} Uhr`;
   return `${today ? 'today' : 'tomorrow'} at ${time}`;
+}
+
+/** "on Sat 15 Nov at 09:10" / "am Sa., 15. Nov. um 09:10 Uhr", in German time. */
+function onDay(teeTime: string, locale: Locale): string {
+  const tz = 'Europe/Berlin';
+  const tee = new Date(teeTime);
+  const loc = locale === 'de' ? 'de-DE' : 'en-GB';
+  const day = new Intl.DateTimeFormat(loc, { timeZone: tz, weekday: 'short', day: 'numeric', month: 'short' }).format(tee);
+  const time = new Intl.DateTimeFormat(loc, { timeZone: tz, hour: '2-digit', minute: '2-digit' }).format(tee);
+  return locale === 'de' ? `am ${day} um ${time} Uhr` : `on ${day} at ${time}`;
 }
 
 // --- Firebase access token (an OAuth token from the service account, cached until shortly before it expires) ---
@@ -99,7 +117,7 @@ Deno.serve(async (req) => {
   const { id } = await req.json();
   const { data: n, error } = await sb
     .from('notifications')
-    .select('id, user_id, type, round_id, actor:profiles!notifications_actor_id_fkey(display_name), rounds(tee_time, courses(name))')
+    .select('id, user_id, type, round_id, detail, actor:profiles!notifications_actor_id_fkey(display_name), rounds(tee_time, courses(name))')
     .eq('id', id)
     .maybeSingle();
   if (error || !n) return new Response('Notification not found', { status: 404 });
@@ -111,6 +129,7 @@ Deno.serve(async (req) => {
   const round = (n as any).rounds as { tee_time: string; courses: { name: string } } | null;
   const route = n.type === 'report_received' ? '/notifications'
     : n.type === 'friend_request' || n.type === 'friend_accepted' ? '/friends'
+    : n.type === 'round_message' && n.round_id ? `/round/${n.round_id}/chat`
     : n.round_id ? `/round/${n.round_id}` : '/notifications';
 
   const token = await accessToken(sa);
@@ -118,9 +137,12 @@ Deno.serve(async (req) => {
   for (const d of devices) {
     const locale: Locale = d.locale === 'de' ? 'de' : 'en';
     const t = TEXT[locale];
+    // Replacer functions, so a "$" in a name or chat message is kept as typed
     const body = (t[n.type] ?? t.other)
-      .replace('{who}', actor ?? t.aPlayer)
-      .replace('{when}', round ? when(round.tee_time, locale) : '');
+      .replace('{who}', () => actor ?? t.aPlayer)
+      .replace('{when}', () => (round ? when(round.tee_time, locale) : ''))
+      .replace('{when2}', () => (round ? onDay(round.tee_time, locale) : ''))
+      .replace('{detail}', () => (n as any).detail ?? '');
 
     const res = await fetch(`https://fcm.googleapis.com/v1/projects/${sa.project_id}/messages:send`, {
       method: 'POST',

@@ -22,7 +22,8 @@ export interface RoundResult {
   format: RoundFormat;
 }
 
-export type PlayerStatus = 'host' | 'confirmed' | 'requested' | 'declined' | 'withdrawn';
+/** waitlisted: joined a full round, moved in when a spot opens. invited: a host invited them from Free to play. */
+export type PlayerStatus = 'host' | 'confirmed' | 'requested' | 'declined' | 'withdrawn' | 'waitlisted' | 'invited';
 
 export interface RoundDetail {
   id: string;
@@ -34,9 +35,9 @@ export interface RoundDetail {
   invite_code: string;
   status: 'open' | 'full' | 'cancelled' | 'played';
   format: RoundFormat;
-  courses: { name: string; city: string | null };
+  courses: { id: string; name: string; city: string | null };
   host: { display_name: string; avatar_url: string | null; handicap_index: number | null };
-  round_players: { player_id: string; status: PlayerStatus; profiles: { display_name: string; avatar_url: string | null; handicap_index: number | null } }[];
+  round_players: { player_id: string; status: PlayerStatus; created_at: string; profiles: { display_name: string; avatar_url: string | null; handicap_index: number | null } }[];
 }
 
 export interface MyRound {
@@ -75,7 +76,9 @@ export interface PlayerCard {
   gender: string | null;
 }
 
-export type NotificationType = 'request_received' | 'request_accepted' | 'request_declined' | 'player_joined' | 'player_left' | 'round_cancelled' | 'host_handover' | 'friend_request' | 'friend_accepted';
+export type NotificationType = 'request_received' | 'request_accepted' | 'request_declined' | 'player_joined' | 'player_left' | 'round_cancelled'
+  | 'host_handover' | 'friend_request' | 'friend_accepted' | 'round_reminder' | 'report_received'
+  | 'round_alert' | 'round_invite' | 'round_message' | 'waitlist_promoted';
 
 export interface AppNotification {
   id: string;
@@ -83,6 +86,8 @@ export interface AppNotification {
   round_id: string | null;
   read_at: string | null;
   created_at: string;
+  /** Start of a chat message (round_message), otherwise null */
+  detail: string | null;
   actor: { display_name: string } | null;
   /** null when the round was deleted or is no longer visible to this user */
   rounds: { tee_time: string; courses: { name: string } } | null;
@@ -107,7 +112,10 @@ export interface Scorecard {
   holes: CardHoles;
   played_at: string;
   created_by: string;
+  /** Picked on the card; null = the round's format (stroke play for a solo card) */
+  format: RoundFormat | null;
   courses: { name: string };
+  rounds: { format: RoundFormat } | null;
   scorecard_players: ScorecardPlayer[];
 }
 
@@ -159,4 +167,52 @@ export interface FeedItem {
 export interface Position {
   lat: number;
   lng: number;
+}
+
+/** A saved search in Find (search_alerts). Either course_id or an area (place_name + radius_km). */
+export interface SearchAlert {
+  id: string;
+  course_id: string | null;
+  course_name: string | null;
+  place_name: string | null;
+  radius_km: number | null;
+  days: 'any' | 'weekend' | 'weekday';
+  format: RoundFormat | null;
+  created_at: string;
+}
+
+export type PartOfDay = 'morning' | 'afternoon' | 'evening' | 'any';
+
+/** Another player's "I'm free" post (find_available). */
+export interface FreePlayer {
+  id: string;
+  user_id: string;
+  display_name: string;
+  avatar_url: string | null;
+  handicap_index: number | null;
+  /** YYYY-MM-DD */
+  day: string;
+  part_of_day: PartOfDay;
+  place_name: string | null;
+  radius_km: number;
+  note: string | null;
+  distance_km: number | null;
+}
+
+/** One of my own "I'm free" posts. */
+export interface MyAvailability {
+  id: string;
+  day: string;
+  part_of_day: PartOfDay;
+  place_name: string | null;
+  radius_km: number;
+  note: string | null;
+}
+
+export interface ChatMessage {
+  id: string;
+  round_id: string;
+  sender_id: string | null;
+  body: string;
+  created_at: string;
 }

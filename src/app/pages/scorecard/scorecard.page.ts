@@ -1,17 +1,19 @@
 import { Component, inject, input, signal, computed } from '@angular/core';
 import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { ScorecardsService, holeNumbers, formatToPar, HOLES_LABEL } from '../../core/scorecards.service';
 import { SupabaseService } from '../../core/supabase.service';
 import { Scorecard, ScorecardPlayer } from '../../core/models';
+import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
+import { Side, cardFormat, isMatchFormat, match, stablefordTotal } from '../../core/scoring';
 
 const DEFAULT_PAR = 4;
 const POLL_MS = 20_000;
 
 @Component({
   selector: 'app-scorecard',
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner],
+  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner, IonSelect, IonSelectOption],
   styles: [`
     .hole-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
     .hole-no { font-family: 'Fraunces Variable', serif; font-size: 44px; line-height: 1; margin: 0; }
@@ -41,6 +43,8 @@ const POLL_MS = 20_000;
     .sum { background: #F4F1E8; font-weight: 700; }
     .hole-link { width: 100%; height: 40px; border: 0; background: none; font: inherit; font-weight: 600; color: #2E5F5A; }
     .par-row td { color: #5F5B4E; }
+    .result { padding: 14px 16px; border-radius: 16px; background: #E3ECE9; color: #1F3532; display: flex; flex-direction: column; gap: 2px; }
+    .format-select { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font-weight: 600; font-size: 14px; }
   `],
   template: `
     <ion-header class="ion-no-border">
@@ -107,9 +111,21 @@ const POLL_MS = 20_000;
                 </div>
               }
             </div>
+            @if (matchLabel(); as m) { <div class="result" role="status"><strong>{{ m }}</strong><span class="muted" style="font-size: 13px">{{ sidesLabel() }}</span></div> }
+            @if (format() === 'scramble') { <p class="muted" style="margin: 0; font-size: 13px">{{ t('card.scrambleHint') }}</p> }
             <p class="muted" style="margin: 0; font-size: 13px">{{ t('card.hint') }}</p>
           } @else {
             <div class="muted" style="font-size: 13px">{{ i18n.date(c.played_at, 'dayDateYear') }} · {{ holesLabel() }}</div>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+              <span id="scoring-label" style="font-weight: 600">{{ t('card.scoring') }}</span>
+              <ion-select class="format-select" interface="action-sheet" aria-labelledby="scoring-label" [value]="format()" [cancelText]="t('common.cancel')" (ionChange)="setFormat($event)">
+                @for (f of formats; track f) { <ion-select-option [value]="f">{{ t('format.' + f) }}</ion-select-option> }
+              </ion-select>
+            </div>
+            @if (format() === 'stableford') { <p class="muted" style="margin: 0; font-size: 13px">{{ t('card.stablefordNote') }}</p> }
+            @if (format() === 'scramble') { <p class="muted" style="margin: 0; font-size: 13px">{{ t('card.scrambleHint') }}</p> }
+            @if (isMatchFormat(format()) && !sides()) { <p class="muted" style="margin: 0; font-size: 13px">{{ t(format() === 'best_ball' ? 'card.bestBallNeeds' : 'card.matchNeeds') }}</p> }
+            @if (matchLabel(); as m) { <div class="result" role="status"><strong>{{ m }}</strong><span class="muted" style="font-size: 13px">{{ sidesLabel() }}</span></div> }
             <div class="grid-wrap">
               <table>
                 <thead>
@@ -295,13 +311,65 @@ export class ScorecardPage {
     return this.holes().filter((h) => h >= from && h <= to).reduce((t, h) => t + (this.strokes(playerId, h) ?? 0), 0);
   }
 
-  /** "+3 thru 7", "41 · E", or "No score yet". */
+  /** "+3 thru 7", "41 · E", or "No score yet". Stableford adds the points. */
   summary(p: ScorecardPlayer) {
     const played = this.holes().filter((h) => this.strokes(p.id, h) !== undefined);
     if (!played.length) return this.t('card.noScore');
     const strokes = played.reduce((t, h) => t + this.strokes(p.id, h)!, 0);
     const toPar = formatToPar(played.reduce((t, h) => t + this.diff(p.id, h), 0));
-    return played.length === this.holes().length ? `${strokes} · ${toPar}` : `${toPar} ${this.t('scores.thru', { n: played.length })}`;
+    const base = played.length === this.holes().length ? `${strokes} · ${toPar}` : `${toPar} ${this.t('scores.thru', { n: played.length })}`;
+    if (this.format() !== 'stableford') return base;
+    const points = stablefordTotal(p.id, this.holes(), (id, h) => this.strokes(id, h), (h) => this.par(h));
+    return `${this.t('card.points', { count: points })} · ${base}`;
+  }
+
+  // --- formats ----------------------------------------------------------------
+
+  readonly formats = ROUND_FORMATS.filter((f) => f !== 'casual');
+  readonly isMatchFormat = isMatchFormat;
+  format = computed(() => cardFormat(this.card()?.format ?? null, this.card()?.rounds?.format));
+
+  /** Match play: the first two players. Best ball: players 1 and 2 against 3 and 4. */
+  sides = computed<[Side, Side] | null>(() => {
+    const ps = this.players();
+    const side = (list: ScorecardPlayer[]): Side => ({ name: list.map((p) => p.name).join(' & '), ids: list.map((p) => p.id) });
+    if (this.format() === 'match_play' && ps.length >= 2) return [side(ps.slice(0, 1)), side(ps.slice(1, 2))];
+    if (this.format() === 'best_ball' && ps.length >= 3) return [side(ps.slice(0, 2)), side(ps.slice(2, 4))];
+    return null;
+  });
+
+  sidesLabel = computed(() => {
+    const s = this.sides();
+    return s ? `${s[0].name} ${this.t('card.vs')} ${s[1].name}` : '';
+  });
+
+  /** "Lena 2 up thru 7", "All square thru 4", "Lena wins 3&2", "Halved". */
+  matchLabel = computed(() => {
+    const s = this.sides();
+    if (!s) return '';
+    const m = match(s[0], s[1], this.holes(), (id, h) => this.strokes(id, h));
+    if (!m.played) return this.t('card.matchNotStarted');
+    const leader = m.lead > 0 ? s[0].name : s[1].name;
+    const up = Math.abs(m.lead);
+    if (m.decided) {
+      if (!up) return this.t('card.halved');
+      return m.remaining ? this.t('card.winsAnd', { name: leader, up, left: m.remaining }) : this.t('card.winsUp', { name: leader, up });
+    }
+    return up ? this.t('card.up', { name: leader, up, n: m.played }) : this.t('card.allSquare', { n: m.played });
+  });
+
+  async setFormat(ev: Event) {
+    const card = this.card();
+    const f = (ev as CustomEvent).detail.value as RoundFormat;
+    if (!card || f === this.format()) return;
+    const before = card.format;
+    this.card.set({ ...card, format: f });
+    try {
+      await this.scorecards.setFormat(card.id, f);
+    } catch (e: any) {
+      this.card.update((c) => (c ? { ...c, format: before } : c));
+      this.error.set(this.i18n.error(e, 'common.error'));
+    }
   }
 
   tapNumber(p: ScorecardPlayer) {

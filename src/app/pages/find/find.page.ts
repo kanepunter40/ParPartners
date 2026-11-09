@@ -1,17 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
 import { I18nService } from '../../core/i18n.service';
-import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
+import { Router, RouterLink } from '@angular/router';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption, ActionSheetController } from '@ionic/angular/standalone';
 import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 import { addIcons } from 'ionicons';
-import { locate, home } from 'ionicons/icons';
+import { locate, home, notificationsOutline, checkmark } from 'ionicons/icons';
 import { RoundsService } from '../../core/rounds.service';
 import { NotificationsService } from '../../core/notifications.service';
 import { NotificationsBellComponent } from '../../core/notifications-bell.component';
 import { IllustrationComponent } from '../../core/illustration.component';
 import { LocationService } from '../../core/location.service';
 import { ProfileService } from '../../core/profile.service';
-import { Course, Position, RoundResult } from '../../core/models';
+import { Course, FreePlayer, Position, RoundResult } from '../../core/models';
+import { AlertsService } from '../../core/alerts.service';
+import { AvailabilityService, isoDay } from '../../core/availability.service';
+import { AvatarComponent } from '../../core/avatar.component';
 
 type Mode = 'near' | 'course';
 type When = 'any' | 'this' | 'next';
@@ -34,7 +37,7 @@ const MY_LOCATION = '@me';
 
 @Component({
   selector: 'app-find',
-  imports: [RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
+  imports: [RouterLink, AvatarComponent, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
   styles: [`
     .find { display: flex; flex-direction: column; gap: 28px; }
     .filters { background: #ECE8DA; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -54,6 +57,10 @@ const MY_LOCATION = '@me';
     .course-opt { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid #EFEAD9; background: #fff; font-family: inherit; color: #1F3532; }
     .format-select { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font-weight: 600; font-size: 14px; }
     .format-pill { background: #F3E4D6; color: #7A4220; }
+    .alert-row { display: flex; align-items: center; gap: 12px; margin: -4px 0 14px; }
+    .alert-row a { font-size: 13px; font-weight: 600; color: #2E5F5A; }
+    .free { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .free-top { display: flex; align-items: center; gap: 12px; }
     .result { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; }
   `],
   template: `
@@ -133,6 +140,14 @@ const MY_LOCATION = '@me';
             }
           </div>
 
+          @if (mode() === 'near' || course()) {
+            <div class="alert-row">
+              <ion-button size="small" fill="outline" [disabled]="alertBusy() || alertSaved()" (click)="saveAlert()">
+                <ion-icon slot="start" [name]="alertSaved() ? 'checkmark' : 'notifications-outline'"></ion-icon>{{ alertSaved() ? t('alerts.saved') : t('alerts.save') }}
+              </ion-button>
+              <a routerLink="/alerts">{{ t('alerts.manage') }}</a>
+            </div>
+          }
           @if (error()) { <p role="alert" style="color: #9C5428; margin: 0 0 12px">{{ error() }}</p> }
 
         <div>
@@ -140,7 +155,11 @@ const MY_LOCATION = '@me';
             <a class="result" [routerLink]="['/round', r.round_id]">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px">
                 <span style="display: flex; gap: 6px; flex-wrap: wrap">
-                  <span class="pill">{{ t('home.spotsLeft', { count: r.spots_left }) }}</span>
+                  @if (r.spots_left > 0) {
+                    <span class="pill">{{ t('home.spotsLeft', { count: r.spots_left }) }}</span>
+                  } @else {
+                    <span class="pill full">{{ t('find.fullWaitlist') }}</span>
+                  }
                   @if (r.format && r.format !== 'casual') { <span class="pill format-pill">{{ t('format.' + r.format) }}</span> }
                 </span>
                 @if (r.distance_km !== null) { <span class="muted" style="font-size: 13px">{{ t('find.kmAway', { km: r.distance_km }) }}</span> }
@@ -161,10 +180,40 @@ const MY_LOCATION = '@me';
               <h3 style="margin: 0">{{ t('find.emptyTitle') }}</h3>
               <p class="muted" style="margin: 0; font-size: 14px">{{ t('find.emptyText') }}</p>
               <ion-button routerLink="/create">{{ t('rounds.post') }}</ion-button>
+              <ion-button fill="clear" routerLink="/free">{{ t('free.cta') }}</ion-button>
             </div>
           }
         </div>
         </section>
+
+        @if (mode() === 'near' || course()) {
+          <section aria-labelledby="free-title">
+            <div class="results-head">
+              <h2 id="free-title">{{ t('free.findTitle') }}</h2>
+              <a routerLink="/free" style="font-size: 13px; font-weight: 600; color: #2E5F5A">{{ t('free.cta') }}</a>
+            </div>
+            @for (f of free(); track f.id) {
+              <div class="free">
+                <div class="free-top">
+                  <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="40" />
+                  <div style="flex: 1; min-width: 0">
+                    <strong>{{ f.display_name }}</strong>
+                    <div class="muted" style="font-size: 13px">{{ f.handicap_index !== null ? t('common.hcp', { hcp: f.handicap_index }) + ' · ' : '' }}{{ f.place_name ? t('find.nearName', { name: f.place_name }) : '' }}</div>
+                  </div>
+                  @if (invitedIds().has(f.user_id)) {
+                    <span class="pill ok">{{ t('free.invited') }}</span>
+                  } @else {
+                    <ion-button size="small" (click)="invite(f)">{{ t('free.invite') }}</ion-button>
+                  }
+                </div>
+                <strong style="font-size: 14px">{{ dayLabel(f.day) }} · {{ t('free.part.' + f.part_of_day) }}</strong>
+                @if (f.note) { <span class="muted" style="font-size: 14px">“{{ f.note }}”</span> }
+              </div>
+            } @empty {
+              <p class="muted" style="margin: 0; font-size: 14px">{{ t('free.noneHere') }}</p>
+            }
+          </section>
+        }
       </div>
 
     </ion-content>
@@ -177,6 +226,10 @@ export class FindPage {
   private location = inject(LocationService);
   private profiles = inject(ProfileService);
   private notifications = inject(NotificationsService);
+  private alerts = inject(AlertsService);
+  private availability = inject(AvailabilityService);
+  private actionSheets = inject(ActionSheetController);
+  private router = inject(Router);
 
   readonly radii = RADII;
   readonly whens: [When, string][] = [['any', 'find.anyDate'], ['this', 'find.thisWeekend'], ['next', 'find.nextWeekend']];
@@ -192,11 +245,15 @@ export class FindPage {
   homeCourse = signal<Course | null>(null);
   suggestions = signal<Course[]>([]);
   results = signal<RoundResult[]>([]);
+  free = signal<FreePlayer[]>([]);
+  invitedIds = signal(new Set<string>());
+  alertBusy = signal(false);
+  alertSaved = signal(false);
   loading = signal(false);
   error = signal('');
 
   constructor() {
-    addIcons({ locate, home });
+    addIcons({ locate, home, notificationsOutline, checkmark });
   }
 
   async ionViewWillEnter() {
@@ -259,6 +316,80 @@ export class FindPage {
     this.load();
   }
 
+  /** Players free to play in the same area and dates. Extra, so failures stay quiet. */
+  private async loadFree(range: { from: Date; to: Date } | null) {
+    const byCourse = this.mode() === 'course';
+    try {
+      this.free.set(await this.availability.find({
+        lat: byCourse ? null : this.centre()!.lat,
+        lng: byCourse ? null : this.centre()!.lng,
+        radiusKm: this.radius(),
+        courseId: byCourse ? this.course()!.id : null,
+        from: range ? isoDay(range.from) : null,
+        to: range ? isoDay(range.to) : null
+      }));
+    } catch {
+      this.free.set([]);
+    }
+  }
+
+  dayLabel(iso: string) {
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Intl.DateTimeFormat(this.i18n.locale(), { weekday: 'long', day: 'numeric', month: 'short' }).format(new Date(y, m - 1, d));
+  }
+
+  /** Saves the current search: a push when someone posts a matching round. */
+  async saveAlert() {
+    const byCourse = this.mode() === 'course';
+    this.alertBusy.set(true);
+    this.error.set('');
+    try {
+      await this.alerts.create({
+        courseId: byCourse ? this.course()!.id : null,
+        lat: byCourse ? null : this.centre()?.lat,
+        lng: byCourse ? null : this.centre()?.lng,
+        radiusKm: this.radius(),
+        placeName: byCourse ? null : this.centreName() === MY_LOCATION ? this.t('alerts.myArea') : this.centreName(),
+        // "This/next weekend" become "weekends" for an alert that keeps running
+        days: this.when() === 'any' ? 'any' : 'weekend',
+        format: this.format()
+      });
+      this.alertSaved.set(true);
+    } catch (e: any) {
+      this.error.set(this.i18n.error(e, 'alerts.saveError'));
+    } finally {
+      this.alertBusy.set(false);
+    }
+  }
+
+  /** Pick one of my rounds with room to invite them to, or post a new one. */
+  async invite(f: FreePlayer) {
+    let mine: { id: string; tee_time: string; course_name: string }[] = [];
+    try { mine = await this.rounds.myOpenHostedRounds(); } catch { /* offer to post a round instead */ }
+    const sheet = await this.actionSheets.create({
+      header: this.t('free.inviteTo', { name: f.display_name }),
+      buttons: [
+        ...mine.map((r) => ({
+          text: r.course_name + ' · ' + this.i18n.date(r.tee_time),
+          handler: () => { this.sendInvite(r.id, f); }
+        })),
+        { text: this.t('free.postForThem'), handler: () => { this.router.navigateByUrl('/create'); } },
+        { text: this.t('common.cancel'), role: 'cancel' }
+      ]
+    });
+    await sheet.present();
+  }
+
+  private async sendInvite(roundId: string, f: FreePlayer) {
+    this.error.set('');
+    try {
+      await this.rounds.invite(roundId, f.user_id);
+      this.invitedIds.update((s) => new Set(s).add(f.user_id));
+    } catch (e: any) {
+      this.error.set(this.i18n.error(e, 'free.inviteError'));
+    }
+  }
+
   async searchCourse(ev: Event) {
     const q = (ev as CustomEvent).detail?.value ?? '';
     if (q.length < 2 || q === this.course()?.name) { this.suggestions.set([]); return; }
@@ -274,8 +405,10 @@ export class FindPage {
   async load() {
     const range = this.when() === 'this' ? weekendRange(0) : this.when() === 'next' ? weekendRange(1) : null;
     const byCourse = this.mode() === 'course';
-    if (byCourse && !this.course()) { this.results.set([]); return; }
-    if (!byCourse && !this.centre()) { this.results.set([]); return; }
+    this.alertSaved.set(false);
+    if (byCourse && !this.course()) { this.results.set([]); this.free.set([]); return; }
+    if (!byCourse && !this.centre()) { this.results.set([]); this.free.set([]); return; }
+    this.loadFree(range);
 
     this.loading.set(true);
     this.error.set('');

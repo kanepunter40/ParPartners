@@ -128,7 +128,11 @@
       "host_handover": "Der Gastgeber hat PARtners verlassen. Du bist jetzt Gastgeber dieser Runde",
       "other": "Neuigkeit zu einer Runde",
       "round_reminder": "Erinnerung: Deine Runde steht bald an",
-      "report_received": "Neue Meldung über {who}. Prüfe sie in Supabase > reports"
+      "report_received": "Neue Meldung über {who}. Prüfe sie in Supabase > reports",
+      "round_alert": "{who} hat eine Runde eingestellt, die zu deinem Alarm passt",
+      "round_invite": "{who} hat dich zu einer Runde eingeladen",
+      "round_message": "{who} hat im Runden-Chat geschrieben",
+      "waitlist_promoted": "Ein Platz ist frei geworden. Du bist dabei"
     }
   },
   "rounds": {
@@ -137,7 +141,9 @@
     "hostedByYou": "Du bist Gastgeber",
     "emptyTitle": "Noch keine Runden",
     "emptyText": "Tritt über „Finden“ einer offenen Runde bei oder stell selbst eine ein, damit andere mitspielen können.",
-    "post": "Runde einstellen"
+    "post": "Runde einstellen",
+    "waitlisted": "Auf der Warteliste",
+    "invited": "Eingeladen"
   },
   "find": {
     "title": "Runde finden",
@@ -167,7 +173,8 @@
     "emptyTitle": "Hier gibt es noch keine offenen Runden",
     "emptyText": "Probier einen größeren Umkreis oder ein anderes Datum, oder stell selbst eine Runde ein, damit andere dich finden.",
     "locationError": "Dein Standort konnte nicht ermittelt werden. Prüf die Berechtigung oder such nach Platz.",
-    "loadError": "Runden konnten nicht geladen werden."
+    "loadError": "Runden konnten nicht geladen werden.",
+    "fullWaitlist": "Voll · Warteliste offen"
   },
   "scores": {
     "title": "Scorekarten",
@@ -348,7 +355,22 @@
     "loadError": "Diese Runde konnte nicht geladen werden.",
     "deleteError": "Die Runde konnte nicht gelöscht werden.",
     "shareTitle": "Spiel mit mir",
-    "shareText": "Spiel mit mir in {course}"
+    "shareText": "Spiel mit mir in {course}",
+    "invitedBy": "{name} hat dich zu dieser Runde eingeladen. Tritt bei, wenn du kannst.",
+    "waitlistPos": "Du bist Nummer {n} auf der Warteliste. Wird ein Platz frei, rückst du nach und bekommst Bescheid.",
+    "onWaitlist": "Du bist auf der Warteliste. Wird ein Platz frei, rückst du nach und bekommst Bescheid.",
+    "calendar": "Zum Kalender",
+    "calendarTitle": "Golf: {course}",
+    "calendarText": "PARtners-Runde mit {players}",
+    "calendarError": "Der Kalender konnte nicht geöffnet werden.",
+    "waitlist_one": "Warteliste ({count})",
+    "waitlist_other": "Warteliste ({count})",
+    "invitedList": "Eingeladen",
+    "invitedPill": "Eingeladen",
+    "leaveWaitlist": "Warteliste verlassen",
+    "joinWaitlist": "Auf die Warteliste",
+    "waitlistHint": "Die Runde ist voll. Auf der Warteliste rückst du nach, wenn jemand absagt.",
+    "decline": "Nein, danke"
   },
   "create": {
     "dateTime": "Datum und Startzeit",
@@ -413,7 +435,21 @@
     "loadError": "Diese Scorekarte konnte nicht geladen werden.",
     "parError": "Das Par konnte nicht gespeichert werden.",
     "noScore": "Noch kein Ergebnis",
-    "deleteError": "Die Scorekarte konnte nicht gelöscht werden."
+    "deleteError": "Die Scorekarte konnte nicht gelöscht werden.",
+    "scoring": "Wertung",
+    "stablefordNote": "Punkte ohne Vorgabeschläge: Für den Platz gibt es noch keine Hcp-Reihenfolge der Löcher.",
+    "scrambleHint": "Scramble: Tragt das Teamergebnis jedes Teams in der Zeile eines Spielers ein.",
+    "bestBallNeeds": "Best Ball braucht mindestens 3 Spieler: Spieler 1 und 2 gegen 3 und 4.",
+    "matchNeeds": "Lochspiel braucht 2 Spieler.",
+    "points_one": "{count} Pkt.",
+    "points_other": "{count} Pkt.",
+    "vs": "gegen",
+    "matchNotStarted": "Match noch nicht begonnen",
+    "halved": "Match geteilt",
+    "winsAnd": "{name} gewinnt {up}&{left}",
+    "winsUp": "{name} gewinnt {up} auf",
+    "up": "{name} {up} auf nach {n}",
+    "allSquare": "Gleichstand nach {n}"
   },
   "join": {
     "cant": "Beitritt nicht möglich",
@@ -480,7 +516,12 @@
     "started": "Diese Runde hat schon begonnen.",
     "self": "Du kannst dich nicht selbst hinzufügen.",
     "offline": "Keine Verbindung. Prüf deinen Empfang und versuch es noch einmal.",
-    "tooManyReports": "Du hast heute schon viele Meldungen gesendet. Bitte schreib uns stattdessen eine E-Mail."
+    "tooManyReports": "Du hast heute schon viele Meldungen gesendet. Bitte schreib uns stattdessen eine E-Mail.",
+    "alertLimit": "Du kannst bis zu 10 Alarme behalten. Lösch zuerst einen.",
+    "freeDay": "Wähl einen Tag in den nächsten 30 Tagen.",
+    "freeLimit": "Du kannst bis zu 10 Tage eingestellt haben.",
+    "tooManyInvites": "Du hast heute viele Einladungen verschickt. Versuch es morgen wieder.",
+    "slowDown": "Warte kurz, bevor du mehr sendest."
   },
   "safety": {
     "optionsFor": "Weitere Optionen für {name}",
@@ -533,5 +574,79 @@
       "best_ball": "Zweierteams: Das bessere Ergebnis pro Loch zählt.",
       "scramble": "Alle schlagen ab, das Team spielt vom besten Ball weiter."
     }
+  },
+  "weather": {
+    "label": "Wetter zur Abschlagszeit",
+    "clear": "Sonnig",
+    "cloudy": "Bewölkt",
+    "fog": "Nebel",
+    "rain": "Regen",
+    "snow": "Schnee",
+    "storm": "Gewitter",
+    "detail": "{rain} % Regenrisiko · Wind {wind} km/h"
+  },
+  "chat": {
+    "open": "Chat",
+    "title": "Runden-Chat",
+    "emptyTitle": "Noch keine Nachrichten",
+    "emptyText": "Klärt hier die Details: Treffpunkt, zu Fuß oder mit Cart, Verspätung.",
+    "placeholder": "Nachricht",
+    "send": "Senden",
+    "loadError": "Der Chat konnte nicht geladen werden. Nur Spieler dieser Runde sehen ihn.",
+    "sendError": "Senden fehlgeschlagen. Versuch es noch einmal."
+  },
+  "alerts": {
+    "title": "Runden-Alarme",
+    "intro": "Du bekommst Bescheid, wenn jemand eine Runde einstellt, die zu einer dieser Suchen passt.",
+    "inAppOnly": "Alarme erscheinen unter Benachrichtigungen. In der App auf dem Handy kommen sie auch als Push-Nachricht.",
+    "delete": "Alarm für {name} löschen",
+    "emptyTitle": "Noch keine Alarme",
+    "emptyText": "Stell in „Finden“ eine Suche ein und tippe auf „Alarm“, um von neuen Runden zu hören.",
+    "goFind": "Zu „Finden“",
+    "loadError": "Deine Alarme konnten nicht geladen werden.",
+    "anArea": "Ein gespeichertes Gebiet",
+    "atCourse": "Auf diesem Platz",
+    "days": {
+      "any": "Jeder Tag",
+      "weekend": "Wochenenden",
+      "weekday": "Wochentage"
+    },
+    "save": "Alarm",
+    "saved": "Alarm gespeichert",
+    "manage": "Meine Alarme",
+    "myArea": "meine Gegend",
+    "saveError": "Der Alarm konnte nicht gespeichert werden."
+  },
+  "free": {
+    "cta": "Ich hätte Zeit",
+    "title": "Ich hätte Zeit",
+    "intro": "Kein Platz und keine Abschlagszeit im Kopf? Sag, an welchem Tag du spielen könntest. Gastgeber in der Nähe können dich zu ihrer Runde einladen.",
+    "day": "Tag",
+    "when": "Tageszeit",
+    "part": {
+      "any": "Egal",
+      "morning": "Morgens",
+      "afternoon": "Nachmittags",
+      "evening": "Abends"
+    },
+    "where": "In der Nähe von",
+    "travel": "Wie weit würdest du fahren?",
+    "note": "Notiz (optional)",
+    "notePlaceholder": "z. B. gern zu Fuß, 18 Löcher",
+    "saved": "Eingestellt. Gastgeber in der Nähe sehen dich jetzt.",
+    "update": "Diesen Tag ändern",
+    "post": "Einstellen",
+    "mine": "Deine Tage",
+    "upTo": "bis {km} km",
+    "remove": "{day} entfernen",
+    "aroundMe": "mein Standort",
+    "postError": "Einstellen fehlgeschlagen. Versuch es noch einmal.",
+    "findTitle": "Hätten Zeit",
+    "invited": "Eingeladen",
+    "invite": "Einladen",
+    "noneHere": "Hier hat noch niemand eingestellt, dass er Zeit hat.",
+    "inviteTo": "{name} einladen zu",
+    "postForThem": "Neue Runde einstellen",
+    "inviteError": "Die Einladung konnte nicht gesendet werden."
   }
 }
