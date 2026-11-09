@@ -4,17 +4,15 @@ import { RouterLink } from '@angular/router';
 import { IonContent, IonRefresher, IonRefresherContent, IonButton } from '@ionic/angular/standalone';
 import { ScorecardsService, cardStats, formatToPar, HOLES_LABEL, isComplete } from '../../core/scorecards.service';
 import { ScorecardSummary } from '../../core/models';
+import { GolfStatsComponent } from '../../core/golf-stats.component';
 
 @Component({
   selector: 'app-scores',
-  imports: [RouterLink, IonContent, IonRefresher, IonRefresherContent, IonButton],
+  imports: [RouterLink, IonContent, IonRefresher, IonRefresherContent, IonButton, GolfStatsComponent],
   styles: [`
     .item { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; text-decoration: none; color: inherit; }
     .score { text-align: right; flex: none; }
     .score strong { display: block; font-family: 'Fraunces Variable', serif; font-size: 26px; line-height: 1.1; }
-    .stats { display: flex; gap: 12px; margin-bottom: 16px; }
-    .stat { flex: 1; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 12px 14px; }
-    .stat strong { display: block; font-family: 'Fraunces Variable', serif; font-size: 22px; }
   `],
   template: `
     <ion-content>
@@ -23,11 +21,7 @@ import { ScorecardSummary } from '../../core/models';
         <h1 class="sr-only">{{ t('scores.title') }}</h1>
         @if (error()) { <p role="alert" style="color: #9C5428">{{ error() }}</p> }
         @if (stats().rounds18) {
-          <div class="stats">
-            <div class="stat"><span class="muted" style="font-size: 13px">{{ t('scores.rounds18') }}</span><strong>{{ stats().rounds18 }}</strong></div>
-            <div class="stat"><span class="muted" style="font-size: 13px">{{ t('scores.average') }}</span><strong>{{ stats().average }}</strong></div>
-            <div class="stat"><span class="muted" style="font-size: 13px">{{ t('scores.best') }}</span><strong>{{ stats().best }}</strong></div>
-          </div>
+          <app-golf-stats [stats]="stats()" style="margin-bottom: 16px" />
         }
         @for (s of items(); track s.id) {
           <a class="item" [routerLink]="['/scorecard', s.id]">

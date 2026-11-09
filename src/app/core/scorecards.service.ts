@@ -21,14 +21,35 @@ export function isComplete(s: ScorecardSummary): boolean {
 }
 
 /** Stats over finished 18-hole cards. average and best are null when there are none. */
+/** How many recent 18-hole rounds the trend graph shows. */
+const TREND_ROUNDS = 10;
+
+const mean = (xs: number[]) => xs.reduce((t, x) => t + x, 0) / xs.length;
+
 export function cardStats(items: ScorecardSummary[]) {
-  const done = items.filter((s) => s.holes === '18' && isComplete(s));
+  // Oldest first. history() is newest first, so reverse before the (stable) sort to keep same-day rounds in order.
+  const done = items.filter((s) => s.holes === '18' && isComplete(s))
+    .reverse()
+    .sort((a, b) => a.played_at.localeCompare(b.played_at));
+  const strokes = done.map((s) => s.strokes);
+  const best = strokes.length ? Math.min(...strokes) : null;
+  const latest = strokes.at(-1);
+  // Last few scores for the graph; trend = recent half minus earlier half (negative = scoring lower = better)
+  const recent = strokes.slice(-TREND_ROUNDS);
+  const half = Math.floor(recent.length / 2);
+  const trend = recent.length >= 2 ? mean(recent.slice(half)) - mean(recent.slice(0, half)) : null;
   return {
     rounds18: done.length,
-    average: done.length ? (done.reduce((t, s) => t + s.strokes, 0) / done.length).toFixed(1) : null,
-    best: done.length ? Math.min(...done.map((s) => s.strokes)) : null
+    average: done.length ? mean(strokes).toFixed(1) : null,
+    best,
+    /** the latest round beat every earlier one */
+    newBest: strokes.length >= 2 && latest === best && strokes.slice(0, -1).every((s) => s > latest),
+    recent,
+    trend
   };
 }
+
+export type CardStats = ReturnType<typeof cardStats>;
 
 @Injectable({ providedIn: 'root' })
 export class ScorecardsService {

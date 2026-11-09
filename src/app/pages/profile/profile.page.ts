@@ -11,11 +11,12 @@ import { FriendsService } from '../../core/friends.service';
 import { VIBES, genderKey, langKey } from '../../core/profile-options';
 import { IllustrationComponent } from '../../core/illustration.component';
 import { AvatarComponent } from '../../core/avatar.component';
+import { GolfStatsComponent } from '../../core/golf-stats.component';
 import { Friend, PlayerCard, ScorecardSummary } from '../../core/models';
 
 @Component({
   selector: 'app-profile',
-  imports: [AvatarComponent, RouterLink, IllustrationComponent, IonContent, IonButton, IonSpinner, IonIcon],
+  imports: [AvatarComponent, GolfStatsComponent, RouterLink, IllustrationComponent, IonContent, IonButton, IonSpinner, IonIcon],
   styles: [`
     .section { display: flex; flex-direction: column; gap: 8px; }
     .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; }
@@ -24,11 +25,8 @@ import { Friend, PlayerCard, ScorecardSummary } from '../../core/models';
     .facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; font-size: 15px; }
     .facts dt { color: #5F5B4E; }
     .facts dd { margin: 0; }
-    .stats { display: flex; gap: 12px; }
-    .stat { flex: 1; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 12px 14px; }
     .friends-link { flex-direction: row; justify-content: space-between; align-items: center; text-decoration: none; color: inherit; }
     .empty { align-items: center; text-align: center; gap: 8px; padding: 20px 18px; }
-    .stat strong { display: block; font-family: 'Fraunces Variable', serif; font-size: 22px; }
     .page { display: flex; flex-direction: column; gap: 24px; min-height: 100%; box-sizing: border-box; }
     .top { display: flex; justify-content: flex-end; margin: -8px -8px -16px 0; }
     .gear { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; color: #1F3532; }
@@ -76,11 +74,7 @@ import { Friend, PlayerCard, ScorecardSummary } from '../../core/models';
           <div class="section">
             <span class="label">{{ t('profile.yourGolf') }}</span>
             @if (stats().rounds18) {
-              <div class="stats">
-                <div class="stat"><span class="muted" style="font-size: 13px">{{ t('scores.rounds18') }}</span><strong>{{ stats().rounds18 }}</strong></div>
-                <div class="stat"><span class="muted" style="font-size: 13px">{{ t('scores.average') }}</span><strong>{{ stats().average }}</strong></div>
-                <div class="stat"><span class="muted" style="font-size: 13px">{{ t('scores.best') }}</span><strong>{{ stats().best }}</strong></div>
-              </div>
+              <app-golf-stats [stats]="stats()" />
               <span class="muted" style="font-size: 13px">{{ t('profile.cardsTotal', { count: cards().length }) }}</span>
             } @else {
               <div class="card empty">
