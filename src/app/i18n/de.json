@@ -515,5 +515,23 @@
   "push": {
     "channel": "Runden und Freunde",
     "channelText": "Beitrittsanfragen, Spieler, die beitreten oder gehen, Erinnerungen an Runden und Freundschaftsanfragen"
+  },
+  "format": {
+    "label": "Spielform",
+    "any": "Alle Spielformen",
+    "casual": "Einfach spielen",
+    "strokeplay": "Zählspiel",
+    "stableford": "Stableford",
+    "match_play": "Lochspiel",
+    "best_ball": "Bestball",
+    "scramble": "Scramble",
+    "hint": {
+      "casual": "Keine feste Spielform: Jeder spielt seinen eigenen Ball.",
+      "strokeplay": "Jeder Schlag zählt. Die niedrigste Summe gewinnt.",
+      "stableford": "Punkte pro Loch, mit deinem Handicap.",
+      "match_play": "Löcher gewinnen, nicht Schläge zählen.",
+      "best_ball": "Zweierteams: Das bessere Ergebnis pro Loch zählt.",
+      "scramble": "Alle schlagen ab, das Team spielt vom besten Ball weiter."
+    }
   }
 }

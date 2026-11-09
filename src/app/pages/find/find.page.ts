@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { I18nService } from '../../core/i18n.service';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
+import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 import { addIcons } from 'ionicons';
 import { locate, home } from 'ionicons/icons';
 import { RoundsService } from '../../core/rounds.service';
@@ -33,7 +34,7 @@ const MY_LOCATION = '@me';
 
 @Component({
   selector: 'app-find',
-  imports: [RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon],
+  imports: [RouterLink, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
   styles: [`
     .find { display: flex; flex-direction: column; gap: 28px; }
     .filters { background: #ECE8DA; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -51,6 +52,8 @@ const MY_LOCATION = '@me';
     .home-chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; max-width: 100%; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #2E5F5A; font: 600 13px 'Work Sans', sans-serif; }
     .home-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .course-opt { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid #EFEAD9; background: #fff; font-family: inherit; color: #1F3532; }
+    .format-select { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font-weight: 600; font-size: 14px; }
+    .format-pill { background: #F3E4D6; color: #7A4220; }
     .result { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; }
   `],
   template: `
@@ -110,6 +113,16 @@ const MY_LOCATION = '@me';
               }
             </div>
           </div>
+          <div class="group">
+            <span class="group-label" id="format-label">{{ t('format.label') }}</span>
+            <ion-select class="format-select" interface="action-sheet" aria-labelledby="format-label"
+                        [value]="format() ?? 'any'" [cancelText]="t('common.cancel')" (ionChange)="setFormat($event)">
+              <ion-select-option value="any">{{ t('format.any') }}</ion-select-option>
+              @for (f of formats; track f) {
+                <ion-select-option [value]="f">{{ t('format.' + f) }}</ion-select-option>
+              }
+            </ion-select>
+          </div>
         </section>
 
         <section aria-labelledby="results-title">
@@ -126,7 +139,10 @@ const MY_LOCATION = '@me';
           @for (r of results(); track r.round_id) {
             <a class="result" [routerLink]="['/round', r.round_id]">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px">
-                <span class="pill">{{ t('home.spotsLeft', { count: r.spots_left }) }}</span>
+                <span style="display: flex; gap: 6px; flex-wrap: wrap">
+                  <span class="pill">{{ t('home.spotsLeft', { count: r.spots_left }) }}</span>
+                  @if (r.format && r.format !== 'casual') { <span class="pill format-pill">{{ t('format.' + r.format) }}</span> }
+                </span>
                 @if (r.distance_km !== null) { <span class="muted" style="font-size: 13px">{{ t('find.kmAway', { km: r.distance_km }) }}</span> }
               </div>
               <h3 style="margin: 0 0 6px; font-size: 18px">{{ r.course_name }}</h3>
@@ -168,6 +184,8 @@ export class FindPage {
   mode = signal<Mode>('near');
   radius = signal(25);
   when = signal<When>('any');
+  readonly formats = ROUND_FORMATS;
+  format = signal<RoundFormat | null>(null);
   centre = signal<Position | null>(null);
   centreName = signal('');
   course = signal<Course | null>(null);
@@ -235,6 +253,11 @@ export class FindPage {
   }
   setRadius(r: number) { this.radius.set(r); this.load(); }
   setWhen(w: When) { this.when.set(w); this.load(); }
+  setFormat(ev: Event) {
+    const v = (ev as CustomEvent).detail.value as RoundFormat | 'any';
+    this.format.set(v === 'any' ? null : v);
+    this.load();
+  }
 
   async searchCourse(ev: Event) {
     const q = (ev as CustomEvent).detail?.value ?? '';
@@ -264,7 +287,8 @@ export class FindPage {
           radiusKm: byCourse ? 1 : this.radius(),
           courseId: byCourse ? this.course()!.id : null,
           from: range?.from ?? null,
-          to: range?.to ?? null
+          to: range?.to ?? null,
+          format: this.format()
         })
       );
     } catch (e: any) {

@@ -515,5 +515,23 @@
   "push": {
     "channel": "Rounds and friends",
     "channelText": "Join requests, players joining or leaving, round reminders and friend requests"
+  },
+  "format": {
+    "label": "Format",
+    "any": "Any format",
+    "casual": "Just playing",
+    "strokeplay": "Strokeplay",
+    "stableford": "Stableford",
+    "match_play": "Match play",
+    "best_ball": "Best ball",
+    "scramble": "Scramble",
+    "hint": {
+      "casual": "No set format: everyone plays their own ball.",
+      "strokeplay": "Every shot counts. Lowest total wins.",
+      "stableford": "Points on each hole, using your handicap.",
+      "match_play": "Win holes, not strokes.",
+      "best_ball": "Teams of two: the better score on each hole counts.",
+      "scramble": "Everyone tees off, the team plays from the best shot."
+    }
   }
 }

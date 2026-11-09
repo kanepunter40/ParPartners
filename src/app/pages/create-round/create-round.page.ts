@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner } from '@ionic/angular/standalone';
 import { RoundsService } from '../../core/rounds.service';
 import { Course } from '../../core/models';
+import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 
 @Component({
   selector: 'app-create-round',
@@ -15,6 +16,9 @@ import { Course } from '../../core/models';
     .opt small { color: #5F5B4E; }
     .stepper { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #D9D2BA; border-radius: 12px; padding: 6px 8px; }
     .stepper button { width: 44px; height: 44px; border-radius: 999px; border: 1px solid #D9D2BA; background: #F4F1E8; font-size: 20px; color: #1F3532; }
+    .formats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+    .fmt { min-height: 44px; padding: 0 6px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
+    .fmt.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
     .sug { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid #EFEAD9; background: #fff; font-family: inherit; color: #1F3532; }
   `],
   template: `
@@ -54,6 +58,16 @@ import { Course } from '../../core/models';
         </div>
 
         <div>
+          <strong id="fmt">{{ t('format.label') }}</strong>
+          <div class="formats" role="radiogroup" aria-labelledby="fmt">
+            @for (f of formats; track f) {
+              <button type="button" class="fmt" role="radio" [class.on]="format() === f" [attr.aria-checked]="format() === f" (click)="format.set(f)">{{ t('format.' + f) }}</button>
+            }
+          </div>
+          <small class="muted" style="display: block; margin-top: 8px" aria-live="polite">{{ t('format.hint.' + format()) }}</small>
+        </div>
+
+        <div>
           <strong id="vis">{{ t('create.whoJoin') }}</strong>
           <div role="group" aria-labelledby="vis" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px">
             <button type="button" class="opt" [class.on]="visibility() === 'nearby'" [attr.aria-pressed]="visibility() === 'nearby'" (click)="visibility.set('nearby')">
@@ -90,6 +104,8 @@ export class CreateRoundPage {
   suggestions = signal<Course[]>([]);
   players = signal(4);
   visibility = signal<'nearby' | 'invite_only'>('nearby');
+  readonly formats = ROUND_FORMATS;
+  format = signal<RoundFormat>('casual');
   notes = '';
   busy = signal(false);
   error = signal('');
@@ -125,7 +141,8 @@ export class CreateRoundPage {
         tee_time: new Date(this.teeTime).toISOString(),
         max_players: this.players(),
         visibility: this.visibility(),
-        notes: this.notes.trim() || null
+        notes: this.notes.trim() || null,
+        format: this.format()
       });
       await this.router.navigate(['/round', id], { replaceUrl: true });
     } catch (e: any) {

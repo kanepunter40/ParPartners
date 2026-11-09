@@ -31,6 +31,10 @@ import { PlayerMenuComponent } from '../../core/player-menu.component';
             <div style="font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em">{{ isHost() ? t('rounds.hostedByYou') : t('home.hostedBy', { name: r.host.display_name }) }}</div>
             <h2 style="font-size: 26px; margin: 6px 0">{{ r.courses.name }}</h2>
             <div class="muted">{{ i18n.date(r.tee_time, 'longDayTime') }}</div>
+            <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 10px">
+              <span class="pill" style="background: #F3E4D6; color: #7A4220">{{ t('format.' + (r.format || 'casual')) }}</span>
+              <span class="muted" style="font-size: 13px">{{ t('format.hint.' + (r.format || 'casual')) }}</span>
+            </div>
           </div>
 
           <div>

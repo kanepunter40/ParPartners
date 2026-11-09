@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { Course, MyRound, PlayerStatus, RoundDetail, RoundResult } from './models';
+import { RoundFormat } from './round-format';
 
 export interface FindParams {
   lat?: number | null;
@@ -9,6 +10,8 @@ export interface FindParams {
   courseId?: string | null;
   from?: Date | null;
   to?: Date | null;
+  /** Only rounds in this format; null for any. */
+  format?: RoundFormat | null;
 }
 
 export interface NewRound {
@@ -17,6 +20,7 @@ export interface NewRound {
   max_players: number;
   visibility: 'nearby' | 'invite_only';
   notes: string | null;
+  format: RoundFormat;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -30,7 +34,8 @@ export class RoundsService {
       p_radius_km: p.radiusKm ?? 25,
       p_course_id: p.courseId ?? null,
       p_from: (p.from ?? new Date()).toISOString(),
-      p_to: p.to ? p.to.toISOString() : null
+      p_to: p.to ? p.to.toISOString() : null,
+      p_format: p.format ?? null
     });
     if (error) throw error;
     return data as RoundResult[];
@@ -67,7 +72,7 @@ export class RoundsService {
     const { data, error } = await this.sb.client
       .from('rounds')
       .select(
-        `id, host_id, tee_time, max_players, visibility, notes, invite_code, status,
+        `id, host_id, tee_time, max_players, visibility, notes, invite_code, status, format,
          courses(name, city),
          host:profiles!rounds_host_id_fkey(display_name, avatar_url, handicap_index),
          round_players(player_id, status, profiles(display_name, avatar_url, handicap_index))`

@@ -1,3 +1,4 @@
+import { RoundFormat } from './round-format';
 export interface Course {
   id: string;
   name: string;
@@ -18,6 +19,7 @@ export interface RoundResult {
   host_id: string;
   host_name: string;
   host_handicap: number | null;
+  format: RoundFormat;
 }
 
 export type PlayerStatus = 'host' | 'confirmed' | 'requested' | 'declined' | 'withdrawn';
@@ -31,6 +33,7 @@ export interface RoundDetail {
   notes: string | null;
   invite_code: string;
   status: 'open' | 'full' | 'cancelled' | 'played';
+  format: RoundFormat;
   courses: { name: string; city: string | null };
   host: { display_name: string; avatar_url: string | null; handicap_index: number | null };
   round_players: { player_id: string; status: PlayerStatus; profiles: { display_name: string; avatar_url: string | null; handicap_index: number | null } }[];
