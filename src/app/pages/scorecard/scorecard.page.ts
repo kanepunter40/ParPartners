@@ -19,6 +19,7 @@ const POLL_MS = 20_000;
     .hole-no { font-family: 'Fraunces Variable', serif; font-size: 44px; line-height: 1; margin: 0; }
     .par-btn { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; font: inherit; font-weight: 600; color: #1F3532; }
     .par-btn.unknown { border-style: dashed; color: #5F5B4E; }
+    .par-btn:disabled { opacity: 1; border-color: transparent; background: transparent; }
     .pars { display: flex; gap: 8px; }
     .pars button { flex: 1; min-height: 48px; border-radius: 12px; border: 1px solid #D9D2BA; background: #fff; font: inherit; font-weight: 600; color: #1F3532; }
     .pars button[aria-pressed="true"] { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
@@ -76,7 +77,7 @@ const POLL_MS = 20_000;
                 <div class="muted" style="font-size: 13px">{{ t('card.nOfM', { n: holeIndex() + 1, m: holes().length }) }}</div>
                 <h2 class="hole-no" aria-live="polite">{{ t('card.hole', { n: hole() }) }}</h2>
               </div>
-              <button type="button" class="par-btn" [class.unknown]="!parKnown(hole())" [attr.aria-expanded]="editingPar()" (click)="editingPar.set(!editingPar())">
+              <button type="button" class="par-btn" [class.unknown]="!parKnown(hole())" [disabled]="parLocked(hole())" [attr.aria-expanded]="parLocked(hole()) ? null : editingPar()" (click)="editingPar.set(!editingPar())">
                 {{ t('card.par', { par: par(hole()) }) }}{{ parKnown(hole()) ? '' : '?' }}
               </button>
             </div>
@@ -214,6 +215,8 @@ export class ScorecardPage {
   confirmDelete = signal(false);
   /** Known pars by course hole number. */
   private pars = signal(new Map<number, number>());
+  /** Course holes whose par comes from the course data and can't be changed. */
+  private lockedPars = signal(new Set<number>());
   /** Strokes by `${scorecardPlayerId}:${hole}`, including unsaved local entries. */
   private scores = signal(new Map<string, number>());
   /** Entries not yet saved to the server (null = clear the hole). Also kept in localStorage. */
@@ -250,7 +253,11 @@ export class ScorecardPage {
   private async load(first: boolean) {
     try {
       const card = await this.scorecards.get(this.id());
-      if (first) this.pars.set(await this.scorecards.pars(card.course_id));
+      if (first) {
+        const known = await this.scorecards.pars(card.course_id);
+        this.pars.set(known.pars);
+        this.lockedPars.set(known.locked);
+      }
       const map = new Map<string, number>();
       for (const p of card.scorecard_players) for (const s of p.scores) map.set(`${p.id}:${s.hole}`, s.strokes);
       for (const [key, value] of this.pending) value === null ? map.delete(key) : map.set(key, value);
@@ -281,6 +288,9 @@ export class ScorecardPage {
   }
   par(h: number) {
     return this.pars().get(this.parKey(h)) ?? DEFAULT_PAR;
+  }
+  parLocked(h: number) {
+    return this.lockedPars().has(this.parKey(h));
   }
   parSum(from: number, to: number) {
     return this.holes().filter((h) => h >= from && h <= to).reduce((t, h) => t + this.par(h), 0);

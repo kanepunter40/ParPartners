@@ -522,7 +522,11 @@
     "freeDay": "Pick a day in the next 30 days.",
     "freeLimit": "You can have up to 10 days posted.",
     "tooManyInvites": "You've sent a lot of invites today. Try again tomorrow.",
-    "slowDown": "Slow down a little before sending more."
+    "slowDown": "Slow down a little before sending more.",
+    "teeFuture": "Pick a tee time in the future.",
+    "teeYear": "Pick a tee time within the next year.",
+    "tooManyRounds": "You've posted 10 rounds today. Try again tomorrow.",
+    "parLocked": "This par comes from the course data and can't be changed."
   },
   "safety": {
     "optionsFor": "More options for {name}",

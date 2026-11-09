@@ -37,6 +37,10 @@ const SERVER_ERRORS: [RegExp, string][] = [
   [/up to 10 days/i, 'server.freeLimit'],
   [/too many invites/i, 'server.tooManyInvites'],
   [/slow down/i, 'server.slowDown'],
+  [/tee time in the future/i, 'server.teeFuture'],
+  [/within the next year/i, 'server.teeYear'],
+  [/too many rounds today/i, 'server.tooManyRounds'],
+  [/comes from the course data/i, 'server.parLocked'],
   [/failed to fetch|network ?error|load failed/i, 'server.offline'],
 ];
 

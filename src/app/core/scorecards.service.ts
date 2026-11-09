@@ -83,11 +83,15 @@ export class ScorecardsService {
     return data as unknown as Scorecard;
   }
 
-  /** Known pars for a course, by hole number. */
-  async pars(courseId: string): Promise<Map<number, number>> {
-    const { data, error } = await this.sb.client.from('course_holes').select('hole, par').eq('course_id', courseId);
+  /** Known pars for a course, by hole number. `locked`: holes whose par comes from the course data (players can't change it). */
+  async pars(courseId: string): Promise<{ pars: Map<number, number>; locked: Set<number> }> {
+    const { data, error } = await this.sb.client.from('course_holes').select('hole, par, source').eq('course_id', courseId);
     if (error) throw error;
-    return new Map((data ?? []).map((h) => [h.hole, h.par]));
+    const rows = data ?? [];
+    return {
+      pars: new Map(rows.map((h) => [h.hole, h.par])),
+      locked: new Set(rows.filter((h) => h.source === 'osm').map((h) => h.hole))
+    };
   }
 
   /** strokes = null clears the hole. */

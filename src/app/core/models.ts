@@ -32,7 +32,6 @@ export interface RoundDetail {
   max_players: number;
   visibility: 'nearby' | 'invite_only';
   notes: string | null;
-  invite_code: string;
   status: 'open' | 'full' | 'cancelled' | 'played';
   format: RoundFormat;
   courses: { id: string; name: string; city: string | null };

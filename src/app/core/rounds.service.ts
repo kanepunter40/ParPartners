@@ -72,7 +72,7 @@ export class RoundsService {
     const { data, error } = await this.sb.client
       .from('rounds')
       .select(
-        `id, host_id, tee_time, max_players, visibility, notes, invite_code, status, format,
+        `id, host_id, tee_time, max_players, visibility, notes, status, format,
          courses(id, name, city),
          host:profiles!rounds_host_id_fkey(display_name, avatar_url, handicap_index),
          round_players(player_id, status, created_at, profiles(display_name, avatar_url, handicap_index))`
@@ -151,6 +151,13 @@ export class RoundsService {
       .order('tee_time');
     if (error) throw error;
     return (data as any[]).map((r) => ({ id: r.id, tee_time: r.tee_time, course_name: r.courses.name }));
+  }
+
+  /** The invite code for the share link; null if I can't share this round. (Not readable from rounds directly.) */
+  async inviteCode(roundId: string): Promise<string | null> {
+    const { data, error } = await this.sb.client.rpc('round_invite_code', { p_round_id: roundId });
+    if (error) throw error;
+    return (data as string | null) ?? null;
   }
 
   /** Returns the round id. */

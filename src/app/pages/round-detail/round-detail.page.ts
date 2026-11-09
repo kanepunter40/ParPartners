@@ -307,7 +307,15 @@ export class RoundDetailPage {
   async share() {
     const r = this.round();
     if (!r) return;
-    const url = `${window.location.origin}/join/${r.invite_code}`;
+    let code: string | null;
+    try {
+      code = await this.rounds.inviteCode(r.id);
+    } catch (e: any) {
+      this.error.set(this.i18n.error(e, 'common.error'));
+      return;
+    }
+    if (!code) return;
+    const url = `${window.location.origin}/join/${code}`;
     if (navigator.share) {
       await navigator.share({ title: this.t('round.shareTitle'), text: this.t('round.shareText', { course: r.courses.name }), url }).catch(() => {});
     } else {

@@ -522,7 +522,11 @@
     "freeDay": "Wähl einen Tag in den nächsten 30 Tagen.",
     "freeLimit": "Du kannst bis zu 10 Tage eingestellt haben.",
     "tooManyInvites": "Du hast heute viele Einladungen verschickt. Versuch es morgen wieder.",
-    "slowDown": "Warte kurz, bevor du mehr sendest."
+    "slowDown": "Warte kurz, bevor du mehr sendest.",
+    "teeFuture": "Wähl eine Abschlagszeit in der Zukunft.",
+    "teeYear": "Wähl eine Abschlagszeit innerhalb des nächsten Jahres.",
+    "tooManyRounds": "Du hast heute schon 10 Runden eingestellt. Versuch es morgen wieder.",
+    "parLocked": "Dieses Par stammt aus den Platzdaten und kann nicht geändert werden."
   },
   "safety": {
     "optionsFor": "Weitere Optionen für {name}",
