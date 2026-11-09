@@ -75,3 +75,6 @@ HANDOFF.md
 RENAME.md
 .claude/
 .mcp.json
+
+# Phone test screenshots
+/e2e/phone/results

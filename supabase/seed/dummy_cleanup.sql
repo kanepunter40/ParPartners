@@ -5,6 +5,7 @@ delete from notifications
 where actor_id::text like 'd0000000-%' or round_id::text like 'd1000000-%';
 delete from scorecards where id::text like 'd2000000-%';
 delete from rounds where id::text like 'd1000000-%';   -- includes Kane's test round at Nippenburg; chats go with the rounds
+delete from rounds where notes like 'Automated phone test%';  -- cancelled rounds left by npm run test:phone
 delete from search_alerts where id::text like 'd3000000-%';  -- Kane's test alerts
 delete from availability where id::text like 'd5000000-%';   -- Kane's test "I'm free" post
 -- Profiles, friendships, round places, "I'm free" posts and the rest go with the users (on delete cascade)
