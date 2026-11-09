@@ -23,6 +23,10 @@ import { GolfStatsComponent } from '../../core/golf-stats.component';
         @if (stats().rounds18) {
           <app-golf-stats [stats]="stats()" style="margin-bottom: 16px" />
         }
+        <!-- At the top, so it doesn't end up below a long list of cards -->
+        @if (items().length) {
+          <ion-button fill="outline" expand="block" routerLink="/scorecard/new" style="margin: 0 0 16px">{{ t('scores.start') }}</ion-button>
+        }
         @for (s of items(); track s.id) {
           <a class="item" [routerLink]="['/scorecard', s.id]">
             <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
@@ -46,9 +50,6 @@ import { GolfStatsComponent } from '../../core/golf-stats.component';
               <ion-button routerLink="/scorecard/new">{{ t('scores.start') }}</ion-button>
             </div>
           }
-        }
-        @if (items().length) {
-          <ion-button fill="outline" expand="block" routerLink="/scorecard/new" style="margin-top: 4px">{{ t('scores.start') }}</ion-button>
         }
       </div>
     </ion-content>
