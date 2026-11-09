@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { I18nService } from '../../core/i18n.service';
+import { PushService } from '../../core/push.service';
 import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { homeOutline, calendarOutline, searchOutline, golfOutline, personOutline } from 'ionicons/icons';
@@ -24,5 +25,7 @@ export class TabsPage {
 
   constructor() {
     addIcons({ homeOutline, calendarOutline, searchOutline, golfOutline, personOutline });
+    // Signed in and onboarded by now (route guards): set up push, asking for permission the first time
+    inject(PushService).start();
   }
 }

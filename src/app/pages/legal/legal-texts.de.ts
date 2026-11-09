@@ -19,7 +19,9 @@ export const PRIVACY_DE: LegalDoc = {
         'Dein Konto: deine E-Mail-Adresse und, falls du eins nutzt, dein Passwort (nur als sicherer Hash gespeichert). Wenn du dich mit Google anmeldest, erhalten wir deinen Namen und deine E-Mail-Adresse von Google.',
         'Dein Profil: Name, Foto (freiwillig), Heimatplatz, Handicap, Sprachen, wann du gern spielst, Rundenlänge und wie ehrgeizig du spielst. Geburtsjahr und Geschlecht sind freiwillig.',
         'Was du in der App tust: Runden, die du einstellst oder denen du beitrittst, Beitrittsanfragen, Scorekarten und Ergebnisse, Freunde und Freundschaftsanfragen sowie die Mitteilungen, die wir dir schicken.',
-        'Gäste: Wenn du jemanden ohne PARtners-Konto auf eine Scorekarte setzt, speichern wir den eingegebenen Namen und die Ergebnisse. Füge nur Leute hinzu, die damit einverstanden sind.'
+        'Gäste: Wenn du jemanden ohne PARtners-Konto auf eine Scorekarte setzt, speichern wir den eingegebenen Namen und die Ergebnisse. Füge nur Leute hinzu, die damit einverstanden sind.',
+        'Sicherheit: Spieler, die du blockierst, und Meldungen, die du sendest. Wenn dich jemand meldet, speichern wir die Meldung und den angegebenen Grund. Wir nutzen Meldungen nur, um PARtners sicher zu halten; die gemeldete Person erfährt nie, wer sie gemeldet hat.',
+        'Push-Mitteilungen: Wenn du sie erlaubst, ein Token, das dein Handy beim Benachrichtigungsdienst kennzeichnet, und deine App-Sprache.'
       ]
     },
     {
@@ -52,6 +54,7 @@ export const PRIVACY_DE: LegalDoc = {
       body: [
         'Supabase (Supabase Inc., USA) speichert die Daten, Fotos und Konten der App auf Servern in Frankfurt am Main. Supabase arbeitet für uns auf Grundlage eines Auftragsverarbeitungsvertrags (Art. 28 DSGVO). Da Supabase ein US-Unternehmen ist, könnten Mitarbeitende in seltenen Fällen von außerhalb der EU auf Daten zugreifen; dafür gelten die EU-Standardvertragsklauseln.',
         'Google (Google Ireland Ltd. und Google LLC, USA): Wenn du „Weiter mit Google“ wählst, übernimmt Google die Anmeldung. Anmelde- und Bestätigungs-E-Mails werden derzeit über ein Gmail-Konto verschickt; Google verarbeitet dabei deine E-Mail-Adresse und den Inhalt der E-Mail. Übermittlungen an Google LLC sind durch das EU-US Data Privacy Framework abgedeckt.',
+        'Firebase Cloud Messaging (Google) stellt Push-Mitteilungen auf Android-Handys zu. Dabei erhält der Dienst das Token deines Handys und den Text jeder Mitteilung (zum Beispiel „Lena ist deiner Runde beigetreten“). Du kannst Mitteilungen jederzeit in den Einstellungen deines Handys ausschalten.',
         'Namen und Lage der Golfplätze stammen von OpenStreetMap. An OpenStreetMap werden keine personenbezogenen Daten übermittelt.',
         'Wir verkaufen deine Daten nicht und geben sie an niemanden sonst weiter, außer wenn das Gesetz es verlangt.'
       ]

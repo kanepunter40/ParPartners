@@ -19,6 +19,7 @@ export const routes: Routes = [
   },
   { path: 'friends', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/friends/friends.page').then((m) => m.FriendsPage) },
   { path: 'settings', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/settings/settings.page').then((m) => m.SettingsPage) },
+  { path: 'settings/blocked', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/blocked/blocked.page').then((m) => m.BlockedPage) },
   { path: 'legal/:doc', loadComponent: () => import('./pages/legal/legal.page').then((m) => m.LegalPage) },
   { path: 'profile/edit', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/profile-edit/profile-edit.page').then((m) => m.ProfileEditPage) },
   { path: 'create', canActivate: [authGuard, onboardedGuard], loadComponent: () => import('./pages/create-round/create-round.page').then((m) => m.CreateRoundPage) },

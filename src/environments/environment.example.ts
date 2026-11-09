@@ -5,5 +5,7 @@ export const environment = {
   supabaseAnonKey: 'sb_publishable_...',
   // Google Cloud > Credentials > OAuth client ID of type "Web application" (also used by the Android app).
   // Until it's filled in, the Google button says Google sign-in isn't set up yet.
-  googleWebClientId: ''
+  googleWebClientId: '',
+  // Turn on once android/app/google-services.json is in place (Firebase). Without it, registering for push crashes the Android app.
+  pushEnabled: false
 };

@@ -54,18 +54,11 @@ export class FriendsService {
     return new Map((data ?? []).map((r) => [r.requester_id === me ? r.addressee_id : r.requester_id, this.statusOf(r, me)]));
   }
 
-  /** Players by name, not including me. */
+  /** Players by name, not including me or anyone blocked either way. */
   async search(query: string): Promise<{ id: string; display_name: string; avatar_url: string | null; handicap_index: number | null }[]> {
-    const q = query.trim().replace(/[%_\,()]/g, '');
+    const q = query.trim();
     if (q.length < 2) return [];
-    const { data, error } = await this.sb.client
-      .from('profiles')
-      .select('id, display_name, avatar_url, handicap_index')
-      .ilike('display_name', `%${q}%`)
-      .neq('id', this.sb.userId)
-      .eq('onboarded', true)
-      .order('display_name')
-      .limit(20);
+    const { data, error } = await this.sb.client.rpc('search_players', { p_query: q });
     if (error) throw error;
     return data ?? [];
   }

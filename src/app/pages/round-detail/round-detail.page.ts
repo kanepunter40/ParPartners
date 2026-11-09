@@ -7,10 +7,11 @@ import { SupabaseService } from '../../core/supabase.service';
 import { FriendsService } from '../../core/friends.service';
 import { FriendStatus, RoundDetail } from '../../core/models';
 import { AvatarComponent } from '../../core/avatar.component';
+import { PlayerMenuComponent } from '../../core/player-menu.component';
 
 @Component({
   selector: 'app-round-detail',
-  imports: [AvatarComponent, RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner],
+  imports: [AvatarComponent, PlayerMenuComponent, RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner],
   styles: [`
     .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
     .player { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 6px 16px; border-bottom: 1px solid #EFEAD9; }
@@ -50,6 +51,7 @@ import { AvatarComponent } from '../../core/avatar.component';
                         @case ('incoming') { <ion-button size="small" fill="outline" [disabled]="busy()" (click)="addFriend(p.player_id)" [attr.aria-label]="t('round.acceptFrom', { name: p.profiles.display_name })">{{ t('friends.accept') }}</ion-button> }
                         @default { <ion-button size="small" fill="outline" [disabled]="busy()" (click)="addFriend(p.player_id)" [attr.aria-label]="t('round.addAs', { name: p.profiles.display_name })">{{ t('round.addFriend') }}</ion-button> }
                       }
+                      <app-player-menu [playerId]="p.player_id" [name]="p.profiles.display_name" [roundId]="r.id" (blocked)="load()" style="margin-right: -10px" />
                     }
                   </span>
                 </div>

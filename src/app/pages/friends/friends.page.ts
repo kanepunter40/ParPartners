@@ -3,11 +3,12 @@ import { I18nService } from '../../core/i18n.service';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonSpinner } from '@ionic/angular/standalone';
 import { FriendsService } from '../../core/friends.service';
 import { AvatarComponent } from '../../core/avatar.component';
+import { PlayerMenuComponent } from '../../core/player-menu.component';
 import { Friend, FriendStatus } from '../../core/models';
 
 @Component({
   selector: 'app-friends',
-  imports: [AvatarComponent, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonSpinner],
+  imports: [AvatarComponent, PlayerMenuComponent, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonSpinner],
   styles: [`
     .wrap { display: flex; flex-direction: column; gap: 24px; }
     .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; display: block; }
@@ -44,6 +45,7 @@ import { Friend, FriendStatus } from '../../core/models';
                       @case ('incoming') { <ion-button size="small" [disabled]="busy() === p.id" (click)="respond(p.id, true)">{{ t('friends.accept') }}</ion-button> }
                       @default { <ion-button size="small" fill="outline" [disabled]="busy() === p.id" (click)="add(p.id)">{{ t('friends.add') }}</ion-button> }
                     }
+                    <app-player-menu [playerId]="p.id" [name]="p.display_name" (blocked)="afterBlock(p.id)" />
                   </span>
                 </div>
               } @empty {
@@ -66,6 +68,7 @@ import { Friend, FriendStatus } from '../../core/models';
                   <span class="actions">
                     <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="respond(f.id, false)">{{ t('friends.decline') }}</ion-button>
                     <ion-button size="small" [disabled]="busy() === f.id" (click)="respond(f.id, true)">{{ t('friends.accept') }}</ion-button>
+                    <app-player-menu [playerId]="f.id" [name]="f.display_name" (blocked)="afterBlock(f.id)" />
                   </span>
                 </div>
               }
@@ -86,6 +89,7 @@ import { Friend, FriendStatus } from '../../core/models';
                     <ion-button size="small" fill="clear" color="medium" [disabled]="busy() === f.id" (click)="remove(f)">
                       {{ confirmRemove() === f.id ? t('friends.tapConfirm') : t('friends.remove') }}
                     </ion-button>
+                    <app-player-menu [playerId]="f.id" [name]="f.display_name" (blocked)="afterBlock(f.id)" />
                   </div>
                 }
               </div>
@@ -176,6 +180,12 @@ export class FriendsPage {
     } finally {
       this.busy.set(null);
     }
+  }
+
+  /** A blocked player drops out of the lists and the search results. */
+  afterBlock(id: string) {
+    this.results.update((r) => r.filter((p) => p.id !== id));
+    return this.load();
   }
 
   add(id: string) { return this.run(id, () => this.friendsService.add(id)); }

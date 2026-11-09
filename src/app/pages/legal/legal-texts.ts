@@ -29,7 +29,9 @@ export const PRIVACY: LegalDoc = {
         'Your account: your email address and, if you use one, your password (stored only as a secure hash). If you sign in with Google, we receive your name and email address from Google.',
         'Your profile: name, photo (optional), home course, handicap, languages, when you like to play, round length and how competitive you are. Year of birth and gender are optional.',
         'What you do in the app: rounds you post or join, requests to join, scorecards and scores, friends and friend requests, and the notifications we send you.',
-        'Guests: if you add someone to a scorecard who isn’t on PARtners, we store the name you type for them and their scores. Only add people who are happy with that.'
+        'Guests: if you add someone to a scorecard who isn’t on PARtners, we store the name you type for them and their scores. Only add people who are happy with that.',
+        'Safety: players you block, and reports you send. If someone reports you, we store the report and the reason they gave. We use reports only to keep PARtners safe, and the person reported never sees who reported them.',
+        'Push notifications: if you allow them, a token that identifies your phone to the notification service, and your app language.'
       ]
     },
     {
@@ -62,6 +64,7 @@ export const PRIVACY: LegalDoc = {
       body: [
         'Supabase (Supabase Inc., USA) stores the app’s data, photos and accounts on servers in Frankfurt, Germany. Supabase works for us under a data processing agreement (GDPR Article 28). Because Supabase is a US company, staff there could in rare cases access data from outside the EU; this is covered by the EU Standard Contractual Clauses.',
         'Google (Google Ireland Ltd. and Google LLC, USA): if you choose "Continue with Google", Google handles that sign-in. Sign-in and confirmation emails are currently sent through a Gmail account, so Google processes your email address and the email’s content. Transfers to Google LLC are covered by the EU–US Data Privacy Framework.',
+        'Firebase Cloud Messaging (Google) delivers push notifications to Android phones. It receives your phone’s token and the text of each notification (for example "Lena joined your round"). You can turn notifications off at any time in your phone’s settings.',
         'Golf course names and locations come from OpenStreetMap. No personal data is sent to OpenStreetMap.',
         'We don’t sell your data or share it with anyone else, unless the law requires us to.'
       ]

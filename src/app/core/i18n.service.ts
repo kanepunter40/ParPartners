@@ -30,7 +30,8 @@ const SERVER_ERRORS: [RegExp, string][] = [
   [/scorecard not found/i, 'server.cardNotFound'],
   [/start a scorecard on this course/i, 'server.cardFirst'],
   [/already started/i, 'server.started'],
-  [/add yourself/i, 'server.self'],
+  [/(add|block|report) yourself/i, 'server.self'],
+  [/too many reports/i, 'server.tooManyReports'],
   [/failed to fetch|network ?error|load failed/i, 'server.offline'],
 ];
 

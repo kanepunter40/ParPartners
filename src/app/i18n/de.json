@@ -126,7 +126,8 @@
       "friend_request": "{who} hat dir eine Freundschaftsanfrage geschickt",
       "friend_accepted": "{who} hat deine Freundschaftsanfrage angenommen",
       "host_handover": "Der Gastgeber hat PARtners verlassen. Du bist jetzt Gastgeber dieser Runde",
-      "other": "Neuigkeit zu einer Runde"
+      "other": "Neuigkeit zu einer Runde",
+      "round_reminder": "Erinnerung: Deine Runde steht bald an"
     }
   },
   "rounds": {
@@ -477,6 +478,41 @@
     "cardFirst": "Starte zuerst eine Scorekarte auf diesem Platz.",
     "started": "Diese Runde hat schon begonnen.",
     "self": "Du kannst dich nicht selbst hinzufügen.",
-    "offline": "Keine Verbindung. Prüf deinen Empfang und versuch es noch einmal."
+    "offline": "Keine Verbindung. Prüf deinen Empfang und versuch es noch einmal.",
+    "tooManyReports": "Du hast heute schon viele Meldungen gesendet. Bitte schreib uns stattdessen eine E-Mail."
+  },
+  "safety": {
+    "optionsFor": "Weitere Optionen für {name}",
+    "report": "Melden",
+    "block": "Blockieren",
+    "whyReport": "Warum meldest du {name}?",
+    "reason": {
+      "harassment": "Belästigung oder Drohungen",
+      "no_show": "Ist nicht erschienen",
+      "fake": "Fake-Profil oder falsche Identität",
+      "inappropriate": "Unangemessenes Foto oder Name",
+      "other": "Etwas anderes"
+    },
+    "reportTitle": "{name} melden",
+    "reportDetails": "Möchtest du noch etwas ergänzen? Das ist freiwillig. {name} sieht deine Meldung nicht.",
+    "detailsPlaceholder": "Was ist passiert",
+    "send": "Meldung senden",
+    "thanks": "Danke für deine Meldung",
+    "thanksText": "Wir prüfen jede Meldung und reagieren innerhalb von 24 Stunden. Möchtest du {name} auch blockieren?",
+    "notNow": "Jetzt nicht",
+    "blockTitle": "{name} blockieren?",
+    "blockText": "Ihr seht eure Runden gegenseitig nicht mehr und könnt ihnen nicht beitreten, und die Person kann dich nicht als Freund hinzufügen. Ist sie in einer Runde, die du organisierst, wird sie entfernt. Sie erfährt nichts davon.",
+    "blocked": "{name} ist blockiert",
+    "blockError": "Spieler konnte nicht blockiert werden.",
+    "reportError": "Meldung konnte nicht gesendet werden.",
+    "blockedTitle": "Blockierte Spieler",
+    "blockedIntro": "Blockierte Spieler sehen deine Runden nicht, können ihnen nicht beitreten und dich nicht als Freund hinzufügen. Du siehst ihre Runden auch nicht.",
+    "noneBlocked": "Du hast niemanden blockiert.",
+    "unblock": "Freigeben",
+    "unblockName": "{name} freigeben"
+  },
+  "push": {
+    "channel": "Runden und Freunde",
+    "channelText": "Beitrittsanfragen, Spieler, die beitreten oder gehen, Erinnerungen an Runden und Freundschaftsanfragen"
   }
 }

@@ -126,7 +126,8 @@
       "friend_request": "{who} sent you a friend request",
       "friend_accepted": "{who} accepted your friend request",
       "host_handover": "The host left PARtners. You're hosting this round now",
-      "other": "Update on a round"
+      "other": "Update on a round",
+      "round_reminder": "Reminder: your round is coming up"
     }
   },
   "rounds": {
@@ -477,6 +478,41 @@
     "cardFirst": "Start a scorecard on this course first.",
     "started": "This round has already started.",
     "self": "You can’t add yourself.",
-    "offline": "No connection. Check your signal and try again."
+    "offline": "No connection. Check your signal and try again.",
+    "tooManyReports": "You’ve sent a lot of reports today. Please email us instead."
+  },
+  "safety": {
+    "optionsFor": "More options for {name}",
+    "report": "Report",
+    "block": "Block",
+    "whyReport": "Why are you reporting {name}?",
+    "reason": {
+      "harassment": "Harassment or threats",
+      "no_show": "Didn’t turn up",
+      "fake": "Fake profile or impersonation",
+      "inappropriate": "Inappropriate photo or name",
+      "other": "Something else"
+    },
+    "reportTitle": "Report {name}",
+    "reportDetails": "Anything else we should know? This is optional. {name} won’t see your report.",
+    "detailsPlaceholder": "What happened",
+    "send": "Send report",
+    "thanks": "Thanks for telling us",
+    "thanksText": "We review every report and act on it within 24 hours. Do you want to block {name} too?",
+    "notNow": "Not now",
+    "blockTitle": "Block {name}?",
+    "blockText": "You won’t see each other’s rounds or be able to join them, and they can’t add you as a friend. If they’re in a round you host, they’re taken out. They aren’t told.",
+    "blocked": "{name} is blocked",
+    "blockError": "Could not block this player.",
+    "reportError": "Could not send the report.",
+    "blockedTitle": "Blocked players",
+    "blockedIntro": "Blocked players can’t see your rounds, join them or add you as a friend, and you won’t see theirs.",
+    "noneBlocked": "You haven’t blocked anyone.",
+    "unblock": "Unblock",
+    "unblockName": "Unblock {name}"
+  },
+  "push": {
+    "channel": "Rounds and friends",
+    "channelText": "Join requests, players joining or leaving, round reminders and friend requests"
   }
 }

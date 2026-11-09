@@ -7,6 +7,7 @@ import { Capacitor } from '@capacitor/core';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonInputPasswordToggle, IonSpinner } from '@ionic/angular/standalone';
 import { SupabaseService } from '../../core/supabase.service';
 import { ProfileService } from '../../core/profile.service';
+import { PushService } from '../../core/push.service';
 import { Lang } from '../../core/i18n.service';
 
 const MIN_PASSWORD = 8;
@@ -83,6 +84,7 @@ const FEEDBACK = 'mailto:parpartners.app@gmail.com?subject=PARtners%20feedback';
         <div class="section">
           <span class="label">{{ t('settings.about') }}</span>
           <div class="group">
+            <a class="item" routerLink="/settings/blocked"><span>{{ t('safety.blockedTitle') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
             <a class="item" routerLink="/legal/privacy"><span>{{ t('welcome.privacy') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
             <a class="item" routerLink="/legal/terms"><span>{{ t('settings.terms') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
             <a class="item" routerLink="/legal/imprint"><span>{{ t('settings.imprint') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
@@ -113,6 +115,7 @@ export class SettingsPage {
   readonly t = this.i18n.t;
   private sb = inject(SupabaseService);
   private profiles = inject(ProfileService);
+  private push = inject(PushService);
   private router = inject(Router);
 
   readonly feedback = FEEDBACK;
@@ -172,6 +175,7 @@ export class SettingsPage {
   }
 
   async signOut() {
+    await this.push.stop();
     await this.sb.signOut();
     this.profiles.clear();
     await this.router.navigateByUrl('/welcome', { replaceUrl: true });
