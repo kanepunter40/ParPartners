@@ -129,7 +129,7 @@
       "other": "Update on a round",
       "round_reminder": "Reminder: your round is coming up",
       "report_received": "New report about {who}. Review it in Supabase > reports",
-      "round_alert": "{who} posted a round that matches your alert",
+      "round_alert": "{who} posted a round that matches your saved search",
       "round_invite": "{who} invited you to their round",
       "round_message": "{who} wrote in the round chat",
       "waitlist_promoted": "A spot opened up. You're in the round"
@@ -174,7 +174,8 @@
     "emptyText": "Try a wider radius or another date, or post your own round and let players find you.",
     "locationError": "Could not get your location. Check the permission, or search by course.",
     "loadError": "Could not load rounds.",
-    "fullWaitlist": "Full · waitlist open"
+    "fullWaitlist": "Full · waitlist open",
+    "weekdays": "Weekdays"
   },
   "scores": {
     "title": "Scorecards",
@@ -517,7 +518,7 @@
     "self": "You can’t add yourself.",
     "offline": "No connection. Check your signal and try again.",
     "tooManyReports": "You’ve sent a lot of reports today. Please email us instead.",
-    "alertLimit": "You can keep up to 10 alerts. Delete one first.",
+    "alertLimit": "You can keep up to 10 saved searches. Delete one first.",
     "freeDay": "Pick a day in the next 30 days.",
     "freeLimit": "You can have up to 10 days posted.",
     "tooManyInvites": "You've sent a lot of invites today. Try again tomorrow.",
@@ -596,14 +597,14 @@
     "sendError": "Could not send. Try again."
   },
   "alerts": {
-    "title": "Round alerts",
-    "intro": "You'll be told when someone posts a round that matches one of these searches.",
-    "inAppOnly": "Alerts show under Notifications. In the phone app they also arrive as push notifications.",
-    "delete": "Delete alert for {name}",
-    "emptyTitle": "No alerts yet",
-    "emptyText": "In Find, set up a search and tap “Alert me” to hear about new rounds.",
+    "title": "Saved searches",
+    "intro": "You'll get a notification when someone posts a round that matches one of these searches. Tap one to open it in Find.",
+    "inAppOnly": "Matches show under Notifications. In the phone app they also arrive as push notifications.",
+    "delete": "Delete saved search for {name}",
+    "emptyTitle": "No saved searches yet",
+    "emptyText": "In Find, set up a search and tap “Save search” to hear about new rounds.",
     "goFind": "Go to Find",
-    "loadError": "Could not load your alerts.",
+    "loadError": "Could not load your saved searches.",
     "anArea": "A saved area",
     "atCourse": "At this course",
     "days": {
@@ -611,11 +612,13 @@
       "weekend": "Weekends",
       "weekday": "Weekdays"
     },
-    "save": "Alert me",
-    "saved": "Alert saved",
-    "manage": "My alerts",
+    "save": "Save search",
+    "saved": "Search saved",
+    "manage": "Saved searches",
     "myArea": "my area",
-    "saveError": "Could not save the alert."
+    "saveError": "Could not save the search.",
+    "hint": "Get a notification when a new round matching these filters is posted.",
+    "savedHint": "You'll be notified when a matching round is posted."
   },
   "free": {
     "cta": "I'm free to play",

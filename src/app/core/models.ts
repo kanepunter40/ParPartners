@@ -176,6 +176,9 @@ export interface SearchAlert {
   course_name: string | null;
   place_name: string | null;
   radius_km: number | null;
+  /** Centre of an area search (null for a course search) */
+  lat: number | null;
+  lng: number | null;
   days: 'any' | 'weekend' | 'weekday';
   format: RoundFormat | null;
   created_at: string;

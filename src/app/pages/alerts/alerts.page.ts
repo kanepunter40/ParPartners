@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { trashOutline, notificationsOutline } from 'ionicons/icons';
+import { trashOutline, notificationsOutline, chevronForward } from 'ionicons/icons';
 import { I18nService } from '../../core/i18n.service';
 import { AlertsService } from '../../core/alerts.service';
 import { PushService } from '../../core/push.service';
@@ -14,8 +14,12 @@ import { SearchAlert } from '../../core/models';
   imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon],
   styles: [`
     .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
-    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 10px 6px 10px 16px; border-bottom: 1px solid #EFEAD9; }
+    .row { display: flex; align-items: center; gap: 4px; min-height: 64px; padding-right: 6px; border-bottom: 1px solid #EFEAD9; }
     .row:last-child { border-bottom: 0; }
+    .open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 4px 10px 16px;
+            background: none; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+    .open:disabled { cursor: default; }
+    .open .chev { color: #8A8470; flex: none; margin-left: auto; }
     .text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
   `],
   template: `
@@ -34,10 +38,13 @@ import { SearchAlert } from '../../core/models';
           <div class="card">
             @for (a of items(); track a.id) {
               <div class="row">
-                <span class="text">
-                  <strong>{{ where(a) }}</strong>
-                  <span class="muted" style="font-size: 13px">{{ details(a) }}</span>
-                </span>
+                <button type="button" class="open" [disabled]="!canOpen(a)" (click)="open(a)">
+                  <span class="text">
+                    <strong>{{ where(a) }}</strong>
+                    <span class="muted" style="font-size: 13px">{{ details(a) }}</span>
+                  </span>
+                  @if (canOpen(a)) { <ion-icon class="chev" name="chevron-forward" aria-hidden="true"></ion-icon> }
+                </button>
                 <ion-button fill="clear" color="medium" [attr.aria-label]="t('alerts.delete', { name: where(a) })" (click)="remove(a)">
                   <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
                 </ion-button>
@@ -61,13 +68,14 @@ export class AlertsPage {
   readonly t = this.i18n.t;
   readonly push = inject(PushService);
   private alerts = inject(AlertsService);
+  private router = inject(Router);
 
   items = signal<SearchAlert[]>([]);
   loaded = signal(false);
   error = signal('');
 
   constructor() {
-    addIcons({ trashOutline, notificationsOutline });
+    addIcons({ trashOutline, notificationsOutline, chevronForward });
   }
 
   async ionViewWillEnter() {
@@ -91,6 +99,17 @@ export class AlertsPage {
       this.t('alerts.days.' + a.days),
       a.format ? this.t('format.' + a.format) : this.t('format.any')
     ].join(' · ');
+  }
+
+  /** Area searches need their centre (returned since 0025_saved_search_location.sql). */
+  canOpen(a: SearchAlert) {
+    return !!a.course_id || (a.lat != null && a.lng != null);
+  }
+
+  /** Opens Find with this search's filters. */
+  open(a: SearchAlert) {
+    this.alerts.pending = a;
+    this.router.navigateByUrl('/tabs/find');
   }
 
   async remove(a: SearchAlert) {

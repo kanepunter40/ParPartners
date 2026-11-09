@@ -11,13 +11,13 @@ import { NotificationsBellComponent } from '../../core/notifications-bell.compon
 import { IllustrationComponent } from '../../core/illustration.component';
 import { LocationService } from '../../core/location.service';
 import { ProfileService } from '../../core/profile.service';
-import { Course, FreePlayer, Position, RoundResult } from '../../core/models';
+import { Course, FreePlayer, Position, RoundResult, SearchAlert } from '../../core/models';
 import { AlertsService } from '../../core/alerts.service';
 import { AvailabilityService, isoDay } from '../../core/availability.service';
 import { AvatarComponent } from '../../core/avatar.component';
 
 type Mode = 'near' | 'course';
-type When = 'any' | 'this' | 'next';
+type When = 'any' | 'weekdays' | 'this' | 'next';
 const RADII = [10, 25, 50, 100];
 
 /** Saturday 00:00 to Monday 00:00 for the weekend `offset` weeks ahead (0 = this one, running from now if already Sat/Sun). */
@@ -30,6 +30,12 @@ function weekendRange(offset: number): { from: Date; to: Date } {
   mon.setDate(sat.getDate() + 2);
   const from = offset === 0 && (day === 0 || day === 6) ? now : sat;
   return { from, to: mon };
+}
+
+/** Monday to Friday, in the phone's time zone. */
+function isWeekday(d: Date): boolean {
+  const day = d.getDay();
+  return day >= 1 && day <= 5;
 }
 
 /** centreName value meaning the device location (shown translated). */
@@ -46,7 +52,7 @@ const MY_LOCATION = '@me';
     .group-label { font-size: 12px; font-weight: 600; color: #5F5B4E; text-transform: uppercase; letter-spacing: .04em; }
     /* Equal-width chips, so each row fits the panel without scrolling */
     .chips { display: flex; gap: 8px; }
-    .chip { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 0 6px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
+    .chip { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 6px; line-height: 1.15; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
     .chip.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
     .results-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
     .results-head h2 { margin: 0; font-size: 22px; }
@@ -57,7 +63,7 @@ const MY_LOCATION = '@me';
     .course-opt { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid #EFEAD9; background: #fff; font-family: inherit; color: #1F3532; }
     .format-select { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font-weight: 600; font-size: 14px; }
     .format-pill { background: #F3E4D6; color: #7A4220; }
-    .alert-row { display: flex; align-items: center; gap: 12px; margin: -4px 0 14px; }
+    .alert-row { display: flex; align-items: center; gap: 12px; margin: -8px 0 4px; }
     .alert-row a { font-size: 13px; font-weight: 600; color: #2E5F5A; }
     .free { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
     .free-top { display: flex; align-items: center; gap: 12px; }
@@ -133,13 +139,6 @@ const MY_LOCATION = '@me';
         </section>
 
         <section aria-labelledby="results-title">
-          <div class="results-head">
-            <h2 id="results-title">{{ t('find.openRounds') }}</h2>
-            @if (mode() === 'near' || course()) {
-              <span class="muted" style="font-size: 13px" aria-live="polite">{{ loading() ? t('find.searching') : results().length ? results().length + ' · ' + areaLabel() : areaLabel() }}</span>
-            }
-          </div>
-
           @if (mode() === 'near' || course()) {
             <div class="alert-row">
               <ion-button size="small" fill="outline" [disabled]="alertBusy() || alertSaved()" (click)="saveAlert()">
@@ -147,7 +146,15 @@ const MY_LOCATION = '@me';
               </ion-button>
               <a routerLink="/alerts">{{ t('alerts.manage') }}</a>
             </div>
+            <p class="muted" style="margin: 0 0 24px; font-size: 13px">{{ alertSaved() ? t('alerts.savedHint') : t('alerts.hint') }}</p>
           }
+
+          <div class="results-head">
+            <h2 id="results-title">{{ t('find.openRounds') }}</h2>
+            @if (mode() === 'near' || course()) {
+              <span class="muted" style="font-size: 13px" aria-live="polite">{{ loading() ? t('find.searching') : results().length ? results().length + ' · ' + areaLabel() : areaLabel() }}</span>
+            }
+          </div>
           @if (error()) { <p role="alert" style="color: #9C5428; margin: 0 0 12px">{{ error() }}</p> }
 
         <div>
@@ -232,7 +239,7 @@ export class FindPage {
   private router = inject(Router);
 
   readonly radii = RADII;
-  readonly whens: [When, string][] = [['any', 'find.anyDate'], ['this', 'find.thisWeekend'], ['next', 'find.nextWeekend']];
+  readonly whens: [When, string][] = [['any', 'find.anyDate'], ['weekdays', 'find.weekdays'], ['this', 'find.thisWeekend'], ['next', 'find.nextWeekend']];
 
   mode = signal<Mode>('near');
   radius = signal(25);
@@ -259,8 +266,38 @@ export class FindPage {
   async ionViewWillEnter() {
     this.notifications.refreshUnread();
     await this.loadHomeCourse();
+    const saved = this.alerts.pending;
+    this.alerts.pending = null;
+    if (saved && await this.applySaved(saved)) return;
     if (!this.centre()) await this.setDefaultCentre();
     this.load();
+  }
+
+  /** Sets the filters from a saved search opened on the Saved searches page. */
+  private async applySaved(a: SearchAlert) {
+    try {
+      if (a.course_id) {
+        const c = await this.rounds.getCourse(a.course_id);
+        if (!c) return false;
+        this.mode.set('course');
+        this.course.set(c);
+      } else {
+        if (a.lat == null || a.lng == null) return false;
+        this.mode.set('near');
+        this.centre.set({ lat: a.lat, lng: a.lng });
+        this.centreName.set(a.place_name ?? '');
+        if (a.radius_km) this.radius.set(a.radius_km);
+      }
+    } catch {
+      return false;
+    }
+    // A saved "weekends" search shows the coming weekend
+    this.when.set(a.days === 'weekday' ? 'weekdays' : a.days === 'weekend' ? 'this' : 'any');
+    this.format.set(a.format);
+    this.suggestions.set([]);
+    this.load();
+    this.alertSaved.set(true);
+    return true;
   }
 
   /** Re-read on every visit, since the home course can change in Edit profile. */
@@ -320,22 +357,28 @@ export class FindPage {
   private async loadFree(range: { from: Date; to: Date } | null) {
     const byCourse = this.mode() === 'course';
     try {
-      this.free.set(await this.availability.find({
+      const free = await this.availability.find({
         lat: byCourse ? null : this.centre()!.lat,
         lng: byCourse ? null : this.centre()!.lng,
         radiusKm: this.radius(),
         courseId: byCourse ? this.course()!.id : null,
         from: range ? isoDay(range.from) : null,
         to: range ? isoDay(range.to) : null
-      }));
+      });
+      this.free.set(this.when() === 'weekdays' ? free.filter((f) => isWeekday(this.dayDate(f.day))) : free);
     } catch {
       this.free.set([]);
     }
   }
 
-  dayLabel(iso: string) {
+  /** YYYY-MM-DD as a local date. */
+  private dayDate(iso: string) {
     const [y, m, d] = iso.split('-').map(Number);
-    return new Intl.DateTimeFormat(this.i18n.locale(), { weekday: 'long', day: 'numeric', month: 'short' }).format(new Date(y, m - 1, d));
+    return new Date(y, m - 1, d);
+  }
+
+  dayLabel(iso: string) {
+    return new Intl.DateTimeFormat(this.i18n.locale(), { weekday: 'long', day: 'numeric', month: 'short' }).format(this.dayDate(iso));
   }
 
   /** Saves the current search: a push when someone posts a matching round. */
@@ -351,7 +394,7 @@ export class FindPage {
         radiusKm: this.radius(),
         placeName: byCourse ? null : this.centreName() === MY_LOCATION ? this.t('alerts.myArea') : this.centreName(),
         // "This/next weekend" become "weekends" for an alert that keeps running
-        days: this.when() === 'any' ? 'any' : 'weekend',
+        days: this.when() === 'any' ? 'any' : this.when() === 'weekdays' ? 'weekday' : 'weekend',
         format: this.format()
       });
       this.alertSaved.set(true);
@@ -413,17 +456,17 @@ export class FindPage {
     this.loading.set(true);
     this.error.set('');
     try {
-      this.results.set(
-        await this.rounds.findRounds({
-          lat: byCourse ? this.course()!.lat : this.centre()!.lat,
-          lng: byCourse ? this.course()!.lng : this.centre()!.lng,
-          radiusKm: byCourse ? 1 : this.radius(),
-          courseId: byCourse ? this.course()!.id : null,
-          from: range?.from ?? null,
-          to: range?.to ?? null,
-          format: this.format()
-        })
-      );
+      const rounds = await this.rounds.findRounds({
+        lat: byCourse ? this.course()!.lat : this.centre()!.lat,
+        lng: byCourse ? this.course()!.lng : this.centre()!.lng,
+        radiusKm: byCourse ? 1 : this.radius(),
+        courseId: byCourse ? this.course()!.id : null,
+        from: range?.from ?? null,
+        to: range?.to ?? null,
+        format: this.format()
+      });
+      // Weekdays: filtered here (the search returns the next 50 rounds, plenty for now)
+      this.results.set(this.when() === 'weekdays' ? rounds.filter((r) => isWeekday(new Date(r.tee_time))) : rounds);
     } catch (e: any) {
       this.error.set(this.i18n.error(e, 'find.loadError'));
     } finally {

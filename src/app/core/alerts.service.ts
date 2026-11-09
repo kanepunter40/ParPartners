@@ -20,6 +20,9 @@ export interface NewAlert {
 export class AlertsService {
   private sb = inject(SupabaseService);
 
+  /** A saved search the player tapped, waiting for Find to apply it. */
+  pending: SearchAlert | null = null;
+
   async list(): Promise<SearchAlert[]> {
     const { data, error } = await this.sb.client.rpc('my_search_alerts');
     if (error) throw error;

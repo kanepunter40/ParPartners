@@ -129,7 +129,7 @@
       "other": "Neuigkeit zu einer Runde",
       "round_reminder": "Erinnerung: Deine Runde steht bald an",
       "report_received": "Neue Meldung über {who}. Prüfe sie in Supabase > reports",
-      "round_alert": "{who} hat eine Runde eingestellt, die zu deinem Alarm passt",
+      "round_alert": "{who} hat eine Runde eingestellt, die zu deiner gespeicherten Suche passt",
       "round_invite": "{who} hat dich zu einer Runde eingeladen",
       "round_message": "{who} hat im Runden-Chat geschrieben",
       "waitlist_promoted": "Ein Platz ist frei geworden. Du bist dabei"
@@ -174,7 +174,8 @@
     "emptyText": "Probier einen größeren Umkreis oder ein anderes Datum, oder stell selbst eine Runde ein, damit andere dich finden.",
     "locationError": "Dein Standort konnte nicht ermittelt werden. Prüf die Berechtigung oder such nach Platz.",
     "loadError": "Runden konnten nicht geladen werden.",
-    "fullWaitlist": "Voll · Warteliste offen"
+    "fullWaitlist": "Voll · Warteliste offen",
+    "weekdays": "Wochentags"
   },
   "scores": {
     "title": "Scorekarten",
@@ -517,7 +518,7 @@
     "self": "Du kannst dich nicht selbst hinzufügen.",
     "offline": "Keine Verbindung. Prüf deinen Empfang und versuch es noch einmal.",
     "tooManyReports": "Du hast heute schon viele Meldungen gesendet. Bitte schreib uns stattdessen eine E-Mail.",
-    "alertLimit": "Du kannst bis zu 10 Alarme behalten. Lösch zuerst einen.",
+    "alertLimit": "Du kannst bis zu 10 Suchen speichern. Lösch zuerst einen.",
     "freeDay": "Wähl einen Tag in den nächsten 30 Tagen.",
     "freeLimit": "Du kannst bis zu 10 Tage eingestellt haben.",
     "tooManyInvites": "Du hast heute viele Einladungen verschickt. Versuch es morgen wieder.",
@@ -596,14 +597,14 @@
     "sendError": "Senden fehlgeschlagen. Versuch es noch einmal."
   },
   "alerts": {
-    "title": "Runden-Alarme",
-    "intro": "Du bekommst Bescheid, wenn jemand eine Runde einstellt, die zu einer dieser Suchen passt.",
-    "inAppOnly": "Alarme erscheinen unter Benachrichtigungen. In der App auf dem Handy kommen sie auch als Push-Nachricht.",
-    "delete": "Alarm für {name} löschen",
-    "emptyTitle": "Noch keine Alarme",
-    "emptyText": "Stell in „Finden“ eine Suche ein und tippe auf „Alarm“, um von neuen Runden zu hören.",
+    "title": "Gespeicherte Suchen",
+    "intro": "Du bekommst Bescheid, wenn jemand eine Runde einstellt, die zu einer dieser Suchen passt. Tippe auf eine, um sie in „Finden“ zu öffnen.",
+    "inAppOnly": "Treffer erscheinen unter Benachrichtigungen. In der App auf dem Handy kommen sie auch als Push-Nachricht.",
+    "delete": "Gespeicherte Suche für {name} löschen",
+    "emptyTitle": "Noch keine gespeicherten Suchen",
+    "emptyText": "Stell in „Finden“ eine Suche ein und tippe auf „Suche speichern“, um von neuen Runden zu hören.",
     "goFind": "Zu „Finden“",
-    "loadError": "Deine Alarme konnten nicht geladen werden.",
+    "loadError": "Deine gespeicherten Suchen konnten nicht geladen werden.",
     "anArea": "Ein gespeichertes Gebiet",
     "atCourse": "Auf diesem Platz",
     "days": {
@@ -611,11 +612,13 @@
       "weekend": "Wochenenden",
       "weekday": "Wochentage"
     },
-    "save": "Alarm",
-    "saved": "Alarm gespeichert",
-    "manage": "Meine Alarme",
+    "save": "Suche speichern",
+    "saved": "Suche gespeichert",
+    "manage": "Gespeicherte Suchen",
     "myArea": "meine Gegend",
-    "saveError": "Der Alarm konnte nicht gespeichert werden."
+    "saveError": "Die Suche konnte nicht gespeichert werden.",
+    "hint": "Bekomm eine Benachrichtigung, wenn eine neue Runde zu diesen Filtern eingestellt wird.",
+    "savedHint": "Du bekommst Bescheid, sobald eine passende Runde eingestellt wird."
   },
   "free": {
     "cta": "Ich hätte Zeit",
