@@ -127,7 +127,8 @@
       "friend_accepted": "{who} hat deine Freundschaftsanfrage angenommen",
       "host_handover": "Der Gastgeber hat PARtners verlassen. Du bist jetzt Gastgeber dieser Runde",
       "other": "Neuigkeit zu einer Runde",
-      "round_reminder": "Erinnerung: Deine Runde steht bald an"
+      "round_reminder": "Erinnerung: Deine Runde steht bald an",
+      "report_received": "Neue Meldung über {who}. Prüfe sie in Supabase > reports"
     }
   },
   "rounds": {

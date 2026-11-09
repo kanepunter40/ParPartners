@@ -127,7 +127,8 @@
       "friend_accepted": "{who} accepted your friend request",
       "host_handover": "The host left PARtners. You're hosting this round now",
       "other": "Update on a round",
-      "round_reminder": "Reminder: your round is coming up"
+      "round_reminder": "Reminder: your round is coming up",
+      "report_received": "New report about {who}. Review it in Supabase > reports"
     }
   },
   "rounds": {

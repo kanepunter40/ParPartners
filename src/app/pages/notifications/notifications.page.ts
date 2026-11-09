@@ -92,7 +92,7 @@ export class NotificationsPage {
   message(n: AppNotification): string {
     const who = n.actor?.display_name ?? this.t('notifications.aPlayer');
     const known = ['request_received', 'request_accepted', 'request_declined', 'player_joined', 'player_left',
-                   'round_cancelled', 'friend_request', 'friend_accepted', 'host_handover', 'round_reminder'];
+                   'round_cancelled', 'friend_request', 'friend_accepted', 'host_handover', 'round_reminder', 'report_received'];
     return this.t(known.includes(n.type) ? `notifications.type.${n.type}` : 'notifications.type.other', { who });
   }
 }

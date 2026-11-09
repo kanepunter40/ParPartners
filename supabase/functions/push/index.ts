@@ -29,6 +29,7 @@ const TEXT: Record<Locale, Record<string, string>> = {
     friend_accepted: '{who} accepted your friend request',
     host_handover: "The host left PARtners. You're hosting this round now",
     round_reminder: 'Reminder: you tee off {when}',
+    report_received: 'New report about {who}. Review it in Supabase > reports',
     other: 'Update on a round',
     aPlayer: 'A player'
   },
@@ -43,6 +44,7 @@ const TEXT: Record<Locale, Record<string, string>> = {
     friend_accepted: '{who} hat deine Freundschaftsanfrage angenommen',
     host_handover: 'Der Gastgeber hat PARtners verlassen. Du bist jetzt Gastgeber dieser Runde',
     round_reminder: 'Erinnerung: Abschlag {when}',
+    report_received: 'Neue Meldung über {who}. Prüfe sie in Supabase > reports',
     other: 'Neuigkeit zu einer Runde',
     aPlayer: 'Ein Spieler'
   }
@@ -107,7 +109,8 @@ Deno.serve(async (req) => {
 
   const actor = (n as any).actor?.display_name as string | undefined;
   const round = (n as any).rounds as { tee_time: string; courses: { name: string } } | null;
-  const route = n.type === 'friend_request' || n.type === 'friend_accepted' ? '/friends'
+  const route = n.type === 'report_received' ? '/notifications'
+    : n.type === 'friend_request' || n.type === 'friend_accepted' ? '/friends'
     : n.round_id ? `/round/${n.round_id}` : '/notifications';
 
   const token = await accessToken(sa);
