@@ -28,7 +28,7 @@ import { Friend, PlayerCard, ScorecardSummary } from '../../core/models';
     .stat { flex: 1; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 12px 14px; }
     .friends-link { flex-direction: row; justify-content: space-between; align-items: center; text-decoration: none; color: inherit; }
     .empty { align-items: center; text-align: center; gap: 8px; padding: 20px 18px; }
-    .stat strong { display: block; font-family: 'Fraunces', serif; font-size: 22px; }
+    .stat strong { display: block; font-family: 'Fraunces Variable', serif; font-size: 22px; }
     .page { display: flex; flex-direction: column; gap: 24px; min-height: 100%; box-sizing: border-box; }
     .top { display: flex; justify-content: flex-end; margin: -8px -8px -16px 0; }
     .gear { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; color: #1F3532; }

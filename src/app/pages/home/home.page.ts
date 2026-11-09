@@ -23,12 +23,12 @@ const PAGE = 30;
     .home { display: flex; flex-direction: column; gap: 28px; }
     .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; display: block; }
     .next { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #2E5F5A; color: #fff; border-radius: 16px; padding: 16px 18px; text-decoration: none; }
-    .next .when { font-family: 'Fraunces', serif; font-size: 20px; }
+    .next .when { font-family: 'Fraunces Variable', serif; font-size: 20px; }
     .next small { color: #D5E3DF; font-size: 13px; }
     .item { display: flex; gap: 12px; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; text-decoration: none; color: inherit; }
     .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
     .detail { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 6px; padding-top: 10px; border-top: 1px solid #EFEAD9; font-size: 14px; }
-    .score { font-family: 'Fraunces', serif; font-size: 24px; line-height: 1; }
+    .score { font-family: 'Fraunces Variable', serif; font-size: 24px; line-height: 1; }
     .head-btn { min-width: 44px; min-height: 44px; position: relative; --padding-start: 10px; --padding-end: 10px; }
     .dot { position: absolute; top: 9px; right: 9px; width: 10px; height: 10px; border-radius: 999px; background: #C97B4A; border: 2px solid #F4F1E8; }
   `],

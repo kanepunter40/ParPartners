@@ -125,7 +125,7 @@
       "round_cancelled": "{who} hat die Runde abgesagt",
       "friend_request": "{who} hat dir eine Freundschaftsanfrage geschickt",
       "friend_accepted": "{who} hat deine Freundschaftsanfrage angenommen",
-      "host_handover": "Der Gastgeber hat Par Partners verlassen. Du bist jetzt Gastgeber dieser Runde",
+      "host_handover": "Der Gastgeber hat PARtners verlassen. Du bist jetzt Gastgeber dieser Runde",
       "other": "Neuigkeit zu einer Runde"
     }
   },
@@ -435,6 +435,7 @@
     "logOut": "Abmelden",
     "about": "Über die App",
     "terms": "Nutzungsbedingungen",
+    "imprint": "Impressum",
     "feedback": "Feedback senden",
     "courseData": "Platzdaten",
     "osm": "© OpenStreetMap-Mitwirkende",

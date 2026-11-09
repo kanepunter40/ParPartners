@@ -11,10 +11,10 @@ import { ScorecardSummary } from '../../core/models';
   styles: [`
     .item { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; text-decoration: none; color: inherit; }
     .score { text-align: right; flex: none; }
-    .score strong { display: block; font-family: 'Fraunces', serif; font-size: 26px; line-height: 1.1; }
+    .score strong { display: block; font-family: 'Fraunces Variable', serif; font-size: 26px; line-height: 1.1; }
     .stats { display: flex; gap: 12px; margin-bottom: 16px; }
     .stat { flex: 1; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 12px 14px; }
-    .stat strong { display: block; font-family: 'Fraunces', serif; font-size: 22px; }
+    .stat strong { display: block; font-family: 'Fraunces Variable', serif; font-size: 22px; }
   `],
   template: `
     <ion-content>

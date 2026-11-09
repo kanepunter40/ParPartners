@@ -14,7 +14,7 @@ const POLL_MS = 20_000;
   imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner],
   styles: [`
     .hole-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
-    .hole-no { font-family: 'Fraunces', serif; font-size: 44px; line-height: 1; margin: 0; }
+    .hole-no { font-family: 'Fraunces Variable', serif; font-size: 44px; line-height: 1; margin: 0; }
     .par-btn { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; font: inherit; font-weight: 600; color: #1F3532; }
     .par-btn.unknown { border-style: dashed; color: #5F5B4E; }
     .pars { display: flex; gap: 8px; }

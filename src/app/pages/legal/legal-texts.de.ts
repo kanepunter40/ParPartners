@@ -1,14 +1,17 @@
 // German versions of the legal texts. DRAFT, like the English ones: needs a postal address and a lawyer's review.
-import { CONTACT, LegalDoc } from './legal-texts';
+import { ADDRESS, CONTACT, LegalDoc, OPERATOR } from './legal-texts';
 
 export const PRIVACY_DE: LegalDoc = {
   title: 'Datenschutzerklärung',
   updated: '9. November 2026',
-  intro: 'Par Partners hilft Golfern, Mitspieler zu finden. Hier erklären wir, was wir über dich speichern, wer es sehen kann und was du tun kannst. Kurz gesagt: Wir speichern nur, was die App zum Funktionieren braucht, verkaufen deine Daten nie, und es gibt weder Werbung noch Tracking.',
+  intro: 'PARtners hilft Golfern, Mitspieler zu finden. Hier erklären wir, was wir über dich speichern, wer es sehen kann und was du tun kannst. Kurz gesagt: Wir speichern nur, was die App zum Funktionieren braucht, verkaufen deine Daten nie, und es gibt weder Werbung noch Tracking.',
   sections: [
     {
       heading: 'Verantwortlicher',
-      body: [`Par Partners wird von Kane Punter als privates Projekt betrieben. Bei allen Fragen zu deinen Daten schreib an ${CONTACT}.`]
+      body: [
+        `PARtners wird von ${OPERATOR} als privates Projekt betrieben. Verantwortlicher im Sinne der DSGVO ist ${OPERATOR}.`,
+        `${OPERATOR}, ${ADDRESS}, Deutschland. E-Mail: ${CONTACT}`
+      ]
     },
     {
       heading: 'Was wir speichern',
@@ -16,12 +19,24 @@ export const PRIVACY_DE: LegalDoc = {
         'Dein Konto: deine E-Mail-Adresse und, falls du eins nutzt, dein Passwort (nur als sicherer Hash gespeichert). Wenn du dich mit Google anmeldest, erhalten wir deinen Namen und deine E-Mail-Adresse von Google.',
         'Dein Profil: Name, Foto (freiwillig), Heimatplatz, Handicap, Sprachen, wann du gern spielst, Rundenlänge und wie ehrgeizig du spielst. Geburtsjahr und Geschlecht sind freiwillig.',
         'Was du in der App tust: Runden, die du einstellst oder denen du beitrittst, Beitrittsanfragen, Scorekarten und Ergebnisse, Freunde und Freundschaftsanfragen sowie die Mitteilungen, die wir dir schicken.',
-        'Gäste: Wenn du jemanden ohne Par-Partners-Konto auf eine Scorekarte setzt, speichern wir den eingegebenen Namen und die Ergebnisse. Füge nur Leute hinzu, die damit einverstanden sind.'
+        'Gäste: Wenn du jemanden ohne PARtners-Konto auf eine Scorekarte setzt, speichern wir den eingegebenen Namen und die Ergebnisse. Füge nur Leute hinzu, die damit einverstanden sind.'
       ]
+    },
+    {
+      heading: 'Welche Angaben nötig sind',
+      body: ['Für ein Konto brauchst du eine E-Mail-Adresse (oder ein Google-Konto) und einen Namen. Ohne diese Angaben können wir dir kein Konto anlegen. Alles andere in deinem Profil ist freiwillig.']
+    },
+    {
+      heading: 'Technische Daten bei der Nutzung',
+      body: ['Immer wenn die App mit unseren Servern kommuniziert, speichert Supabase technische Angaben: deine IP-Adresse, den Zeitpunkt, was abgerufen wurde, und die Art deines Geräts oder Browsers. Wir nutzen sie nur, um die App sicher zu halten und Fehler zu finden. Sie werden nach spätestens 7 Tagen automatisch gelöscht.']
     },
     {
       heading: 'Dein Standort',
       body: ['Wenn du es erlaubst, nutzt die App den Standort deines Handys, um Runden in deiner Nähe zu finden. Er wird mit der Suche übertragen und nicht gespeichert. Du kannst stattdessen jederzeit nach Platz suchen.']
+    },
+    {
+      heading: 'Auf deinem Handy gespeichert',
+      body: ['Damit die App funktioniert, speichert sie einiges auf deinem Gerät: deine Anmeldung (damit du angemeldet bleibst), deine Sprachwahl, einen Einladungscode, bis du angemeldet bist, und Ergebnisse, die du ohne Verbindung eingegeben hast, bis sie gespeichert sind. Das ist für die App unbedingt erforderlich, deshalb fragen wir nicht nach einer Einwilligung (§ 25 Abs. 2 TDDDG). Es wird nicht für Tracking genutzt. Wenn du die App deinstallierst, wird es gelöscht.']
     },
     {
       heading: 'Wer was sehen kann',
@@ -35,19 +50,30 @@ export const PRIVACY_DE: LegalDoc = {
     {
       heading: 'Dienste, die wir nutzen',
       body: [
-        'Supabase speichert die Daten, Fotos und Konten der App auf Servern in Frankfurt am Main.',
-        'Google: Wenn du „Weiter mit Google“ wählst, übernimmt Google die Anmeldung. Anmelde- und Bestätigungs-E-Mails werden derzeit über ein Gmail-Konto verschickt.',
-        'Google Fonts: Die App lädt ihre Schriften von Servern von Google. Dabei sieht Google deine IP-Adresse. Wir planen, die Schriften künftig selbst auszuliefern.',
-        'Namen und Lage der Golfplätze stammen von OpenStreetMap. An OpenStreetMap werden keine personenbezogenen Daten übermittelt.'
+        'Supabase (Supabase Inc., USA) speichert die Daten, Fotos und Konten der App auf Servern in Frankfurt am Main. Supabase arbeitet für uns auf Grundlage eines Auftragsverarbeitungsvertrags (Art. 28 DSGVO). Da Supabase ein US-Unternehmen ist, könnten Mitarbeitende in seltenen Fällen von außerhalb der EU auf Daten zugreifen; dafür gelten die EU-Standardvertragsklauseln.',
+        'Google (Google Ireland Ltd. und Google LLC, USA): Wenn du „Weiter mit Google“ wählst, übernimmt Google die Anmeldung. Anmelde- und Bestätigungs-E-Mails werden derzeit über ein Gmail-Konto verschickt; Google verarbeitet dabei deine E-Mail-Adresse und den Inhalt der E-Mail. Übermittlungen an Google LLC sind durch das EU-US Data Privacy Framework abgedeckt.',
+        'Namen und Lage der Golfplätze stammen von OpenStreetMap. An OpenStreetMap werden keine personenbezogenen Daten übermittelt.',
+        'Wir verkaufen deine Daten nicht und geben sie an niemanden sonst weiter, außer wenn das Gesetz es verlangt.'
       ]
     },
     {
       heading: 'Rechtsgrundlage',
-      body: ['Wir nutzen deine Daten, um dir die App bereitzustellen, für die du dich angemeldet hast (Art. 6 Abs. 1 lit. b DSGVO). Freiwillige Angaben wie Geburtsjahr, Geschlecht und Standort nutzen wir, weil du sie uns gegeben hast (Art. 6 Abs. 1 lit. a DSGVO); du kannst sie jederzeit entfernen.']
+      body: [
+        'Wir nutzen deine Daten, um dir die App bereitzustellen, für die du dich angemeldet hast (Art. 6 Abs. 1 lit. b DSGVO).',
+        'Freiwillige Angaben wie Geburtsjahr, Geschlecht und Standort nutzen wir, weil du sie uns gegeben hast (Art. 6 Abs. 1 lit. a DSGVO). Du kannst diese Einwilligung jederzeit widerrufen, indem du sie unter „Profil bearbeiten“ entfernst oder den Standortzugriff ausschaltest. Was wir vorher damit getan haben, bleibt davon unberührt.',
+        'Technische Daten nutzen wir, weil wir ein berechtigtes Interesse daran haben, die App sicher und funktionsfähig zu halten (Art. 6 Abs. 1 lit. f DSGVO).'
+      ]
     },
     {
       heading: 'Wie lange wir Daten speichern',
-      body: ['So lange du ein Konto hast. Wenn du dein Konto in den Einstellungen löschst, werden Profil, Foto, eigene Scorekarten, Freundschaften und Mitteilungen sofort entfernt. Anstehende Runden, die du organisierst, gehen an einen anderen Spieler, und deine Ergebnisse bleiben auf den Karten anderer Spieler als „Gelöschter Spieler“ stehen, damit deren Karten stimmen.']
+      body: [
+        'So lange du ein Konto hast. Wenn du dein Konto in den Einstellungen löschst, werden Profil, Foto, eigene Scorekarten, Freundschaften und Mitteilungen sofort entfernt. Anstehende Runden, die du organisierst, gehen an einen anderen Spieler, und deine Ergebnisse bleiben auf den Karten anderer Spieler als „Gelöschter Spieler“ stehen, damit deren Karten stimmen.',
+        'Kopien in unseren Sicherungen werden innerhalb von 7 Tagen überschrieben.'
+      ]
+    },
+    {
+      heading: 'Automatisierte Entscheidungen',
+      body: ['Wir treffen keine Entscheidungen über dich, die allein auf automatisierter Verarbeitung beruhen, und erstellen keine Werbeprofile.']
     },
     {
       heading: 'Deine Rechte',
@@ -58,7 +84,7 @@ export const PRIVACY_DE: LegalDoc = {
     },
     {
       heading: 'Alter',
-      body: ['Par Partners ist für Menschen ab 16 Jahren.']
+      body: ['PARtners ist für Menschen ab 16 Jahren.']
     },
     {
       heading: 'Änderungen',
@@ -70,11 +96,11 @@ export const PRIVACY_DE: LegalDoc = {
 export const TERMS_DE: LegalDoc = {
   title: 'Nutzungsbedingungen',
   updated: '9. November 2026',
-  intro: 'Diese Bedingungen gelten, wenn du Par Partners nutzt. Mit dem Erstellen eines Kontos stimmst du ihnen zu.',
+  intro: 'Diese Bedingungen gelten, wenn du PARtners nutzt. Mit dem Erstellen eines Kontos stimmst du ihnen zu.',
   sections: [
     {
       heading: 'Der Dienst',
-      body: ['Par Partners hilft dir, Golfpartner zu finden, Runden zu organisieren und deine Schläge zu zählen. Die App ist kostenlos. Wir buchen keine Startzeiten und nehmen keine Zahlungen an: Greenfees und Buchungen laufen direkt zwischen dir und dem Golfclub.']
+      body: ['PARtners hilft dir, Golfpartner zu finden, Runden zu organisieren und deine Schläge zu zählen. Die App ist kostenlos. Wir buchen keine Startzeiten und nehmen keine Zahlungen an: Greenfees und Buchungen laufen direkt zwischen dir und dem Golfclub.']
     },
     {
       heading: 'Dein Konto',
@@ -97,7 +123,7 @@ export const TERMS_DE: LegalDoc = {
     },
     {
       heading: 'Verfügbarkeit',
-      body: ['Wir geben uns Mühe, dass Par Partners läuft und deine Daten sicher sind, können aber nicht garantieren, dass die App immer verfügbar und fehlerfrei ist. Ergebnisse und Handicaps in der App sind für deinen eigenen Gebrauch und nicht offiziell.']
+      body: ['Wir geben uns Mühe, dass PARtners läuft und deine Daten sicher sind, können aber nicht garantieren, dass die App immer verfügbar und fehlerfrei ist. Ergebnisse und Handicaps in der App sind für deinen eigenen Gebrauch und nicht offiziell.']
     },
     {
       heading: 'Haftung',
@@ -113,6 +139,26 @@ export const TERMS_DE: LegalDoc = {
         'Wenn sich diese Bedingungen wesentlich ändern, sagen wir dir in der App Bescheid, bevor sie gelten. Es gilt deutsches Recht.',
         `Fragen: ${CONTACT}`
       ]
+    }
+  ]
+};
+
+export const IMPRINT_DE: LegalDoc = {
+  title: 'Impressum',
+  updated: '9. November 2026',
+  intro: '',
+  sections: [
+    {
+      heading: 'Angaben gemäß § 5 DDG',
+      body: [OPERATOR, ADDRESS, 'Deutschland']
+    },
+    {
+      heading: 'Kontakt',
+      body: [`E-Mail: ${CONTACT}`]
+    },
+    {
+      heading: 'Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV',
+      body: [`${OPERATOR}, ${ADDRESS}`]
     }
   ]
 };

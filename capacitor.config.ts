@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.parpartners',   // change before the first store build
-  appName: 'Par Partners',
+  appName: 'PARtners',
   webDir: 'dist/par-partners/browser',
   plugins: {
     // Only bundle the sign-in providers we use (Facebook would add its SDK and ad-ID permission)

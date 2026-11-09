@@ -1,10 +1,10 @@
 import { Component, computed, input, inject } from '@angular/core';
 import { I18nService } from '../../core/i18n.service';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton } from '@ionic/angular/standalone';
-import { PRIVACY, TERMS } from './legal-texts';
-import { PRIVACY_DE, TERMS_DE } from './legal-texts.de';
+import { IMPRINT, PRIVACY, TERMS } from './legal-texts';
+import { IMPRINT_DE, PRIVACY_DE, TERMS_DE } from './legal-texts.de';
 
-/** /legal/privacy and /legal/terms. Open without signing in (linked from sign-up). */
+/** /legal/privacy, /legal/terms and /legal/imprint. Open without signing in (linked from sign-up). */
 @Component({
   selector: 'app-legal',
   imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton],
@@ -24,7 +24,7 @@ import { PRIVACY_DE, TERMS_DE } from './legal-texts.de';
     <ion-content>
       <article class="page-pad doc">
         <div>
-          <p>{{ text().intro }}</p>
+          @if (text().intro) { <p>{{ text().intro }}</p> }
           <span class="muted updated">{{ t('legal.updated', { date: text().updated }) }}</span>
         </div>
         @for (s of text().sections; track s.heading) {
@@ -40,10 +40,14 @@ import { PRIVACY_DE, TERMS_DE } from './legal-texts.de';
 export class LegalPage {
   readonly i18n = inject(I18nService);
   readonly t = this.i18n.t;
-  /** Route param: 'privacy' or 'terms'. */
+  /** Route param: 'privacy', 'terms' or 'imprint'. */
   doc = input<string>('privacy');
   text = computed(() => {
     const de = this.i18n.lang() === 'de';
-    return this.doc() === 'terms' ? (de ? TERMS_DE : TERMS) : (de ? PRIVACY_DE : PRIVACY);
+    switch (this.doc()) {
+      case 'terms': return de ? TERMS_DE : TERMS;
+      case 'imprint': return de ? IMPRINT_DE : IMPRINT;
+      default: return de ? PRIVACY_DE : PRIVACY;
+    }
   });
 }

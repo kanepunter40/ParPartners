@@ -125,7 +125,7 @@
       "round_cancelled": "{who} cancelled the round",
       "friend_request": "{who} sent you a friend request",
       "friend_accepted": "{who} accepted your friend request",
-      "host_handover": "The host left Par Partners. You're hosting this round now",
+      "host_handover": "The host left PARtners. You're hosting this round now",
       "other": "Update on a round"
     }
   },
@@ -435,6 +435,7 @@
     "logOut": "Log out",
     "about": "About",
     "terms": "Terms of service",
+    "imprint": "Imprint",
     "feedback": "Send feedback",
     "courseData": "Course data",
     "osm": "© OpenStreetMap contributors",

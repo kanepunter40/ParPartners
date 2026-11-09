@@ -10,7 +10,7 @@ import { ProfileService } from '../../core/profile.service';
 import { Lang } from '../../core/i18n.service';
 
 const MIN_PASSWORD = 8;
-const FEEDBACK = 'mailto:parpartners.app@gmail.com?subject=Par%20Partners%20feedback';
+const FEEDBACK = 'mailto:parpartners.app@gmail.com?subject=PARtners%20feedback';
 
 @Component({
   selector: 'app-settings',
@@ -85,6 +85,7 @@ const FEEDBACK = 'mailto:parpartners.app@gmail.com?subject=Par%20Partners%20feed
           <div class="group">
             <a class="item" routerLink="/legal/privacy"><span>{{ t('welcome.privacy') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
             <a class="item" routerLink="/legal/terms"><span>{{ t('settings.terms') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
+            <a class="item" routerLink="/legal/imprint"><span>{{ t('settings.imprint') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
             <a class="item" [href]="feedback"><span>{{ t('settings.feedback') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
             <a class="item" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">
               <span>{{ t('settings.courseData') }}</span><small>{{ t('settings.osm') }}</small>
