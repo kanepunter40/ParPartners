@@ -20,8 +20,9 @@ import { MyRound } from '../../core/models';
         <h1 class="sr-only">{{ t('rounds.title') }}</h1>
         <!-- At the top, so it doesn't end up below a long list of rounds -->
         @if (items().length) {
-          <ion-button fill="outline" expand="block" routerLink="/create" style="margin: 0 0 16px">{{ t('rounds.post') }}</ion-button>
+          <ion-button fill="outline" expand="block" routerLink="/create" style="margin: 0">{{ t('rounds.post') }}</ion-button>
         }
+        <ion-button fill="clear" expand="block" routerLink="/free" style="margin: 4px 0 16px">{{ t('free.cta') }}</ion-button>
         @for (r of items(); track r.round_id) {
           <a [routerLink]="['/round', r.round_id]" style="text-decoration: none; color: inherit; display: block">
             <div style="background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px">
@@ -50,7 +51,6 @@ import { MyRound } from '../../core/models';
             </div>
           }
         }
-        <ion-button fill="clear" expand="block" routerLink="/free" style="margin-top: 4px">{{ t('free.cta') }}</ion-button>
       </div>
     </ion-content>
   `

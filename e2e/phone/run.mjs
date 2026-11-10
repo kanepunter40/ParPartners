@@ -178,6 +178,21 @@ async function run() {
   });
 
   if (roundId) {
+    await step('Post a round and the free link are at the top of Rounds', async () => {
+      await tab('rounds');
+      const firstRound = visible('a[href^="/round/"]');
+      await firstRound.waitFor();
+      const c = await firstRound.boundingBox();
+      for (const label of [t('rounds.post'), t('free.cta')]) {
+        const b = await visible(`ion-button:has-text("${label}")`).boundingBox();
+        expect(b && c && b.y < c.y, `"${label}" is below the first round`);
+      }
+      await screenshot('Rounds tab');
+      // Back to the test round for the share step
+      await goto(`/round/${roundId}`);
+      await byText('ion-button', t('round.share')).waitFor();
+    });
+
     await step('Share link has the new 16-character invite code', async () => {
       // Catch the share instead of opening Android's share sheet
       await page.evaluate(() => {
