@@ -3,6 +3,7 @@
 // matched to courses already imported by import-courses.mjs (via courses.osm_id).
 //
 //   node scripts/import-holes.mjs                          # all of Germany, in 1° tiles
+//   node scripts/import-holes.mjs --country FR             # all of mainland France and Corsica
 //   node scripts/import-holes.mjs --bbox 48.3,8.5,49.2,9.9 # one region (south,west,north,east)
 //   node scripts/import-holes.mjs --from-file supabase/holes_overpass.json   # reuse the saved responses
 //
@@ -17,9 +18,16 @@ import { pathToFileURL } from 'node:url';
 const args = process.argv.slice(2);
 const argValue = (flag) => (args.indexOf(flag) >= 0 ? args[args.indexOf(flag) + 1] : null);
 const fromFile = argValue('--from-file');
-const bbox = (argValue('--bbox') ?? '47.2,5.8,55.1,15.1').split(',').map(Number); // default: Germany
-const OUT = new URL('../supabase/course_holes_import.sql', import.meta.url);
-const RAW = new URL('../supabase/holes_overpass.json', import.meta.url);
+/** Bounding boxes (south,west,north,east) per country. Tiles also catch neighbours' courses; the SQL only keeps imported ones. */
+// Several boxes are separated by ';' (France: mainland, then Corsica).
+const COUNTRY_BBOX = { DE: '47.2,5.8,55.1,15.1', FR: '42.3,-4.9,51.1,8.3;41.3,8.5,43.1,9.6' };
+const country = (argValue('--country') ?? 'DE').toUpperCase();
+if (!COUNTRY_BBOX[country]) throw new Error(`No bounding box for ${country}. Add it to COUNTRY_BBOX or pass --bbox.`);
+const boxes = (argValue('--bbox') ?? COUNTRY_BBOX[country]).split(';').map((b) => b.split(',').map(Number));
+// Germany keeps the original file names; other countries get their own, e.g. course_holes_import_fr.sql
+const suffix = country === 'DE' ? '' : `_${country.toLowerCase()}`;
+const OUT = new URL(`../supabase/course_holes_import${suffix}.sql`, import.meta.url);
+const RAW = new URL(`../supabase/holes_overpass${suffix}.json`, import.meta.url);
 
 const ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
@@ -56,7 +64,8 @@ async function fetchTile(tile) {
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'par-partners-import/1.0' },
-        body: 'data=' + encodeURIComponent(tileQuery(tile))
+        body: 'data=' + encodeURIComponent(tileQuery(tile)),
+        signal: AbortSignal.timeout(180000) // a hung connection would otherwise stall the import forever
       });
       if (!res.ok) throw new Error(`${url} answered ${res.status}`);
       return (await res.json()).elements ?? [];
@@ -119,7 +128,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   if (fromFile) {
     elements = JSON.parse(readFileSync(fromFile, 'utf8'));
   } else {
-    const all = tiles(bbox);
+    const all = boxes.flatMap((b) => tiles(b));
     elements = [];
     const failed = [];
     for (const [i, tile] of all.entries()) {
@@ -141,6 +150,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.exit(1);
   }
   writeFileSync(OUT, toSqlFile(rows));
-  console.log(`Wrote ${rows.length} hole pars on ${new Set(rows.map((r) => r.osmId)).size} courses to supabase/course_holes_import.sql`);
+  console.log(`Wrote ${rows.length} hole pars on ${new Set(rows.map((r) => r.osmId)).size} courses to supabase/course_holes_import${suffix}.sql`);
   console.log('Next: paste that file into the Supabase SQL editor and run it.');
 }

@@ -5,6 +5,7 @@
 //   node scripts/import-courses.mjs AT         # another country, ISO 3166-1 alpha-2 code
 //   node scripts/import-courses.mjs DE --from-file overpass.json   # reuse a saved Overpass response
 //
+// Output: supabase/courses_import.sql for DE, supabase/courses_import_<cc>.sql for others.
 // Then run the generated file in the Supabase SQL editor (or: psql "$DATABASE_URL" -f supabase/courses_import.sql).
 // It is safe to re-run: rows are matched on osm_id and updated.
 //
@@ -17,9 +18,16 @@ const args = process.argv.slice(2);
 const country = (args.find((a) => /^[A-Za-z]{2}$/.test(a)) ?? 'DE').toUpperCase();
 const fileIdx = args.indexOf('--from-file');
 const fromFile = fileIdx >= 0 ? args[fileIdx + 1] : null;
-const OUT = new URL('../supabase/courses_import.sql', import.meta.url);
+// Germany keeps the original file name; other countries get their own file, e.g. courses_import_fr.sql
+const outName = country === 'DE' ? 'courses_import.sql' : `courses_import_${country.toLowerCase()}.sql`;
+const OUT = new URL(`../supabase/${outName}`, import.meta.url);
 
-const ENDPOINTS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
+const ENDPOINTS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter'
+];
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const query = `[out:json][timeout:180];
 area["ISO3166-1"="${country}"][admin_level=2]->.a;
@@ -28,18 +36,21 @@ out center tags;`;
 
 async function fetchOverpass() {
   let lastErr;
-  for (const url of ENDPOINTS) {
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const url = ENDPOINTS[attempt % ENDPOINTS.length];
     try {
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'par-partners-import/1.0' },
-        body: 'data=' + encodeURIComponent(query)
+        body: 'data=' + encodeURIComponent(query),
+        signal: AbortSignal.timeout(300000) // a hung connection would otherwise stall the import forever
       });
       if (!res.ok) throw new Error(`${url} answered ${res.status}`);
       return await res.json();
     } catch (e) {
       lastErr = e;
       console.warn('Overpass request failed, trying next endpoint:', e.message);
+      await sleep(2000 * 2 ** attempt); // Overpass asks for exponential backoff when busy
     }
   }
   throw lastErr;
@@ -96,6 +107,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.exit(1);
   }
   writeFileSync(OUT, toSqlFile(rows, country));
-  console.log(`Wrote ${rows.length} courses to supabase/courses_import.sql`);
+  console.log(`Wrote ${rows.length} courses to supabase/${outName}`);
   console.log(`Next: paste that file into the Supabase SQL editor and run it.`);
 }
