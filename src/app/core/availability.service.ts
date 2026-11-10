@@ -12,6 +12,7 @@ export interface NewAvailability {
   radiusKm: number;
   note: string | null;
   cart: CartPref | null;
+  womenOnly: boolean;
 }
 
 export interface FindFreeParams {
@@ -40,7 +41,7 @@ export class AvailabilityService {
   async post(a: NewAvailability): Promise<string> {
     const { data, error } = await this.sb.client.rpc('post_availability', {
       p_day: a.day, p_part: a.part, p_lat: a.lat, p_lng: a.lng,
-      p_place_name: a.placeName, p_radius_km: a.radiusKm, p_note: a.note, p_cart: a.cart
+      p_place_name: a.placeName, p_radius_km: a.radiusKm, p_note: a.note, p_cart: a.cart, p_women_only: a.womenOnly
     });
     if (error) throw error;
     return data as string;
@@ -50,7 +51,7 @@ export class AvailabilityService {
   async mine(): Promise<MyAvailability[]> {
     const { data, error } = await this.sb.client
       .from('availability')
-      .select('id, day, part_of_day, place_name, radius_km, note, cart')
+      .select('id, day, part_of_day, place_name, radius_km, note, cart, women_only')
       .eq('user_id', this.sb.userId)
       .gte('day', isoDay(new Date()))
       .order('day');

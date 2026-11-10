@@ -287,6 +287,7 @@
     "birthPlaceholder": "z. B. 1992",
     "gender": "Geschlecht",
     "showOnProfile": "In meinem Profil anzeigen",
+    "genderHint": "Wenn du „Frau“ wählst, kannst du Runden nur für Frauen einstellen und ihnen beitreten.",
     "whenPlay": "Wann du meistens spielst",
     "roundLength": "Rundenlänge",
     "vibe": "Deine Spielweise auf dem Platz",
@@ -503,6 +504,9 @@
     "cancelled": "Die Anmeldung wurde abgebrochen."
   },
   "server": {
+    "womenOnly": "Diese Runde ist nur für Frauen.",
+    "womenOnlyPost": "Nur Frauen können eine Runde oder einen Tag nur für Frauen einstellen.",
+    "womenOnlyFixed": "„Nur Frauen“ lässt sich nach dem Einstellen nicht mehr ändern.",
     "cardFull": "Auf eine Scorekarte passen höchstens 8 Spieler.",
     "profileFirst": "Vervollständige zuerst dein Profil.",
     "badHole": "Dieses Loch ist nicht auf der Karte.",
@@ -572,6 +576,11 @@
     "any": "Egal",
     "walk": "Zu Fuß",
     "cart": "Cart"
+  },
+  "womenOnly": {
+    "label": "Nur Frauen",
+    "roundHint": "Nur Frauen können diese Runde sehen und beitreten.",
+    "freeHint": "Nur Frauen sehen deinen Tag und können dich einladen."
   },
   "format": {
     "label": "Spielform",

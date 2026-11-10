@@ -47,6 +47,13 @@ export class ProfileService {
     this.cache = null;
   }
 
+  /** Whether I picked Woman as my gender: decides if the women-only option is offered. */
+  async isWoman(): Promise<boolean> {
+    const { data, error } = await this.sb.client.rpc('i_am_woman');
+    if (error) throw error;
+    return data === true;
+  }
+
   /** My full profile, including the private fields, for the edit form. */
   async details(): Promise<ProfileData> {
     const id = this.sb.userId;

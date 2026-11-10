@@ -287,6 +287,7 @@
     "birthPlaceholder": "e.g. 1992",
     "gender": "Gender",
     "showOnProfile": "Show on my profile",
+    "genderHint": "If you pick Woman, you can post and join women-only rounds.",
     "whenPlay": "When you usually play",
     "roundLength": "Round length",
     "vibe": "Your vibe on the course",
@@ -503,6 +504,9 @@
     "cancelled": "Sign-in was cancelled."
   },
   "server": {
+    "womenOnly": "This round is for women only.",
+    "womenOnlyPost": "Only women can post a women-only round or day.",
+    "womenOnlyFixed": "Women only can’t be changed after posting.",
     "cardFull": "A scorecard has at most 8 players.",
     "profileFirst": "Finish your profile first.",
     "badHole": "That hole isn’t on this card.",
@@ -572,6 +576,11 @@
     "any": "Either",
     "walk": "Walking",
     "cart": "Cart"
+  },
+  "womenOnly": {
+    "label": "Women only",
+    "roundHint": "Only women can see and join this round.",
+    "freeHint": "Only women see your day and can invite you."
   },
   "format": {
     "label": "Format",

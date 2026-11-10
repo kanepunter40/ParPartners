@@ -172,6 +172,7 @@ const MY_LOCATION = '@me';
                   }
                   @if (r.format && r.format !== 'casual') { <span class="pill format-pill">{{ t('format.' + r.format) }}</span> }
                   @if (r.cart) { <span class="pill format-pill">{{ t('cart.' + r.cart) }}</span> }
+                  @if (r.women_only) { <span class="pill format-pill">{{ t('womenOnly.label') }}</span> }
                 </span>
                 @if (r.distance_km !== null) { <span class="muted" style="font-size: 13px">{{ t('find.kmAway', { km: r.distance_km }) }}</span> }
               </div>

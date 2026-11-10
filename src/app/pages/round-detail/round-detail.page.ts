@@ -55,6 +55,7 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
             <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 10px">
               <span class="pill" style="background: #F3E4D6; color: #7A4220">{{ t('format.' + (r.format || 'casual')) }}</span>
               @if (r.cart) { <span class="pill" style="background: #E3ECE9; color: #1F3532">{{ t('cart.' + r.cart) }}</span> }
+              @if (r.women_only) { <span class="pill" style="background: #E3ECE9; color: #1F3532">{{ t('womenOnly.label') }}</span> }
               <span class="muted" style="font-size: 13px">{{ t('format.hint.' + (r.format || 'casual')) }}</span>
             </div>
           </div>

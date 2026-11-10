@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon, IonInput, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon, IonInput, IonSpinner, IonToggle } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { locate, home, trashOutline } from 'ionicons/icons';
 import { I18nService } from '../../core/i18n.service';
@@ -17,7 +17,7 @@ const PARTS: PartOfDay[] = ['any', 'morning', 'afternoon', 'evening'];
 /** "I'm free": post a day you could play, without a course or tee time. Hosts nearby can invite you. */
 @Component({
   selector: 'app-free',
-  imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon, IonInput, IonSpinner],
+  imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon, IonInput, IonSpinner, IonToggle],
   styles: [`
     .wrap { display: flex; flex-direction: column; gap: 22px; padding-bottom: 32px; }
     .group { display: flex; flex-direction: column; gap: 8px; }
@@ -100,6 +100,13 @@ const PARTS: PartOfDay[] = ['any', 'morning', 'afternoon', 'evening'];
           </div>
         </div>
 
+        @if (isWoman()) {
+          <div class="group">
+            <ion-toggle [checked]="womenOnly()" (ionChange)="womenOnly.set($event.detail.checked)" style="width: 100%"><strong>{{ t('womenOnly.label') }}</strong></ion-toggle>
+            <small class="muted" style="margin-top: -4px">{{ t('womenOnly.freeHint') }}</small>
+          </div>
+        }
+
         <div class="group">
           <span class="label" id="note-label">{{ t('free.note') }}</span>
           <ion-input aria-labelledby="note-label" [maxlength]="200" [placeholder]="t('free.notePlaceholder')" [(ngModel)]="note"></ion-input>
@@ -118,7 +125,7 @@ const PARTS: PartOfDay[] = ['any', 'morning', 'afternoon', 'evening'];
               @for (a of mine(); track a.id) {
                 <div class="row">
                   <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-                    <strong>{{ dayLabel(a.day) }} · {{ t('free.part.' + a.part_of_day) }}{{ a.cart ? ' · ' + t('cart.' + a.cart) : '' }}</strong>
+                    <strong>{{ dayLabel(a.day) }} · {{ t('free.part.' + a.part_of_day) }}{{ a.cart ? ' · ' + t('cart.' + a.cart) : '' }}{{ a.women_only ? ' · ' + t('womenOnly.label') : '' }}</strong>
                     <span class="muted" style="font-size: 13px">{{ isMyLocation(a.place_name) ? t('find.yourLocation') : t('find.nearName', { name: a.place_name! }) }} · {{ t('free.upTo', { km: a.radius_km }) }}</span>
                   </span>
                   <ion-button fill="clear" color="medium" [attr.aria-label]="t('free.remove', { day: dayLabel(a.day) })" (click)="remove(a)">
@@ -154,6 +161,8 @@ export class FreePage {
   part = signal<PartOfDay>('any');
   readonly carts: (CartPref | null)[] = [null, 'walk', 'cart'];
   cart = signal<CartPref | null>(null);
+  isWoman = signal(false);
+  womenOnly = signal(false);
 
   /** No place name, or one saved before 0027 as "my location" / "mein Standort". */
   isMyLocation(name: string | null) {
@@ -176,6 +185,7 @@ export class FreePage {
 
   async ionViewWillEnter() {
     this.loadMine();
+    this.profiles.isWoman().then((w) => this.isWoman.set(w), () => {});
     if (this.centre()) return;
     try {
       const id = (await this.profiles.load())?.home_course_id;
@@ -224,6 +234,7 @@ export class FreePage {
       this.radius.set(existing.radius_km);
       this.note = existing.note ?? '';
       this.cart.set(existing.cart);
+      this.womenOnly.set(existing.women_only);
     }
   }
 
@@ -245,7 +256,8 @@ export class FreePage {
     try {
       await this.availability.post({
         day: this.day(), part: this.part(), lat: c.lat, lng: c.lng,
-        placeName: this.placeName() || null, radiusKm: this.radius(), note: this.note.trim() || null, cart: this.cart()
+        placeName: this.placeName() || null, radiusKm: this.radius(), note: this.note.trim() || null, cart: this.cart(),
+        womenOnly: this.isWoman() && this.womenOnly()
       });
       this.saved.set(true);
       await this.loadMine();

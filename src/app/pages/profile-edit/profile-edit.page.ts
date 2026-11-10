@@ -101,6 +101,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, genderKey,
                 <button type="button" class="chip" [class.on]="gender() === g" [attr.aria-pressed]="gender() === g" (click)="gender.set(gender() === g ? null : g)">{{ t(genderKey(g)) }}</button>
               }
             </div>
+            <span class="muted" style="font-size: 13px; margin-top: -6px">{{ t('edit.genderHint') }}</span>
             <ion-toggle [(ngModel)]="showAgeGender">{{ t('edit.showOnProfile') }}</ion-toggle>
           </fieldset>
 

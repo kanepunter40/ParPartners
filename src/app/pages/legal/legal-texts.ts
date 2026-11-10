@@ -73,7 +73,7 @@ export const PRIVACY: LegalDoc = {
       heading: 'Why we may use it',
       body: [
         'We use your data to provide the app you signed up for (GDPR Article 6(1)(b)).',
-        'Optional details, like your year of birth, gender and location, are used because you chose to give them (Article 6(1)(a)). You can withdraw that consent at any time by removing them in Edit profile or turning off location access. This doesn’t affect anything we did with them before.',
+        'Optional details, like your year of birth, gender and location, are used because you chose to give them (Article 6(1)(a)). If your gender is Woman, we also use it to let you see, post and join women-only rounds. Your gender itself isn’t shown, but the players in a women-only round can tell that everyone in it is a woman. You can withdraw that consent at any time by removing them in Edit profile or turning off location access. This doesn’t affect anything we did with them before.',
         'Technical data is used because we have a legitimate interest in keeping the app secure and working (Article 6(1)(f)).'
       ]
     },

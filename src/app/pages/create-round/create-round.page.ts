@@ -2,14 +2,15 @@ import { Component, inject, signal } from '@angular/core';
 import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle } from '@ionic/angular/standalone';
 import { RoundsService } from '../../core/rounds.service';
+import { ProfileService } from '../../core/profile.service';
 import { CartPref, Course } from '../../core/models';
 import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 
 @Component({
   selector: 'app-create-round',
-  imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner],
+  imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle],
   styles: [`
     .opt { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: 14px; border: 1px solid #E6DFC9; background: #fff; text-align: left; color: #1F3532; font-family: inherit; }
     .opt.on { background: #E3ECE9; border-color: #2E5F5A; }
@@ -86,6 +87,12 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
               <strong>{{ t('create.inviteOnly') }}</strong><small>{{ t('create.inviteHint') }}</small>
             </button>
           </div>
+          @if (isWoman()) {
+            <ion-toggle [checked]="womenOnly()" (ionChange)="womenOnly.set($event.detail.checked)" style="margin-top: 14px; width: 100%">
+              <strong>{{ t('womenOnly.label') }}</strong>
+            </ion-toggle>
+            <small class="muted" style="display: block; margin-top: 2px">{{ t('womenOnly.roundHint') }}</small>
+          }
         </div>
 
         <div>
@@ -106,6 +113,7 @@ export class CreateRoundPage {
   readonly i18n = inject(I18nService);
   readonly t = this.i18n.t;
   private rounds = inject(RoundsService);
+  private profiles = inject(ProfileService);
   private router = inject(Router);
   readonly Math = Math;
 
@@ -117,11 +125,17 @@ export class CreateRoundPage {
   format = signal<RoundFormat>('casual');
   readonly carts: (CartPref | null)[] = [null, 'walk', 'cart'];
   cart = signal<CartPref | null>(null);
+  isWoman = signal(false);
+  womenOnly = signal(false);
   notes = '';
   busy = signal(false);
   error = signal('');
   minDate = new Date().toISOString();
   teeTime = this.defaultTeeTime();
+
+  constructor() {
+    this.profiles.isWoman().then((w) => this.isWoman.set(w), () => {});
+  }
 
   /** Next Saturday at 10:00 local time, as an ISO string for ion-datetime. */
   private defaultTeeTime(): string {
@@ -154,7 +168,8 @@ export class CreateRoundPage {
         visibility: this.visibility(),
         notes: this.notes.trim() || null,
         format: this.format(),
-        cart: this.cart()
+        cart: this.cart(),
+        women_only: this.isWoman() && this.womenOnly()
       });
       await this.router.navigate(['/round', id], { replaceUrl: true });
     } catch (e: any) {

@@ -22,6 +22,7 @@ export interface NewRound {
   notes: string | null;
   format: RoundFormat;
   cart: CartPref | null;
+  women_only: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -73,7 +74,7 @@ export class RoundsService {
     const { data, error } = await this.sb.client
       .from('rounds')
       .select(
-        `id, host_id, tee_time, max_players, visibility, notes, status, format, cart,
+        `id, host_id, tee_time, max_players, visibility, notes, status, format, cart, women_only,
          courses(id, name, city),
          host:profiles!rounds_host_id_fkey(display_name, avatar_url, handicap_index),
          round_players(player_id, status, created_at, profiles(display_name, avatar_url, handicap_index))`

@@ -25,6 +25,8 @@ export interface RoundResult {
   format: RoundFormat;
   /** walk / cart; null = either */
   cart: CartPref | null;
+  /** only women can see and join */
+  women_only: boolean;
 }
 
 /** waitlisted: joined a full round, moved in when a spot opens. invited: a host invited them from Free to play. */
@@ -41,6 +43,8 @@ export interface RoundDetail {
   format: RoundFormat;
   /** walk / cart; null = either */
   cart: CartPref | null;
+  /** only women can see and join */
+  women_only: boolean;
   courses: { id: string; name: string; city: string | null };
   host: { display_name: string; avatar_url: string | null; handicap_index: number | null };
   round_players: { player_id: string; status: PlayerStatus; created_at: string; profiles: { display_name: string; avatar_url: string | null; handicap_index: number | null } }[];
@@ -223,6 +227,8 @@ export interface MyAvailability {
   radius_km: number;
   note: string | null;
   cart: CartPref | null;
+  /** only women can see and join */
+  women_only: boolean;
 }
 
 export interface ChatMessage {

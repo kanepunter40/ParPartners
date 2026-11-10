@@ -63,7 +63,7 @@ export const PRIVACY_DE: LegalDoc = {
       heading: 'Rechtsgrundlage',
       body: [
         'Wir nutzen deine Daten, um dir die App bereitzustellen, für die du dich angemeldet hast (Art. 6 Abs. 1 lit. b DSGVO).',
-        'Freiwillige Angaben wie Geburtsjahr, Geschlecht und Standort nutzen wir, weil du sie uns gegeben hast (Art. 6 Abs. 1 lit. a DSGVO). Du kannst diese Einwilligung jederzeit widerrufen, indem du sie unter „Profil bearbeiten“ entfernst oder den Standortzugriff ausschaltest. Was wir vorher damit getan haben, bleibt davon unberührt.',
+        'Freiwillige Angaben wie Geburtsjahr, Geschlecht und Standort nutzen wir, weil du sie uns gegeben hast (Art. 6 Abs. 1 lit. a DSGVO). Wenn du „Frau“ angegeben hast, nutzen wir das auch, damit du Runden nur für Frauen sehen, einstellen und ihnen beitreten kannst. Dein Geschlecht selbst wird nicht angezeigt, aber die Spielerinnen einer Runde nur für Frauen können erkennen, dass alle darin Frauen sind. Du kannst diese Einwilligung jederzeit widerrufen, indem du sie unter „Profil bearbeiten“ entfernst oder den Standortzugriff ausschaltest. Was wir vorher damit getan haben, bleibt davon unberührt.',
         'Technische Daten nutzen wir, weil wir ein berechtigtes Interesse daran haben, die App sicher und funktionsfähig zu halten (Art. 6 Abs. 1 lit. f DSGVO).'
       ]
     },
