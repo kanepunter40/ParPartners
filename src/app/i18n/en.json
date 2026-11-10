@@ -132,8 +132,11 @@
       "round_alert": "{who} posted a round that matches your saved search",
       "round_invite": "{who} invited you to their round",
       "round_message": "{who} wrote in the round chat",
-      "waitlist_promoted": "A spot opened up. You're in the round"
-    }
+      "waitlist_promoted": "A spot opened up. You're in the round",
+      "player_free": "{who} is free on {day} and your round has room",
+      "free_alert": "{who} is free to play on {day} near your saved search"
+    },
+    "inviteLabel": "Invite {who} to this round"
   },
   "rounds": {
     "title": "Upcoming rounds",
@@ -602,7 +605,7 @@
   },
   "alerts": {
     "title": "Saved searches",
-    "intro": "You'll get a notification when someone posts a round that matches one of these searches. Tap one to open it in Find.",
+    "intro": "You'll get a notification when someone posts a round that matches one of these searches, and, if you switch it on, when a player nearby is free to play. Tap a search to open it in Find.",
     "inAppOnly": "Matches show under Notifications. In the phone app they also arrive as push notifications.",
     "delete": "Delete saved search for {name}",
     "emptyTitle": "No saved searches yet",
@@ -622,7 +625,8 @@
     "myArea": "my area",
     "saveError": "Could not save the search.",
     "hint": "Get a notification when a new round matching these filters is posted.",
-    "savedHint": "You'll be notified when a matching round is posted."
+    "savedHint": "You'll be notified when a matching round is posted.",
+    "includeFree": "Also tell me when players are free here"
   },
   "free": {
     "cta": "I'm free to play",

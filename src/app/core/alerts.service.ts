@@ -44,6 +44,12 @@ export class AlertsService {
     return data as string;
   }
 
+  /** Switches "also tell me when players are free here" on or off. */
+  async setIncludeFree(id: string, on: boolean) {
+    const { error } = await this.sb.client.from('search_alerts').update({ include_free: on }).eq('id', id);
+    if (error) throw error;
+  }
+
   async remove(id: string) {
     const { error } = await this.sb.client.from('search_alerts').delete().eq('id', id);
     if (error) throw error;

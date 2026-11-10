@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon, IonToggle } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline, notificationsOutline, chevronForward } from 'ionicons/icons';
 import { I18nService } from '../../core/i18n.service';
@@ -11,11 +11,13 @@ import { SearchAlert } from '../../core/models';
 /** Saved searches from Find, and a way to delete them. */
 @Component({
   selector: 'app-alerts',
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon, IonToggle],
   styles: [`
     .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
-    .row { display: flex; align-items: center; gap: 4px; min-height: 64px; padding-right: 6px; border-bottom: 1px solid #EFEAD9; }
-    .row:last-child { border-bottom: 0; }
+    .item { border-bottom: 1px solid #EFEAD9; }
+    .item:last-child { border-bottom: 0; }
+    .row { display: flex; align-items: center; gap: 4px; min-height: 64px; padding-right: 6px; }
+    .free { display: block; padding: 0 16px 12px; font-size: 14px; --track-background-checked: #2E5F5A; }
     .open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 4px 10px 16px;
             background: none; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
     .open:disabled { cursor: default; }
@@ -37,6 +39,7 @@ import { SearchAlert } from '../../core/models';
         @if (items().length) {
           <div class="card">
             @for (a of items(); track a.id) {
+              <div class="item">
               <div class="row">
                 <button type="button" class="open" [disabled]="!canOpen(a)" (click)="open(a)">
                   <span class="text">
@@ -48,6 +51,10 @@ import { SearchAlert } from '../../core/models';
                 <ion-button fill="clear" color="medium" [attr.aria-label]="t('alerts.delete', { name: where(a) })" (click)="remove(a)">
                   <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
                 </ion-button>
+              </div>
+              <ion-toggle class="free" justify="space-between" [checked]="a.include_free" (ionChange)="setFree(a, $event)">
+                {{ t('alerts.includeFree') }}
+              </ion-toggle>
               </div>
             }
           </div>
@@ -110,6 +117,18 @@ export class AlertsPage {
   open(a: SearchAlert) {
     this.alerts.pending = a;
     this.router.navigateByUrl('/tabs/find');
+  }
+
+  /** "Also tell me when players are free here". Shown as switched at once, put back if saving fails. */
+  async setFree(a: SearchAlert, ev: Event) {
+    const on = (ev as CustomEvent).detail.checked as boolean;
+    this.items.update((list) => list.map((x) => (x.id === a.id ? { ...x, include_free: on } : x)));
+    try {
+      await this.alerts.setIncludeFree(a.id, on);
+    } catch (e: any) {
+      this.items.update((list) => list.map((x) => (x.id === a.id ? { ...x, include_free: !on } : x)));
+      this.error.set(this.i18n.error(e, 'common.error'));
+    }
   }
 
   async remove(a: SearchAlert) {

@@ -132,8 +132,11 @@
       "round_alert": "{who} hat eine Runde eingestellt, die zu deiner gespeicherten Suche passt",
       "round_invite": "{who} hat dich zu einer Runde eingeladen",
       "round_message": "{who} hat im Runden-Chat geschrieben",
-      "waitlist_promoted": "Ein Platz ist frei geworden. Du bist dabei"
-    }
+      "waitlist_promoted": "Ein Platz ist frei geworden. Du bist dabei",
+      "player_free": "{who} hat am {day} Zeit und in deiner Runde ist noch Platz",
+      "free_alert": "{who} hat am {day} Zeit zum Spielen, passend zu deiner gespeicherten Suche"
+    },
+    "inviteLabel": "{who} zu dieser Runde einladen"
   },
   "rounds": {
     "title": "Anstehende Runden",
@@ -602,7 +605,7 @@
   },
   "alerts": {
     "title": "Gespeicherte Suchen",
-    "intro": "Du bekommst Bescheid, wenn jemand eine Runde einstellt, die zu einer dieser Suchen passt. Tippe auf eine, um sie in „Finden“ zu öffnen.",
+    "intro": "Du bekommst Bescheid, wenn jemand eine Runde einstellt, die zu einer dieser Suchen passt, und wenn du es einschaltest auch, wenn jemand in der Nähe Zeit zum Spielen hat. Tippe auf eine Suche, um sie in „Finden“ zu öffnen.",
     "inAppOnly": "Treffer erscheinen unter Benachrichtigungen. In der App auf dem Handy kommen sie auch als Push-Nachricht.",
     "delete": "Gespeicherte Suche für {name} löschen",
     "emptyTitle": "Noch keine gespeicherten Suchen",
@@ -622,7 +625,8 @@
     "myArea": "meine Gegend",
     "saveError": "Die Suche konnte nicht gespeichert werden.",
     "hint": "Bekomm eine Benachrichtigung, wenn eine neue Runde zu diesen Filtern eingestellt wird.",
-    "savedHint": "Du bekommst Bescheid, sobald eine passende Runde eingestellt wird."
+    "savedHint": "Du bekommst Bescheid, sobald eine passende Runde eingestellt wird.",
+    "includeFree": "Auch Bescheid geben, wenn hier jemand Zeit hat"
   },
   "free": {
     "cta": "Ich hätte Zeit",

@@ -77,7 +77,7 @@ export interface PlayerCard {
 
 export type NotificationType = 'request_received' | 'request_accepted' | 'request_declined' | 'player_joined' | 'player_left' | 'round_cancelled'
   | 'host_handover' | 'friend_request' | 'friend_accepted' | 'round_reminder' | 'report_received'
-  | 'round_alert' | 'round_invite' | 'round_message' | 'waitlist_promoted';
+  | 'round_alert' | 'round_invite' | 'round_message' | 'waitlist_promoted' | 'player_free' | 'free_alert';
 
 export interface AppNotification {
   id: string;
@@ -87,6 +87,9 @@ export interface AppNotification {
   created_at: string;
   /** Start of a chat message (round_message), otherwise null */
   detail: string | null;
+  /** The day a player is free, YYYY-MM-DD (player_free, free_alert), otherwise null */
+  day: string | null;
+  actor_id: string | null;
   actor: { display_name: string } | null;
   /** null when the round was deleted or is no longer visible to this user */
   rounds: { tee_time: string; courses: { name: string } } | null;
@@ -180,6 +183,8 @@ export interface SearchAlert {
   lng: number | null;
   days: 'any' | 'weekend' | 'weekday';
   format: RoundFormat | null;
+  /** Also notify when a player posts that they're free in this area */
+  include_free: boolean;
   created_at: string;
 }
 

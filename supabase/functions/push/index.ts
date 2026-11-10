@@ -34,6 +34,8 @@ const TEXT: Record<Locale, Record<string, string>> = {
     round_invite: '{who} invited you to their round {when2}',
     round_message: '{who}: {detail}',
     waitlist_promoted: "A spot opened up. You're in the round {when2}",
+    player_free: '{who} is free {day} and your round has room. Invite them?',
+    free_alert: '{who} is free to play {day} near your saved search',
     other: 'Update on a round',
     aPlayer: 'A player'
   },
@@ -53,6 +55,8 @@ const TEXT: Record<Locale, Record<string, string>> = {
     round_invite: '{who} hat dich zu einer Runde {when2} eingeladen',
     round_message: '{who}: {detail}',
     waitlist_promoted: 'Ein Platz ist frei geworden. Du bist {when2} dabei',
+    player_free: '{who} hat {day} Zeit und in deiner Runde ist noch Platz. Einladen?',
+    free_alert: '{who} hat {day} Zeit zum Spielen, passend zu deiner gespeicherten Suche',
     other: 'Neuigkeit zu einer Runde',
     aPlayer: 'Ein Spieler'
   }
@@ -77,6 +81,14 @@ function onDay(teeTime: string, locale: Locale): string {
   const day = new Intl.DateTimeFormat(loc, { timeZone: tz, weekday: 'short', day: 'numeric', month: 'short' }).format(tee);
   const time = new Intl.DateTimeFormat(loc, { timeZone: tz, hour: '2-digit', minute: '2-digit' }).format(tee);
   return locale === 'de' ? `am ${day} um ${time} Uhr` : `on ${day} at ${time}`;
+}
+
+/** "on Sat 15 Nov" / "am Sa., 15. Nov." for a YYYY-MM-DD day. */
+function onDate(day: string, locale: Locale): string {
+  const [y, m, d] = day.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d, 12));
+  const text = new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' }).format(date);
+  return locale === 'de' ? `am ${text}` : `on ${text}`;
 }
 
 // --- Firebase access token (an OAuth token from the service account, cached until shortly before it expires) ---
@@ -117,7 +129,7 @@ Deno.serve(async (req) => {
   const { id } = await req.json();
   const { data: n, error } = await sb
     .from('notifications')
-    .select('id, user_id, type, round_id, detail, actor:profiles!notifications_actor_id_fkey(display_name), rounds(tee_time, courses(name))')
+    .select('id, user_id, type, round_id, detail, day, actor:profiles!notifications_actor_id_fkey(display_name), rounds(tee_time, courses(name))')
     .eq('id', id)
     .maybeSingle();
   if (error || !n) return new Response('Notification not found', { status: 404 });
@@ -127,7 +139,9 @@ Deno.serve(async (req) => {
 
   const actor = (n as any).actor?.display_name as string | undefined;
   const round = (n as any).rounds as { tee_time: string; courses: { name: string } } | null;
-  const route = n.type === 'report_received' ? '/notifications'
+  // player_free: the Invite button is in the notifications list. free_alert: Find lists free players.
+  const route = n.type === 'report_received' || n.type === 'player_free' ? '/notifications'
+    : n.type === 'free_alert' ? '/tabs/find'
     : n.type === 'friend_request' || n.type === 'friend_accepted' ? '/friends'
     : n.type === 'round_message' && n.round_id ? `/round/${n.round_id}/chat`
     : n.round_id ? `/round/${n.round_id}` : '/notifications';
@@ -142,7 +156,8 @@ Deno.serve(async (req) => {
       .replace('{who}', () => actor ?? t.aPlayer)
       .replace('{when}', () => (round ? when(round.tee_time, locale) : ''))
       .replace('{when2}', () => (round ? onDay(round.tee_time, locale) : ''))
-      .replace('{detail}', () => (n as any).detail ?? '');
+      .replace('{detail}', () => (n as any).detail ?? '')
+      .replace('{day}', () => ((n as any).day ? onDate((n as any).day, locale) : ''));
 
     const res = await fetch(`https://fcm.googleapis.com/v1/projects/${sa.project_id}/messages:send`, {
       method: 'POST',
