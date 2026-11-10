@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
-import { Course, MyRound, PlayerStatus, RoundDetail, RoundResult } from './models';
+import { CartPref, Course, MyRound, PlayerStatus, RoundDetail, RoundResult } from './models';
 import { RoundFormat } from './round-format';
 
 export interface FindParams {
@@ -21,6 +21,7 @@ export interface NewRound {
   visibility: 'nearby' | 'invite_only';
   notes: string | null;
   format: RoundFormat;
+  cart: CartPref | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -72,7 +73,7 @@ export class RoundsService {
     const { data, error } = await this.sb.client
       .from('rounds')
       .select(
-        `id, host_id, tee_time, max_players, visibility, notes, status, format,
+        `id, host_id, tee_time, max_players, visibility, notes, status, format, cart,
          courses(id, name, city),
          host:profiles!rounds_host_id_fkey(display_name, avatar_url, handicap_index),
          round_players(player_id, status, created_at, profiles(display_name, avatar_url, handicap_index))`

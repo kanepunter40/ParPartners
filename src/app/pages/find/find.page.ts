@@ -54,6 +54,9 @@ const MY_LOCATION = '@me';
     .chips { display: flex; gap: 8px; }
     .chip { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 6px; line-height: 1.15; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
     .chip.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
+    /* Date filter: long German labels ("Nächstes Wochenende") get two per row instead of being cut mid-word */
+    .chips.when { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
+    .chips .chip { overflow-wrap: normal; word-break: normal; hyphens: auto; }
     .results-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
     .results-head h2 { margin: 0; font-size: 22px; }
     ion-searchbar { padding: 0; --background: #fff; }
@@ -120,7 +123,7 @@ const MY_LOCATION = '@me';
           }
           <div class="group">
             <span class="group-label" id="when-label">{{ t('find.when') }}</span>
-            <div class="chips" role="group" aria-labelledby="when-label">
+            <div class="chips when" role="group" aria-labelledby="when-label">
               @for (w of whens; track w[0]) {
                 <button type="button" class="chip" [class.on]="when() === w[0]" [attr.aria-pressed]="when() === w[0]" (click)="setWhen(w[0])">{{ t(w[1]) }}</button>
               }
@@ -168,6 +171,7 @@ const MY_LOCATION = '@me';
                     <span class="pill full">{{ t('find.fullWaitlist') }}</span>
                   }
                   @if (r.format && r.format !== 'casual') { <span class="pill format-pill">{{ t('format.' + r.format) }}</span> }
+                  @if (r.cart) { <span class="pill format-pill">{{ t('cart.' + r.cart) }}</span> }
                 </span>
                 @if (r.distance_km !== null) { <span class="muted" style="font-size: 13px">{{ t('find.kmAway', { km: r.distance_km }) }}</span> }
               </div>
@@ -205,7 +209,7 @@ const MY_LOCATION = '@me';
                   <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="40" />
                   <div style="flex: 1; min-width: 0">
                     <strong>{{ f.display_name }}</strong>
-                    <div class="muted" style="font-size: 13px">{{ f.handicap_index !== null ? t('common.hcp', { hcp: f.handicap_index }) + ' · ' : '' }}{{ f.place_name ? t('find.nearName', { name: f.place_name }) : '' }}</div>
+                    <div class="muted" style="font-size: 13px">{{ f.handicap_index !== null ? t('common.hcp', { hcp: f.handicap_index }) + ' · ' : '' }}{{ f.place_name && f.place_name !== 'my location' && f.place_name !== 'mein Standort' ? t('find.nearName', { name: f.place_name }) : '' }}</div>
                   </div>
                   @if (invitedIds().has(f.user_id)) {
                     <span class="pill ok">{{ t('free.invited') }}</span>
@@ -213,7 +217,7 @@ const MY_LOCATION = '@me';
                     <ion-button size="small" (click)="invite(f)">{{ t('free.invite') }}</ion-button>
                   }
                 </div>
-                <strong style="font-size: 14px">{{ dayLabel(f.day) }} · {{ t('free.part.' + f.part_of_day) }}</strong>
+                <strong style="font-size: 14px">{{ dayLabel(f.day) }} · {{ t('free.part.' + f.part_of_day) }}{{ f.cart ? ' · ' + t('cart.' + f.cart) : '' }}</strong>
                 @if (f.note) { <span class="muted" style="font-size: 14px">“{{ f.note }}”</span> }
               </div>
             } @empty {

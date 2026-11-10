@@ -24,6 +24,10 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
     .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
     .player { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 6px 16px; border-bottom: 1px solid #EFEAD9; }
     .player:last-child { border-bottom: 0; }
+    /* Name with the handicap under it, so a long German button label still fits beside them */
+    .who { flex: 1; min-width: 0; display: flex; align-items: center; }
+    .who .name { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
+    .player-actions { flex: none; display: flex; align-items: center; gap: 8px; }
     .weather { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
     .weather ion-icon { font-size: 32px; color: #C97B4A; flex: none; }
     .notice { margin: 0; padding: 12px 16px; border-radius: 12px; background: #E3ECE9; color: #1F3532; }
@@ -50,6 +54,7 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
             <div class="muted">{{ i18n.date(r.tee_time, 'longDayTime') }}</div>
             <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 10px">
               <span class="pill" style="background: #F3E4D6; color: #7A4220">{{ t('format.' + (r.format || 'casual')) }}</span>
+              @if (r.cart) { <span class="pill" style="background: #E3ECE9; color: #1F3532">{{ t('cart.' + r.cart) }}</span> }
               <span class="muted" style="font-size: 13px">{{ t('format.hint.' + (r.format || 'casual')) }}</span>
             </div>
           </div>
@@ -81,9 +86,16 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
             <div class="card">
               @for (p of confirmed(); track p.player_id) {
                 <div class="player">
-                  <span style="display: flex; align-items: center"><app-avatar [name]="p.profiles.display_name" [path]="p.profiles.avatar_url" [size]="36" style="margin-right: 10px" />{{ p.profiles.display_name }}{{ p.status === 'host' ? ' ' + t('round.hostTag') : '' }}</span>
-                  <span style="display: flex; align-items: center; gap: 8px">
-                    <span class="muted" style="font-size: 13px">{{ p.profiles.handicap_index !== null ? t('common.hcp', { hcp: p.profiles.handicap_index }) : '' }}</span>
+                  <span class="who">
+                    <app-avatar [name]="p.profiles.display_name" [path]="p.profiles.avatar_url" [size]="36" style="margin-right: 10px; flex: none" />
+                    <span class="name">
+                      <span>{{ p.profiles.display_name }}{{ p.status === 'host' ? ' ' + t('round.hostTag') : '' }}</span>
+                      @if (p.profiles.handicap_index !== null) {
+                        <span class="muted" style="font-size: 13px; white-space: nowrap">{{ t('common.hcp', { hcp: p.profiles.handicap_index }) }}</span>
+                      }
+                    </span>
+                  </span>
+                  <span class="player-actions">
                     @if (p.player_id !== me()) {
                       @switch (friendStatus().get(p.player_id) ?? 'none') {
                         @case ('friends') { <span class="pill ok">{{ t('round.friend') }}</span> }

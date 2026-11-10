@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner } from '@ionic/angular/standalone';
 import { RoundsService } from '../../core/rounds.service';
-import { Course } from '../../core/models';
+import { CartPref, Course } from '../../core/models';
 import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 
 @Component({
@@ -45,7 +45,7 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 
         <div>
           <strong>{{ t('create.dateTime') }}</strong>
-          <ion-datetime presentation="date-time" [locale]="i18n.locale()" [firstDayOfWeek]="1" [min]="minDate" [(ngModel)]="teeTime" [minuteValues]="'0,10,20,30,40,50'" style="margin-top: 6px; border-radius: 12px"></ion-datetime>
+          <ion-datetime presentation="date-time" [locale]="i18n.locale()" [firstDayOfWeek]="1" [min]="minDate" [(ngModel)]="teeTime" [minuteValues]="'0,10,20,30,40,50'" style="margin-top: 6px; border-radius: 12px"><span slot="time-label">{{ t('create.time') }}</span></ion-datetime>
         </div>
 
         <div>
@@ -65,6 +65,15 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
             }
           </div>
           <small class="muted" style="display: block; margin-top: 8px" aria-live="polite">{{ t('format.hint.' + format()) }}</small>
+        </div>
+
+        <div>
+          <strong id="cart">{{ t('cart.label') }}</strong>
+          <div class="formats" role="radiogroup" aria-labelledby="cart">
+            @for (c of carts; track c) {
+              <button type="button" class="fmt" role="radio" [class.on]="cart() === c" [attr.aria-checked]="cart() === c" (click)="cart.set(c)">{{ t('cart.' + (c ?? 'any')) }}</button>
+            }
+          </div>
         </div>
 
         <div>
@@ -106,6 +115,8 @@ export class CreateRoundPage {
   visibility = signal<'nearby' | 'invite_only'>('nearby');
   readonly formats = ROUND_FORMATS;
   format = signal<RoundFormat>('casual');
+  readonly carts: (CartPref | null)[] = [null, 'walk', 'cart'];
+  cart = signal<CartPref | null>(null);
   notes = '';
   busy = signal(false);
   error = signal('');
@@ -142,7 +153,8 @@ export class CreateRoundPage {
         max_players: this.players(),
         visibility: this.visibility(),
         notes: this.notes.trim() || null,
-        format: this.format()
+        format: this.format(),
+        cart: this.cart()
       });
       await this.router.navigate(['/round', id], { replaceUrl: true });
     } catch (e: any) {

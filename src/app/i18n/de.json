@@ -389,7 +389,8 @@
     "inviteHint": "Nur Leute, denen du den Link schickst",
     "notesPlaceholder": "Treffpunkt, Trolley, alles Wichtige",
     "submit": "Runde einstellen",
-    "error": "Die Runde konnte nicht eingestellt werden."
+    "error": "Die Runde konnte nicht eingestellt werden.",
+    "time": "Uhrzeit"
   },
   "cardNew": {
     "title": "Neue Scorekarte",
@@ -405,7 +406,8 @@
     "addPlayer": "Weiteren Spieler hinzufügen",
     "pickCourse": "Wähl einen Platz aus der Liste, um zu starten.",
     "openError": "Die Scorekarte konnte nicht geöffnet werden.",
-    "startError": "Die Scorekarte konnte nicht gestartet werden."
+    "startError": "Die Scorekarte konnte nicht gestartet werden.",
+    "guestsHint": "Optional. Die anderen brauchen die App nicht."
   },
   "card": {
     "byHole": "Loch für Loch",
@@ -565,6 +567,12 @@
     "channel": "Runden und Freunde",
     "channelText": "Beitrittsanfragen, Spieler, die beitreten oder gehen, Erinnerungen an Runden und Freundschaftsanfragen"
   },
+  "cart": {
+    "label": "Zu Fuß oder Cart?",
+    "any": "Egal",
+    "walk": "Zu Fuß",
+    "cart": "Cart"
+  },
   "format": {
     "label": "Spielform",
     "any": "Alle Spielformen",
@@ -643,7 +651,7 @@
     "where": "In der Nähe von",
     "travel": "Wie weit würdest du fahren?",
     "note": "Notiz (optional)",
-    "notePlaceholder": "z. B. gern zu Fuß, 18 Löcher",
+    "notePlaceholder": "z. B. 18 Löcher, entspanntes Tempo",
     "saved": "Eingestellt. Gastgeber in der Nähe sehen dich jetzt.",
     "update": "Diesen Tag ändern",
     "post": "Einstellen",

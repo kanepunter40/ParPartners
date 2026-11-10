@@ -190,7 +190,7 @@ export class ProfileEditPage {
       const [d, me] = await Promise.all([this.profiles.details(), this.profiles.load(true)]);
       this.avatar.set(me?.avatar_url ?? null);
       this.name = d.displayName;
-      this.handicapText = d.handicap !== null ? String(d.handicap) : '';
+      this.handicapText = d.handicap !== null ? this.i18n.num(d.handicap, 1) : '';
       this.noHandicap = d.noHandicap;
       this.languages.set(d.languages);
       this.birthYearText = d.birthYear !== null ? String(d.birthYear) : '';

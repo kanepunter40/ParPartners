@@ -80,7 +80,7 @@ const MAX_GUESTS = 7;
               @if (guests().length < maxGuests) {
                 <ion-button fill="outline" color="medium" (click)="addGuest()">{{ t('cardNew.addPlayer') }}</ion-button>
               }
-              <div class="muted" style="font-size: 13px">Optional. Other players don't need the app.</div>
+              <div class="muted" style="font-size: 13px">{{ t('cardNew.guestsHint') }}</div>
             </div>
           }
 

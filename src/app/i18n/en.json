@@ -389,7 +389,8 @@
     "inviteHint": "Only people you share the link with",
     "notesPlaceholder": "Meeting point, trolley, anything to flag",
     "submit": "Post round",
-    "error": "Could not post the round."
+    "error": "Could not post the round.",
+    "time": "Time"
   },
   "cardNew": {
     "title": "New scorecard",
@@ -405,7 +406,8 @@
     "addPlayer": "Add another player",
     "pickCourse": "Pick a course from the list to start.",
     "openError": "Could not open the scorecard.",
-    "startError": "Could not start the scorecard."
+    "startError": "Could not start the scorecard.",
+    "guestsHint": "Optional. Other players don't need the app."
   },
   "card": {
     "byHole": "Hole by hole",
@@ -565,6 +567,12 @@
     "channel": "Rounds and friends",
     "channelText": "Join requests, players joining or leaving, round reminders and friend requests"
   },
+  "cart": {
+    "label": "Walking or cart?",
+    "any": "Either",
+    "walk": "Walking",
+    "cart": "Cart"
+  },
   "format": {
     "label": "Format",
     "any": "Any format",
@@ -643,7 +651,7 @@
     "where": "Around",
     "travel": "How far would you travel?",
     "note": "Note (optional)",
-    "notePlaceholder": "e.g. happy to walk, 18 holes",
+    "notePlaceholder": "e.g. 18 holes, relaxed pace",
     "saved": "Posted. Hosts nearby can see you now.",
     "update": "Update this day",
     "post": "Post",

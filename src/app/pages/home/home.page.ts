@@ -91,7 +91,7 @@ const PAGE = 30;
                       <strong>{{ f.course_name }}</strong>
                       <span style="font-size: 13px">{{ i18n.date(f.tee_time) }}</span>
                     </span>
-                    <span [class]="f.spots_left ? 'pill ok' : 'pill full'">{{ f.spots_left ? t('home.spotsLeft', { count: f.spots_left }) : t('home.full') }}</span>
+                    <span [class]="f.spots_left ? 'pill ok' : 'pill full'" style="flex: none; white-space: nowrap">{{ f.spots_left ? t('home.spotsLeft', { count: f.spots_left }) : t('home.full') }}</span>
                   </span>
                 }
               </span>

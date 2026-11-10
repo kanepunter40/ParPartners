@@ -8,7 +8,7 @@ import { AvailabilityService, isoDay } from '../../core/availability.service';
 import { LocationService } from '../../core/location.service';
 import { ProfileService } from '../../core/profile.service';
 import { RoundsService } from '../../core/rounds.service';
-import { MyAvailability, PartOfDay, Position } from '../../core/models';
+import { CartPref, MyAvailability, PartOfDay, Position } from '../../core/models';
 
 const DAYS_SHOWN = 14;
 const RADII = [10, 25, 50, 100];
@@ -27,8 +27,9 @@ const PARTS: PartOfDay[] = ['any', 'morning', 'afternoon', 'evening'];
     .day strong { font-size: 18px; }
     .day.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
     .day.taken:not(.on) { border-color: #2E5F5A; border-width: 2px; }
-    .chips { display: flex; gap: 8px; }
-    .chip { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 0 6px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    /* Sized by the label ("Nachmittags" gets more room), never broken mid-word */
+    .chip { flex: 1 1 auto; white-space: nowrap; min-height: 44px; padding: 0 12px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
     .chip.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
     .where { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 12px 14px; }
     ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; min-height: 48px; }
@@ -91,6 +92,15 @@ const PARTS: PartOfDay[] = ['any', 'morning', 'afternoon', 'evening'];
         </div>
 
         <div class="group">
+          <span class="label" id="cart-label">{{ t('cart.label') }}</span>
+          <div class="chips" role="group" aria-labelledby="cart-label">
+            @for (c of carts; track c) {
+              <button type="button" class="chip" [class.on]="cart() === c" [attr.aria-pressed]="cart() === c" (click)="cart.set(c)">{{ t('cart.' + (c ?? 'any')) }}</button>
+            }
+          </div>
+        </div>
+
+        <div class="group">
           <span class="label" id="note-label">{{ t('free.note') }}</span>
           <ion-input aria-labelledby="note-label" [maxlength]="200" [placeholder]="t('free.notePlaceholder')" [(ngModel)]="note"></ion-input>
         </div>
@@ -108,8 +118,8 @@ const PARTS: PartOfDay[] = ['any', 'morning', 'afternoon', 'evening'];
               @for (a of mine(); track a.id) {
                 <div class="row">
                   <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-                    <strong>{{ dayLabel(a.day) }} · {{ t('free.part.' + a.part_of_day) }}</strong>
-                    <span class="muted" style="font-size: 13px">{{ a.place_name ? t('find.nearName', { name: a.place_name }) : '' }} · {{ t('free.upTo', { km: a.radius_km }) }}</span>
+                    <strong>{{ dayLabel(a.day) }} · {{ t('free.part.' + a.part_of_day) }}{{ a.cart ? ' · ' + t('cart.' + a.cart) : '' }}</strong>
+                    <span class="muted" style="font-size: 13px">{{ isMyLocation(a.place_name) ? t('find.yourLocation') : t('find.nearName', { name: a.place_name! }) }} · {{ t('free.upTo', { km: a.radius_km }) }}</span>
                   </span>
                   <ion-button fill="clear" color="medium" [attr.aria-label]="t('free.remove', { day: dayLabel(a.day) })" (click)="remove(a)">
                     <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
@@ -142,6 +152,13 @@ export class FreePage {
 
   day = signal(this.days[0].iso);
   part = signal<PartOfDay>('any');
+  readonly carts: (CartPref | null)[] = [null, 'walk', 'cart'];
+  cart = signal<CartPref | null>(null);
+
+  /** No place name, or one saved before 0027 as "my location" / "mein Standort". */
+  isMyLocation(name: string | null) {
+    return !name || name === 'my location' || name === 'mein Standort';
+  }
   radius = signal(25);
   centre = signal<Position | null>(null);
   placeName = signal('');
@@ -206,6 +223,7 @@ export class FreePage {
       this.part.set(existing.part_of_day);
       this.radius.set(existing.radius_km);
       this.note = existing.note ?? '';
+      this.cart.set(existing.cart);
     }
   }
 
@@ -227,7 +245,7 @@ export class FreePage {
     try {
       await this.availability.post({
         day: this.day(), part: this.part(), lat: c.lat, lng: c.lng,
-        placeName: this.placeName() || this.t('free.aroundMe'), radiusKm: this.radius(), note: this.note.trim() || null
+        placeName: this.placeName() || null, radiusKm: this.radius(), note: this.note.trim() || null, cart: this.cart()
       });
       this.saved.set(true);
       await this.loadMine();

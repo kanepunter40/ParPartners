@@ -1,4 +1,7 @@
 import { RoundFormat } from './round-format';
+
+/** Walking or riding a cart; null on a round or post means either is fine. */
+export type CartPref = "walk" | "cart";
 export interface Course {
   id: string;
   name: string;
@@ -20,6 +23,8 @@ export interface RoundResult {
   host_name: string;
   host_handicap: number | null;
   format: RoundFormat;
+  /** walk / cart; null = either */
+  cart: CartPref | null;
 }
 
 /** waitlisted: joined a full round, moved in when a spot opens. invited: a host invited them from Free to play. */
@@ -34,6 +39,8 @@ export interface RoundDetail {
   notes: string | null;
   status: 'open' | 'full' | 'cancelled' | 'played';
   format: RoundFormat;
+  /** walk / cart; null = either */
+  cart: CartPref | null;
   courses: { id: string; name: string; city: string | null };
   host: { display_name: string; avatar_url: string | null; handicap_index: number | null };
   round_players: { player_id: string; status: PlayerStatus; created_at: string; profiles: { display_name: string; avatar_url: string | null; handicap_index: number | null } }[];
@@ -203,6 +210,7 @@ export interface FreePlayer {
   place_name: string | null;
   radius_km: number;
   note: string | null;
+  cart: CartPref | null;
   distance_km: number | null;
 }
 
@@ -214,6 +222,7 @@ export interface MyAvailability {
   place_name: string | null;
   radius_km: number;
   note: string | null;
+  cart: CartPref | null;
 }
 
 export interface ChatMessage {
