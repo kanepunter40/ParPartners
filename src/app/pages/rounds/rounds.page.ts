@@ -18,6 +18,10 @@ import { MyRound } from '../../core/models';
       <ion-refresher slot="fixed" (ionRefresh)="refresh($event)"><ion-refresher-content></ion-refresher-content></ion-refresher>
       <div class="page-pad">
         <h1 class="sr-only">{{ t('rounds.title') }}</h1>
+        <!-- At the top, so it doesn't end up below a long list of rounds -->
+        @if (items().length) {
+          <ion-button fill="outline" expand="block" routerLink="/create" style="margin: 0 0 16px">{{ t('rounds.post') }}</ion-button>
+        }
         @for (r of items(); track r.round_id) {
           <a [routerLink]="['/round', r.round_id]" style="text-decoration: none; color: inherit; display: block">
             <div style="background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px">
@@ -45,9 +49,6 @@ import { MyRound } from '../../core/models';
               <ion-button routerLink="/create">{{ t('rounds.post') }}</ion-button>
             </div>
           }
-        }
-        @if (items().length) {
-          <ion-button fill="outline" expand="block" routerLink="/create" style="margin-top: 4px">{{ t('rounds.post') }}</ion-button>
         }
         <ion-button fill="clear" expand="block" routerLink="/free" style="margin-top: 4px">{{ t('free.cta') }}</ion-button>
       </div>
