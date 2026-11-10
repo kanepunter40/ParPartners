@@ -87,8 +87,18 @@ export class I18nService {
       if (this.lookup(lang, `${key}_${form}`) ?? this.lookup('en', `${key}_${form}`)) k = `${key}_${form}`;
     }
     const text = this.lookup(lang, k) ?? this.lookup('en', k) ?? key;
-    return params ? text.replace(/\{(\w+)\}/g, (m, name) => (params[name] ?? m).toString()) : text;
+    // Numbers in the player's style: "31,7" in German, "31.7" in English
+    return params
+      ? text.replace(/\{(\w+)\}/g, (m, name) => {
+          const v = params[name];
+          return v == null ? m : typeof v === 'number' ? this.num(v) : v.toString();
+        })
+      : text;
   };
+
+  /** A number in the player's style: 93,1 in German, 93.1 in English. No thousands separator. */
+  num = (n: number, maxDecimals = 3): string =>
+    new Intl.NumberFormat(this.locale(), { maximumFractionDigits: maxDecimals, useGrouping: false }).format(n);
 
   date = (value: string | Date | null | undefined, style: DateStyle = 'dayTime'): string => {
     if (!value) return '';

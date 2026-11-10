@@ -15,9 +15,12 @@ const H = 28;
   selector: 'app-golf-stats',
   imports: [IonIcon],
   styles: [`
-    :host { display: flex; gap: 12px; }
-    .stat { flex: 1; min-width: 0; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; }
-    .lbl { font-size: 13px; color: #5F5B4E; display: flex; align-items: center; gap: 4px; }
+    /* The three tiles share their rows (label / number / extra), so a label that wraps in one
+       language pushes all the numbers down together instead of just its own. */
+    :host { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto 1fr; column-gap: 12px; }
+    .stat { grid-row: span 3; display: grid; grid-template-rows: subgrid; align-content: start; min-width: 0;
+      background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 12px 14px; }
+    .lbl { font-size: 13px; color: #5F5B4E; display: flex; align-items: flex-start; gap: 4px; }
     strong { display: block; font-family: 'Fraunces Variable', serif; font-size: 22px; }
     .row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
     .trend { font-size: 12px; font-weight: 600; white-space: nowrap; }
@@ -28,21 +31,22 @@ const H = 28;
     .trophy { color: #B8892B; font-size: 15px; }
     .best { background: linear-gradient(160deg, #FFF8E6, #fff 60%); }
     .best.new { border-color: #E3C77A; }
-    .badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 3px; margin-top: 6px; padding: 2px 8px; border-radius: 999px;
-      background: #F6E7BC; color: #6E5214; font-size: 11px; font-weight: 600; white-space: nowrap; }
-    .badge ion-icon { font-size: 12px; }
+    /* Never wider than its tile; wraps inside it if a translation is long */
+    .badge { justify-self: start; align-self: start; max-width: 100%; display: inline-flex; align-items: center; gap: 3px; margin-top: 6px;
+      padding: 2px 8px; border-radius: 10px; background: #F6E7BC; color: #6E5214; font-size: 11px; font-weight: 600; line-height: 1.3; }
+    .badge ion-icon { flex: none; font-size: 12px; }
     @media (prefers-reduced-motion: no-preference) {
       .new .trophy { animation: pop .7s cubic-bezier(.3, 1.6, .5, 1) both; }
       @keyframes pop { 0% { transform: scale(.4) rotate(-20deg); } 100% { transform: none; } }
     }
   `],
   template: `
-    <div class="stat"><span class="lbl">{{ t('scores.rounds18') }}</span><strong>{{ stats().rounds18 }}</strong></div>
+    <div class="stat"><span class="lbl">{{ t('scores.rounds18') }}</span><strong>{{ i18n.num(stats().rounds18) }}</strong></div>
 
     <div class="stat">
       <span class="lbl">{{ t('scores.average') }}</span>
       <span class="row">
-        <strong>{{ stats().average }}</strong>
+        <strong>{{ num(stats().average) }}</strong>
         @if (trend(); as tr) {
           <span class="trend" [class]="tr.cls" [attr.aria-label]="tr.label" role="img">{{ tr.arrow }}{{ tr.text }}</span>
         }
@@ -57,7 +61,7 @@ const H = 28;
 
     <div class="stat best" [class.new]="stats().newBest">
       <span class="lbl"><ion-icon class="trophy" name="trophy" aria-hidden="true"></ion-icon>{{ t('scores.best') }}</span>
-      <strong>{{ stats().best }}</strong>
+      <strong>{{ num(stats().best) }}</strong>
       @if (stats().newBest) {
         <span class="badge"><ion-icon name="sparkles" aria-hidden="true"></ion-icon>{{ t('scores.newBest') }}</span>
       }
@@ -65,7 +69,7 @@ const H = 28;
   `
 })
 export class GolfStatsComponent {
-  private i18n = inject(I18nService);
+  readonly i18n = inject(I18nService);
   readonly t = this.i18n.t;
   readonly W = W;
   readonly H = H;
@@ -74,8 +78,7 @@ export class GolfStatsComponent {
   trend = computed(() => {
     const d = this.stats().trend;
     if (d === null) return null;
-    const n = Math.abs(d).toFixed(1);
-    const loc = this.i18n.lang() === 'de' ? n.replace('.', ',') : n;
+    const loc = this.i18n.num(Math.abs(d), 1);
     if (d <= -FLAT) return { cls: 'trend good', arrow: '↓ ', text: loc, label: this.t('scores.trendDown', { n: loc }) };
     if (d >= FLAT) return { cls: 'trend bad', arrow: '↑ ', text: loc, label: this.t('scores.trendUp', { n: loc }) };
     return { cls: 'trend flat', arrow: '→', text: '', label: this.t('scores.trendFlat') };
@@ -101,5 +104,12 @@ export class GolfStatsComponent {
 
   constructor() {
     addIcons({ trophy, sparkles });
+  }
+
+  /** Average ("93.1", always one decimal) and best can be missing before there are 18-hole cards. */
+  num(n: number | string | null | undefined) {
+    if (n == null) return '–';
+    const decimals = typeof n === 'string' ? (n.split('.')[1]?.length ?? 0) : 0;
+    return new Intl.NumberFormat(this.i18n.locale(), { minimumFractionDigits: decimals, maximumFractionDigits: decimals, useGrouping: false }).format(Number(n));
   }
 }
