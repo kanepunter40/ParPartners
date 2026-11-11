@@ -40,7 +40,8 @@ export const PRIVACY: LegalDoc = {
     },
     {
       heading: 'Technical data when you use the app',
-      body: ['Whenever the app talks to our servers, Supabase records technical details: your IP address, the time, what was requested, and your device or browser type. We use these only to keep the app secure and to find errors. They are deleted automatically after at most 7 days.']
+      body: ['Whenever the app talks to our servers, Supabase records technical details: your IP address, the time, what was requested, and your device or browser type. We use these only to keep the app secure and to find errors. They are deleted automatically after at most 7 days.',
+        'If the app crashes or runs into an error, it sends a crash report to Firebase Crashlytics: what went wrong, the screen you were on, the app version, your phone model and Android version, and a random ID for this installation. Reports aren’t linked to your account. We use them only to find and fix bugs, and Crashlytics deletes them after 90 days.']
     },
     {
       heading: 'Your location',
@@ -65,6 +66,7 @@ export const PRIVACY: LegalDoc = {
         'Supabase (Supabase Inc., USA) stores the app’s data, photos and accounts on servers in Frankfurt, Germany. Supabase works for us under a data processing agreement (GDPR Article 28). Because Supabase is a US company, staff there could in rare cases access data from outside the EU; this is covered by the EU Standard Contractual Clauses.',
         'Google (Google Ireland Ltd. and Google LLC, USA): if you choose "Continue with Google", Google handles that sign-in. Sign-in and confirmation emails are currently sent through a Gmail account, so Google processes your email address and the email’s content. Transfers to Google LLC are covered by the EU–US Data Privacy Framework.',
         'Firebase Cloud Messaging (Google) delivers push notifications to Android phones. It receives your phone’s token and the text of each notification (for example "Lena joined your round"). You can turn notifications off at any time in your phone’s settings.',
+        'Firebase Crashlytics (Google) receives the crash reports described above. Google may process them outside the EU; this is covered by the EU-US Data Privacy Framework and the EU Standard Contractual Clauses.',
         'Golf course names and locations come from OpenStreetMap. No personal data is sent to OpenStreetMap.',
         'We don’t sell your data or share it with anyone else, unless the law requires us to.'
       ]

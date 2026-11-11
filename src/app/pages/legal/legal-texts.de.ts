@@ -30,7 +30,8 @@ export const PRIVACY_DE: LegalDoc = {
     },
     {
       heading: 'Technische Daten bei der Nutzung',
-      body: ['Immer wenn die App mit unseren Servern kommuniziert, speichert Supabase technische Angaben: deine IP-Adresse, den Zeitpunkt, was abgerufen wurde, und die Art deines Geräts oder Browsers. Wir nutzen sie nur, um die App sicher zu halten und Fehler zu finden. Sie werden nach spätestens 7 Tagen automatisch gelöscht.']
+      body: ['Immer wenn die App mit unseren Servern kommuniziert, speichert Supabase technische Angaben: deine IP-Adresse, den Zeitpunkt, was abgerufen wurde, und die Art deines Geräts oder Browsers. Wir nutzen sie nur, um die App sicher zu halten und Fehler zu finden. Sie werden nach spätestens 7 Tagen automatisch gelöscht.',
+        'Wenn die App abstürzt oder auf einen Fehler stößt, schickt sie einen Absturzbericht an Firebase Crashlytics: was schiefging, den Bildschirm, auf dem du warst, die App-Version, dein Handymodell und deine Android-Version sowie eine zufällige ID für diese Installation. Die Berichte sind nicht mit deinem Konto verknüpft. Wir nutzen sie nur, um Fehler zu finden und zu beheben; Crashlytics löscht sie nach 90 Tagen.']
     },
     {
       heading: 'Dein Standort',
@@ -55,6 +56,7 @@ export const PRIVACY_DE: LegalDoc = {
         'Supabase (Supabase Inc., USA) speichert die Daten, Fotos und Konten der App auf Servern in Frankfurt am Main. Supabase arbeitet für uns auf Grundlage eines Auftragsverarbeitungsvertrags (Art. 28 DSGVO). Da Supabase ein US-Unternehmen ist, könnten Mitarbeitende in seltenen Fällen von außerhalb der EU auf Daten zugreifen; dafür gelten die EU-Standardvertragsklauseln.',
         'Google (Google Ireland Ltd. und Google LLC, USA): Wenn du „Weiter mit Google“ wählst, übernimmt Google die Anmeldung. Anmelde- und Bestätigungs-E-Mails werden derzeit über ein Gmail-Konto verschickt; Google verarbeitet dabei deine E-Mail-Adresse und den Inhalt der E-Mail. Übermittlungen an Google LLC sind durch das EU-US Data Privacy Framework abgedeckt.',
         'Firebase Cloud Messaging (Google) stellt Push-Mitteilungen auf Android-Handys zu. Dabei erhält der Dienst das Token deines Handys und den Text jeder Mitteilung (zum Beispiel „Lena ist deiner Runde beigetreten“). Du kannst Mitteilungen jederzeit in den Einstellungen deines Handys ausschalten.',
+        'Firebase Crashlytics (Google) erhält die oben beschriebenen Absturzberichte. Google kann sie außerhalb der EU verarbeiten; das ist durch das EU-US Data Privacy Framework und die EU-Standardvertragsklauseln abgesichert.',
         'Namen und Lage der Golfplätze stammen von OpenStreetMap. An OpenStreetMap werden keine personenbezogenen Daten übermittelt.',
         'Wir verkaufen deine Daten nicht und geben sie an niemanden sonst weiter, außer wenn das Gesetz es verlangt.'
       ]
