@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.parpartners',   // change before the first store build
+  appId: 'app.parpartners',   // final: the Play Store ID (matches parpartners.app); can never change after the first upload
   appName: 'PARtners',
   webDir: 'dist/par-partners/browser',
   plugins: {
