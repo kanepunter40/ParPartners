@@ -15,6 +15,7 @@ import { Course, FreePlayer, Position, RoundResult, SearchAlert } from '../../co
 import { AlertsService } from '../../core/alerts.service';
 import { AvailabilityService, isoDay } from '../../core/availability.service';
 import { AvatarComponent } from '../../core/avatar.component';
+import { PlayerMenuComponent } from '../../core/player-menu.component';
 
 type Mode = 'near' | 'course';
 type When = 'any' | 'weekdays' | 'this' | 'next';
@@ -43,7 +44,7 @@ const MY_LOCATION = '@me';
 
 @Component({
   selector: 'app-find',
-  imports: [RouterLink, AvatarComponent, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
+  imports: [RouterLink, AvatarComponent, PlayerMenuComponent, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
   styles: [`
     .find { display: flex; flex-direction: column; gap: 28px; }
     .filters { background: #ECE8DA; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -217,6 +218,7 @@ const MY_LOCATION = '@me';
                   } @else {
                     <ion-button size="small" (click)="invite(f)">{{ t('free.invite') }}</ion-button>
                   }
+                  <app-player-menu [playerId]="f.user_id" [name]="f.display_name" (blocked)="load()" style="margin-right: -10px" />
                 </div>
                 <strong style="font-size: 14px">{{ dayLabel(f.day) }} · {{ t('free.part.' + f.part_of_day) }}{{ f.cart ? ' · ' + t('cart.' + f.cart) : '' }}</strong>
                 @if (f.note) { <span class="muted" style="font-size: 14px">“{{ f.note }}”</span> }

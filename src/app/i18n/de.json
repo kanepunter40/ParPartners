@@ -540,6 +540,7 @@
   "safety": {
     "optionsFor": "Weitere Optionen für {name}",
     "report": "Melden",
+    "reportMessage": "Nachricht melden",
     "block": "Blockieren",
     "whyReport": "Warum meldest du {name}?",
     "reason": {
@@ -616,6 +617,7 @@
     "emptyTitle": "Noch keine Nachrichten",
     "emptyText": "Klärt hier die Details: Treffpunkt, zu Fuß oder mit Cart, Verspätung.",
     "placeholder": "Nachricht",
+    "messageFrom": "{name}: {text}. Tippen zum Melden oder Blockieren",
     "send": "Senden",
     "loadError": "Der Chat konnte nicht geladen werden. Nur Spieler dieser Runde sehen ihn.",
     "sendError": "Senden fehlgeschlagen. Versuch es noch einmal."

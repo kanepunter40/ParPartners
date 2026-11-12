@@ -540,6 +540,7 @@
   "safety": {
     "optionsFor": "More options for {name}",
     "report": "Report",
+    "reportMessage": "Report message",
     "block": "Block",
     "whyReport": "Why are you reporting {name}?",
     "reason": {
@@ -616,6 +617,7 @@
     "emptyTitle": "No messages yet",
     "emptyText": "Sort out the details here: where to meet, walking or cart, running late.",
     "placeholder": "Message",
+    "messageFrom": "{name}: {text}. Tap to report or block",
     "send": "Send",
     "loadError": "Could not load the chat. Only players in this round can see it.",
     "sendError": "Could not send. Try again."

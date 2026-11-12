@@ -11,6 +11,7 @@ import { SupabaseService } from '../../core/supabase.service';
 import { NotificationsService } from '../../core/notifications.service';
 import { ChatMessage, RoundDetail } from '../../core/models';
 import { AvatarComponent } from '../../core/avatar.component';
+import { PlayerActionsService } from '../../core/player-actions.service';
 
 const MAX_LENGTH = 1000;
 /** Fallback in case the live connection drops (e.g. switching between Wi-Fi and mobile data). */
@@ -35,6 +36,9 @@ const POLL_MS = 30_000;
     .who { font-size: 12px; font-weight: 600; color: #2E5F5A; margin: 0 0 0 12px; }
     .bubble { padding: 10px 14px; border-radius: 18px; background: #fff; border: 1px solid #E6DFC9; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.35; }
     .mine .bubble { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
+    /* Others' messages are buttons: tap to report or block the sender */
+    button.bubble { font: inherit; color: inherit; text-align: left; cursor: pointer; }
+    button.bubble:active { background: #EFEAD9; }
     .time { font-size: 11px; color: #5F5B4E; margin: 0 12px; }
     .compose { display: flex; align-items: flex-end; gap: 8px; padding: 10px 12px 18px; background: #F4F1E8; border-top: 1px solid #E6DFC9; }
     ion-textarea { --background: #fff; --padding-start: 14px; --padding-end: 14px; border: 1px solid #D9D2BA; border-radius: 22px; min-height: 44px; }
@@ -66,7 +70,11 @@ const POLL_MS = 30_000;
               </span>
               <div class="msg">
                 @if (m.sender_id !== me() && newSender(i)) { <span class="who">{{ name(m.sender_id) }}</span> }
-                <div class="bubble">{{ m.body }}</div>
+                @if (m.sender_id && m.sender_id !== me()) {
+                  <button type="button" class="bubble" (click)="messageOptions(m)" [attr.aria-label]="t('chat.messageFrom', { name: name(m.sender_id), text: m.body })">{{ m.body }}</button>
+                } @else {
+                  <div class="bubble">{{ m.body }}</div>
+                }
                 @if (lastOfRun(i)) { <span class="time">{{ i18n.date(m.created_at, 'time') }}</span> }
               </div>
             </div>
@@ -104,6 +112,7 @@ export class RoundChatPage {
   private rounds = inject(RoundsService);
   private sb = inject(SupabaseService);
   private notifications = inject(NotificationsService);
+  private playerActions = inject(PlayerActionsService);
   private content = viewChild(IonContent);
 
   readonly maxLength = MAX_LENGTH;
@@ -187,6 +196,15 @@ export class RoundChatPage {
       this.error.set(this.i18n.error(e, 'chat.sendError'));
     } finally {
       this.sending.set(false);
+    }
+  }
+
+  /** Tapping someone else's message: report it or block them. Their messages disappear once blocked. */
+  async messageOptions(m: ChatMessage) {
+    if (!m.sender_id) return;
+    const blocked = await this.playerActions.open({ playerId: m.sender_id, name: this.name(m.sender_id), roundId: this.id(), message: m.body });
+    if (blocked) {
+      try { this.messages.set(await this.chat.list(this.id())); } catch { /* the next refresh catches up */ }
     }
   }
 
