@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:phone": "node e2e/phone/run.mjs"
+    "test:phone": "node e2e/phone/run.mjs",
+    "site:legal": "node scripts/build-site-legal.mjs"
   },
   "prettier": {
     "printWidth": 100,
