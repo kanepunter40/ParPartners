@@ -12,6 +12,7 @@ import { addToCalendar, ROUND_MINUTES } from '../../core/calendar';
 import { FriendStatus, RoundDetail } from '../../core/models';
 import { AvatarComponent } from '../../core/avatar.component';
 import { PlayerMenuComponent } from '../../core/player-menu.component';
+import { inviteUrl } from '../../core/app-links';
 
 const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
   clear: 'sunny', cloudy: 'partly-sunny', fog: 'cloudy', rain: 'rainy', snow: 'snow', storm: 'thunderstorm'
@@ -328,7 +329,7 @@ export class RoundDetailPage {
       return;
     }
     if (!code) return;
-    const url = `${window.location.origin}/join/${code}`;
+    const url = inviteUrl(code); // the website, not this page's address (that's https://localhost inside the app)
     if (navigator.share) {
       await navigator.share({ title: this.t('round.shareTitle'), text: this.t('round.shareText', { course: r.courses.name }), url }).catch(() => {});
     } else {

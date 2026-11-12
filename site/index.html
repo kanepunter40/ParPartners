@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PARtners: find people to play golf with</title>
+<meta name="description" content="PARtners helps golfers find people to play with: post a round, join one nearby, keep score together.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<main class="card">
+  <img src="/favicon.svg" alt="" width="56" height="56">
+  <h1>PARtners</h1>
+  <p data-en="Find people to play golf with. Post a round with open spots, join one nearby, and keep score together."
+     data-de="Finde Leute, mit denen du Golf spielen kannst. Stell eine Runde mit freien Plätzen ein, tritt einer in deiner Nähe bei und zählt gemeinsam die Schläge.">Find people to play golf with. Post a round with open spots, join one nearby, and keep score together.</p>
+  <p class="small" data-en="Coming soon to Google Play." data-de="Bald bei Google Play.">Coming soon to Google Play.</p>
+</main>
+<script>
+  if (/^de\b/i.test(navigator.language || '')) {
+    document.documentElement.lang = 'de';
+    document.querySelectorAll('[data-de]').forEach(function (el) { el.textContent = el.getAttribute('data-de'); });
+  }
+</script>
+</body>
+</html>

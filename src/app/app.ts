@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { SocialAuthService } from './core/social-auth.service';
+import { AppLinksService } from './core/app-links';
 
 @Component({
   selector: 'app-root',
@@ -10,5 +11,6 @@ import { SocialAuthService } from './core/social-auth.service';
 export class App {
   constructor() {
     inject(SocialAuthService).listenForCallback();
+    inject(AppLinksService).listen();
   }
 }

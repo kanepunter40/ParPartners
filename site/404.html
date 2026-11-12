@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>PARtners</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<!-- GitHub Pages serves this page for every path it doesn't know, which is how /join/<code> lands here.
+     Phones with the app never see it: Android opens /join/ links straight in the app. -->
+<main class="card">
+  <img src="/favicon.svg" alt="" width="56" height="56">
+  <div id="invite" hidden>
+    <h1 data-en="You're invited to a round" data-de="Du bist zu einer Runde eingeladen">You're invited to a round</h1>
+    <p data-en="Someone wants you in their group on PARtners, the app for finding people to play golf with. Install the app, then open this link again to join."
+       data-de="Jemand möchte dich in seiner Gruppe bei PARtners haben, der App, um Mitspieler für Golf zu finden. Installiere die App und öffne diesen Link dann noch einmal, um beizutreten.">Someone wants you in their group on PARtners, the app for finding people to play golf with. Install the app, then open this link again to join.</p>
+    <a class="button" href="https://play.google.com/store/apps/details?id=app.parpartners" data-en="Get PARtners on Google Play" data-de="PARtners bei Google Play laden">Get PARtners on Google Play</a>
+    <p class="small"><span data-en="Invite code" data-de="Einladungscode">Invite code</span>: <code id="code"></code></p>
+  </div>
+  <div id="missing" hidden>
+    <h1 data-en="Page not found" data-de="Seite nicht gefunden">Page not found</h1>
+    <p><a href="/" data-en="Go to the PARtners home page" data-de="Zur PARtners-Startseite">Go to the PARtners home page</a></p>
+  </div>
+</main>
+<script>
+  var de = /^de\b/i.test(navigator.language || '');
+  if (de) {
+    document.documentElement.lang = 'de';
+    document.querySelectorAll('[data-de]').forEach(function (el) { el.textContent = el.getAttribute('data-de'); });
+  }
+  var m = location.pathname.match(/^\/join\/([A-Za-z0-9_-]{1,64})\/?$/);
+  if (m) {
+    document.getElementById('code').textContent = m[1];
+    document.getElementById('invite').hidden = false;
+    document.title = de ? 'Einladung · PARtners' : 'Invite · PARtners';
+  } else {
+    document.getElementById('missing').hidden = false;
+  }
+</script>
+</body>
+</html>

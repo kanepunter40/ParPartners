@@ -1,0 +1,20 @@
+/* The app's own colours: green on sand. */
+:root { --bg: #F4F1E8; --card: #FFFFFF; --ink: #1F3532; --muted: #5F5B4E; --line: #E6DFC9; --green: #2E5F5A; color-scheme: light; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #121B1A; --card: #1A2624; --ink: #E7EFEC; --muted: #A5AEA9; --line: #2C3A37; --green: #8CC4B9; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px;
+  background: var(--bg); color: var(--ink); font: 400 16px/1.55 'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+.card { width: 100%; max-width: 440px; background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+  padding: 32px 24px; display: flex; flex-direction: column; gap: 14px; text-align: center; align-items: center; }
+.card > div { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+h1 { margin: 0; font: 600 26px/1.2 Georgia, 'Times New Roman', serif; text-wrap: balance; }
+p { margin: 0; color: var(--muted); }
+a { color: var(--green); }
+.button { display: inline-block; padding: 12px 20px; border-radius: 999px; background: var(--green); color: var(--card);
+  font-weight: 600; text-decoration: none; }
+.button:focus-visible, a:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+.small { font-size: 14px; }
+code { font: 14px ui-monospace, Consolas, monospace; background: var(--bg); padding: 2px 6px; border-radius: 6px; }
+[hidden] { display: none !important; }

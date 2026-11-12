@@ -28,6 +28,17 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="app.parpartners" android:host="auth" />
             </intent-filter>
+
+            <!-- Invite links open the app: https://parpartners.app/join/<code>.
+                 Verified against https://parpartners.app/.well-known/assetlinks.json (site/ in this repo). -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="parpartners.app" />
+                <data android:pathPrefix="/join/" />
+            </intent-filter>
         </activity>
 
         <!-- Push notifications: status bar icon and accent colour -->

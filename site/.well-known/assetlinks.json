@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.parpartners",
+      "sha256_cert_fingerprints": [
+        "0E:30:3D:45:93:31:B2:4D:90:CE:E9:E8:1B:53:8A:8C:8C:7E:17:86:9A:73:86:FB:CB:7A:A9:16:12:5B:97:9F",
+        "C8:BA:88:E3:96:30:DF:31:0A:C1:B6:EA:B2:8A:3C:35:DD:9D:26:C3:BF:9F:EA:40:60:74:D6:EB:99:7E:1A:8D"
+      ]
+    }
+  }
+]
