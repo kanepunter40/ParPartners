@@ -62,6 +62,18 @@ const TEXT: Record<Locale, Record<string, string>> = {
   }
 };
 
+/** Notification type -> group a player can turn off (same list as src/app/core/notification-settings.service.ts).
+ *  Types not listed (report_received) are always sent. */
+const GROUP: Record<string, string> = {
+  request_received: 'your_rounds', player_joined: 'your_rounds', player_left: 'your_rounds', player_free: 'your_rounds',
+  round_invite: 'joining', request_accepted: 'joining', request_declined: 'joining', waitlist_promoted: 'joining',
+  round_cancelled: 'changes', host_handover: 'changes',
+  round_reminder: 'reminders',
+  round_message: 'chat',
+  friend_request: 'friends', friend_accepted: 'friends',
+  round_alert: 'searches', free_alert: 'searches'
+};
+
 /** "tomorrow at 09:10" / "today at 15:30", in German time (where the courses are). */
 function when(teeTime: string, locale: Locale): string {
   const tz = 'Europe/Berlin';
@@ -133,6 +145,13 @@ Deno.serve(async (req) => {
     .eq('id', id)
     .maybeSingle();
   if (error || !n) return new Response('Notification not found', { status: 404 });
+
+  // Settings > Notifications: groups the player turned off. The in-app list still shows them.
+  const group = GROUP[n.type];
+  if (group) {
+    const { data: prefs } = await sb.from('notification_settings').select('muted').eq('user_id', n.user_id).maybeSingle();
+    if (prefs?.muted?.includes(group)) return new Response('Muted by the player', { status: 200 });
+  }
 
   const { data: devices } = await sb.from('device_tokens').select('token, locale').eq('user_id', n.user_id);
   if (!devices?.length) return new Response('No devices', { status: 200 });

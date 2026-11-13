@@ -55,6 +55,13 @@ const FEEDBACK_TO = 'parpartners.app@gmail.com';
         </div>
 
         <div class="section">
+          <span class="label">{{ t('notifSettings.title') }}</span>
+          <div class="group">
+            <a class="item" routerLink="/settings/notifications"><span>{{ t('settings.notificationsRow') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
+          </div>
+        </div>
+
+        <div class="section">
           <span class="label">{{ t('settings.account') }}</span>
           <div class="group">
             <div class="item"><span>{{ t('welcome.email') }}</span><small>{{ email() }}</small></div>

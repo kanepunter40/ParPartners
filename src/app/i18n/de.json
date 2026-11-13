@@ -511,7 +511,8 @@
     "deleteMine": "Mein Konto löschen",
     "deleteConfirm": "Noch einmal tippen, um endgültig zu löschen",
     "deleteText": "Damit werden dein Profil, dein Foto, deine eigenen Scorekarten, Freunde und Mitteilungen gelöscht. Anstehende Runden, die du organisierst, gehen an den Spieler, der als Nächstes beigetreten ist. Deine Ergebnisse bleiben auf den Karten anderer Spieler als „Gelöschter Spieler“. Das lässt sich nicht rückgängig machen.",
-    "deleteError": "Dein Konto konnte nicht gelöscht werden."
+    "deleteError": "Dein Konto konnte nicht gelöscht werden.",
+    "notificationsRow": "Auswählen, was du bekommst"
   },
   "legal": {
     "updated": "Zuletzt aktualisiert: {date}"
@@ -695,5 +696,40 @@
     "inviteTo": "{name} einladen zu",
     "postForThem": "Neue Runde einstellen",
     "inviteError": "Die Einladung konnte nicht gesendet werden."
+  },
+  "notifSettings": {
+    "title": "Benachrichtigungen",
+    "intro": "Wähle, welche Benachrichtigungen auf dein Handy kommen.",
+    "listNote": "Ausgeschaltete Benachrichtigungen stehen weiter in der Liste in der App, dort verpasst du nichts.",
+    "loadError": "Deine Einstellungen für Benachrichtigungen konnten nicht geladen werden.",
+    "saveError": "Die Änderung konnte nicht gespeichert werden. Versuch es noch einmal.",
+    "your_rounds": {
+      "title": "Spieler in deinen Runden",
+      "text": "Jemand tritt deiner Runde bei, verlässt sie, fragt an oder hat Zeit, wenn noch Platz ist"
+    },
+    "joining": {
+      "title": "Einladungen und Plätze",
+      "text": "Du wirst eingeladen, ein Platz wird für dich frei oder der Gastgeber antwortet auf deine Anfrage"
+    },
+    "changes": {
+      "title": "Änderungen an Runden",
+      "text": "Eine Runde wird abgesagt oder du wirst Gastgeber"
+    },
+    "reminders": {
+      "title": "Erinnerung an den Abschlag",
+      "text": "Am Tag bevor du spielst"
+    },
+    "chat": {
+      "title": "Chat-Nachrichten",
+      "text": "Neue Nachrichten in deinen Runden"
+    },
+    "friends": {
+      "title": "Freunde",
+      "text": "Freundschaftsanfragen und wenn jemand deine annimmt"
+    },
+    "searches": {
+      "title": "Gespeicherte Suchen",
+      "text": "Neue Runden und freie Spieler, die zu einer gespeicherten Suche passen"
+    }
   }
 }

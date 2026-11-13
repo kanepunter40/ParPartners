@@ -511,7 +511,8 @@
     "deleteMine": "Delete my account",
     "deleteConfirm": "Tap again to delete for good",
     "deleteText": "This removes your profile, photo, solo scorecards, friends and notifications. Upcoming rounds you host pass to the next player who joined. Your scores stay on other players' cards as \"Deleted player\". This can't be undone.",
-    "deleteError": "Could not delete your account."
+    "deleteError": "Could not delete your account.",
+    "notificationsRow": "Choose what to get"
   },
   "legal": {
     "updated": "Last updated {date}"
@@ -695,5 +696,40 @@
     "inviteTo": "Invite {name} to",
     "postForThem": "Post a new round",
     "inviteError": "Could not send the invite."
+  },
+  "notifSettings": {
+    "title": "Notifications",
+    "intro": "Choose which notifications reach your phone.",
+    "listNote": "Turned-off notifications still show in the app's notification list, so you won't miss anything there.",
+    "loadError": "Could not load your notification settings.",
+    "saveError": "Could not save that change. Try again.",
+    "your_rounds": {
+      "title": "Players in your rounds",
+      "text": "Someone joins, leaves or asks to join a round you host, or is free when your round has room"
+    },
+    "joining": {
+      "title": "Invites and spots",
+      "text": "You're invited to a round, a spot opens up for you, or the host answers your request"
+    },
+    "changes": {
+      "title": "Round changes",
+      "text": "A round is cancelled, or you become the host"
+    },
+    "reminders": {
+      "title": "Tee-time reminders",
+      "text": "The day before you play"
+    },
+    "chat": {
+      "title": "Chat messages",
+      "text": "New messages in your rounds"
+    },
+    "friends": {
+      "title": "Friends",
+      "text": "Friend requests, and when someone accepts yours"
+    },
+    "searches": {
+      "title": "Saved searches",
+      "text": "New rounds and free players that match a saved search"
+    }
   }
 }
