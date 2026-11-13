@@ -380,7 +380,15 @@
     "teeTime": "Abschlag",
     "course": "Platz",
     "host": "Gastgeber",
-    "whoPlays": "Wer spielt mit"
+    "whoPlays": "Wer spielt mit",
+    "requests": "Möchten mitspielen ({count})",
+    "acceptRequest": "Annehmen",
+    "declineRequest": "Ablehnen",
+    "letIn": "{name} annehmen",
+    "declineFrom": "{name} ablehnen",
+    "requestsFull": "Die Runde ist voll. Mach einen Platz frei, um jemanden anzunehmen.",
+    "requestedNotice": "Du hast {name} gefragt, ob du mitspielen kannst. Du bekommst Bescheid, sobald die Antwort da ist.",
+    "withdrawRequest": "Anfrage zurückziehen"
   },
   "create": {
     "dateTime": "Datum und Startzeit",

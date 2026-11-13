@@ -49,6 +49,8 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
             <p role="status" style="margin: 0; padding: 12px 14px; border-radius: var(--pp-radius-control); background: var(--pp-accent-soft); color: var(--pp-accent-ink); font-weight: 600">{{ t('round.cancelled') }}</p>
           } @else if (myStatus() === 'invited') {
             <p role="status" class="notice">{{ t('round.invitedBy', { name: r.host.display_name }) }}</p>
+          } @else if (myStatus() === 'requested') {
+            <p role="status" class="notice">{{ t('round.requestedNotice', { name: r.host.display_name }) }}</p>
           } @else if (myStatus() === 'waitlisted') {
             <p role="status" class="notice">{{ waitlistPos() ? t('round.waitlistPos', { n: waitlistPos()! }) : t('round.onWaitlist') }}</p>
           }
@@ -118,6 +120,34 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
             </div>
           </div>
 
+          @if (isHost() && requests().length && !cancelled()) {
+            <div>
+              <h2 class="section-title">{{ t('round.requests', { count: requests().length }) }}</h2>
+              <div class="pp-group">
+                @for (p of requests(); track p.player_id) {
+                  <div class="player">
+                    <span class="who">
+                      <app-avatar [name]="p.profiles.display_name" [path]="p.profiles.avatar_url" [size]="36" style="margin-right: 10px; flex: none" />
+                      <span class="name">
+                        <span>{{ p.profiles.display_name }}</span>
+                        @if (p.profiles.handicap_index !== null) {
+                          <span class="muted" style="font-size: 13px; white-space: nowrap">{{ t('common.hcp', { hcp: p.profiles.handicap_index }) }}</span>
+                        }
+                      </span>
+                    </span>
+                    <span class="player-actions">
+                      <ion-button size="small" fill="clear" color="medium" [disabled]="busy()" (click)="respond(p.player_id, false)"
+                                  [attr.aria-label]="t('round.declineFrom', { name: p.profiles.display_name })">{{ t('round.declineRequest') }}</ion-button>
+                      <ion-button size="small" [disabled]="busy() || spotsLeft() <= 0 || started()" (click)="respond(p.player_id, true)"
+                                  [attr.aria-label]="t('round.letIn', { name: p.profiles.display_name })">{{ t('round.acceptRequest') }}</ion-button>
+                    </span>
+                  </div>
+                }
+              </div>
+              @if (spotsLeft() <= 0) { <p class="muted" style="margin: 8px 2px 0; font-size: 13px">{{ t('round.requestsFull') }}</p> }
+            </div>
+          }
+
           @if (isHost() && (waitlist().length || invited().length)) {
             <div>
               @if (waitlist().length) {
@@ -171,6 +201,8 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
           <ion-button expand="block" color="medium" fill="outline" [disabled]="busy()" (click)="leave()">{{ t('round.leave') }}</ion-button>
         } @else if (myStatus() === 'waitlisted') {
           <ion-button expand="block" color="medium" fill="outline" [disabled]="busy()" (click)="leave()">{{ t('round.leaveWaitlist') }}</ion-button>
+        } @else if (myStatus() === 'requested') {
+          <ion-button expand="block" color="medium" fill="outline" [disabled]="busy()" (click)="leave()">{{ t('round.withdrawRequest') }}</ion-button>
         } @else {
           <ion-button expand="block" [disabled]="busy() || (round()!.status !== 'open' && round()!.status !== 'full')" (click)="join()">
             {{ spotsLeft() <= 0 ? t('round.joinWaitlist') : t('round.join') }}
@@ -214,6 +246,8 @@ export class RoundDetailPage {
   /** Only the host can see these rows (RLS). In joining order. */
   waitlist = computed(() => (this.round()?.round_players.filter((p) => p.status === 'waitlisted') ?? []).sort((a, b) => a.created_at.localeCompare(b.created_at)));
   invited = computed(() => this.round()?.round_players.filter((p) => p.status === 'invited') ?? []);
+  /** Players who asked to join (e.g. after first saying no to an invite). The host decides. Oldest first. */
+  requests = computed(() => (this.round()?.round_players.filter((p) => p.status === 'requested') ?? []).sort((a, b) => a.created_at.localeCompare(b.created_at)));
   /** Past the tee time: no joining or leaving. Checked on load, which is enough for a detail page. */
   started = computed(() => !!this.round() && new Date(this.round()!.tee_time).getTime() <= Date.now());
   spotsLeft = computed(() => (this.round()?.max_players ?? 0) - this.confirmed().length);
@@ -279,7 +313,9 @@ export class RoundDetailPage {
 
   /** Joins, or goes on the waitlist if the round is full. */
   join() { return this.run(() => this.rounds.join(this.id())); }
-  /** Leaves the line-up, steps off the waitlist, or says no to an invite. */
+  /** Host: accepts or turns down a request to join. */
+  respond(playerId: string, accept: boolean) { return this.run(() => this.rounds.respond(this.id(), playerId, accept)); }
+  /** Leaves the line-up, steps off the waitlist, withdraws a request, or says no to an invite. */
   leave() { return this.run(() => this.rounds.leave(this.id())); }
 
   async calendar() {

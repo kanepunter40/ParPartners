@@ -123,6 +123,12 @@ export class RoundsService {
     if (error) throw error;
   }
 
+  /** Host only: lets a player in who asked to join, or turns them down. They're told either way. */
+  async respond(roundId: string, playerId: string, accept: boolean) {
+    const { error } = await this.sb.client.rpc('respond_to_request', { p_round_id: roundId, p_player_id: playerId, p_accept: accept });
+    if (error) throw error;
+  }
+
   /** Host only. Marks the round cancelled and tells the players who joined. */
   async deleteRound(roundId: string) {
     const { error } = await this.sb.client.rpc('delete_round', { p_round_id: roundId });

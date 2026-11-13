@@ -380,7 +380,15 @@
     "teeTime": "Tee time",
     "course": "Course",
     "host": "Host",
-    "whoPlays": "Who's playing"
+    "whoPlays": "Who's playing",
+    "requests": "Asking to join ({count})",
+    "acceptRequest": "Accept",
+    "declineRequest": "Decline",
+    "letIn": "Accept {name}",
+    "declineFrom": "Decline {name}",
+    "requestsFull": "The round is full. Free a spot to accept someone.",
+    "requestedNotice": "You asked {name} if you can join. You’ll be told when they answer.",
+    "withdrawRequest": "Withdraw request"
   },
   "create": {
     "dateTime": "Date and tee time",
