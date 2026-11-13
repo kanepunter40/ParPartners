@@ -1,15 +1,14 @@
 /**
  * Privacy policy, terms of service and imprint. DRAFT: written to match what the app actually
- * does (November 2026), but not checked by a lawyer. Before launch: replace ADDRESS with a real
- * postal address (GDPR Art. 13 and the German "Impressum" need one) and have the texts reviewed.
+ * does (November 2026), but not checked by a lawyer. Before launch: have the texts reviewed.
  */
 export interface LegalSection { heading: string; body: string[] }
 export interface LegalDoc { title: string; updated: string; intro: string; sections: LegalSection[] }
 
 export const OPERATOR = 'Kane Punter';
 export const CONTACT = 'parpartners.app@gmail.com';
-/** TODO before launch: a postal address where legal mail reaches you (no PO box). */
-export const ADDRESS = '[Street and number, postcode, city]';
+/** Postal address for legal mail (GDPR Art. 13 and the German "Impressum" need one). Country is added where it's used. */
+export const ADDRESS = 'Augustenstraße 85, 70197 Stuttgart';
 
 export const PRIVACY: LegalDoc = {
   title: 'Privacy policy',
