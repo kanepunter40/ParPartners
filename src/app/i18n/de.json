@@ -87,7 +87,8 @@
     "findFriends": "Freunde finden",
     "older": "Ältere Neuigkeiten anzeigen",
     "loadError": "Deine Neuigkeiten konnten nicht geladen werden.",
-    "olderError": "Ältere Neuigkeiten konnten nicht geladen werden."
+    "olderError": "Ältere Neuigkeiten konnten nicht geladen werden.",
+    "fromFriends": "Von deinen Freunden"
   },
   "feed": {
     "scorecard": {
@@ -375,7 +376,11 @@
     "leaveWaitlist": "Warteliste verlassen",
     "joinWaitlist": "Auf die Warteliste",
     "waitlistHint": "Die Runde ist voll. Auf der Warteliste rückst du nach, wenn jemand absagt.",
-    "decline": "Nein, danke"
+    "decline": "Nein, danke",
+    "teeTime": "Abschlag",
+    "course": "Platz",
+    "host": "Gastgeber",
+    "whoPlays": "Wer spielt mit"
   },
   "create": {
     "dateTime": "Datum und Startzeit",

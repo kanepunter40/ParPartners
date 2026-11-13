@@ -21,20 +21,20 @@ const PARTS: PartOfDay[] = ['any', 'morning', 'afternoon', 'evening'];
   styles: [`
     .wrap { display: flex; flex-direction: column; gap: 22px; padding-bottom: 32px; }
     .group { display: flex; flex-direction: column; gap: 8px; }
-    .label { font-size: 12px; font-weight: 600; color: #5F5B4E; text-transform: uppercase; letter-spacing: .04em; }
+    .label { font-size: 15px; font-weight: 600; color: var(--pp-ink2); }
     .days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin: 0 -24px; padding-left: 24px; padding-right: 24px; scrollbar-width: none; }
-    .day { flex: none; width: 58px; min-height: 64px; border-radius: 14px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+    .day { flex: none; width: 58px; min-height: 64px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-ink); font: 600 13px 'Hanken Grotesk Variable', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
     .day strong { font-size: 18px; }
-    .day.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
-    .day.taken:not(.on) { border-color: #2E5F5A; border-width: 2px; }
+    .day.on { background: var(--pp-deep); border-color: var(--pp-deep); color: #fff; }
+    .day.taken:not(.on) { border-color: var(--pp-deep); border-width: 2px; }
     .chips { display: flex; flex-wrap: wrap; gap: 8px; }
     /* Sized by the label ("Nachmittags" gets more room), never broken mid-word */
-    .chip { flex: 1 1 auto; white-space: nowrap; min-height: 44px; padding: 0 12px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
-    .chip.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
-    .where { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 12px 14px; }
-    ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; min-height: 48px; }
-    .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
-    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 6px 8px 16px; border-bottom: 1px solid #EFEAD9; }
+    .chip { flex: 1 1 auto; white-space: nowrap; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-ink); font: 600 13px 'Hanken Grotesk Variable', sans-serif; }
+    .chip.on { background: var(--pp-deep); border-color: var(--pp-deep); color: #fff; }
+    .where { display: flex; align-items: center; gap: 12px; background: var(--pp-surface); border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); padding: 12px 14px; }
+    ion-input { --background: var(--pp-surface); --padding-start: 14px; border: 1px solid var(--pp-rule-strong); border-radius: var(--pp-radius-control); overflow: hidden; min-height: 48px; }
+    .card { background: var(--pp-surface); border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); overflow: hidden; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 6px 8px 16px; border-bottom: 1px solid var(--pp-rule-soft); }
     .row:last-child { border-bottom: 0; }
   `],
   template: `
@@ -112,8 +112,8 @@ const PARTS: PartOfDay[] = ['any', 'morning', 'afternoon', 'evening'];
           <ion-input aria-labelledby="note-label" [maxlength]="200" [placeholder]="t('free.notePlaceholder')" [(ngModel)]="note"></ion-input>
         </div>
 
-        @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
-        @if (saved()) { <p role="status" style="color: #2E5F5A; margin: 0; font-weight: 600">{{ t('free.saved') }}</p> }
+        @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
+        @if (saved()) { <p role="status" style="color: var(--pp-deep); margin: 0; font-weight: 600">{{ t('free.saved') }}</p> }
         <ion-button expand="block" [disabled]="busy() || !centre()" (click)="post()">
           @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ postedDays().has(day()) ? t('free.update') : t('free.post') }} }
         </ion-button>

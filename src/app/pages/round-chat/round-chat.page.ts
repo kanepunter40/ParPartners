@@ -22,7 +22,7 @@ const POLL_MS = 30_000;
   imports: [FormsModule, AvatarComponent, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonFooter, IonTextarea, IonButton, IonIcon, IonSpinner],
   styles: [`
     .list { display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 8px; }
-    .day { align-self: center; margin: 10px 0 4px; font-size: 12px; font-weight: 600; color: #5F5B4E; }
+    .day { align-self: center; margin: 10px 0 4px; font-size: 12px; font-weight: 600; color: var(--pp-ink2); }
     .row { display: flex; align-items: flex-start; gap: 8px; max-width: 86%; }
     /* My messages: on the right, my picture on the outside edge */
     .row.mine { align-self: flex-end; flex-direction: row-reverse; }
@@ -33,15 +33,15 @@ const POLL_MS = 30_000;
     .row.run-start:not(.mine) .face { margin-top: 17px; }
     .msg { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .mine .msg { align-items: flex-end; }
-    .who { font-size: 12px; font-weight: 600; color: #2E5F5A; margin: 0 0 0 12px; }
-    .bubble { padding: 10px 14px; border-radius: 18px; background: #fff; border: 1px solid #E6DFC9; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.35; }
-    .mine .bubble { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
+    .who { font-size: 12px; font-weight: 600; color: var(--pp-deep); margin: 0 0 0 12px; }
+    .bubble { padding: 10px 14px; border-radius: 18px; background: var(--pp-surface); border: 1px solid var(--pp-rule); white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.35; }
+    .mine .bubble { background: var(--pp-deep); border-color: var(--pp-deep); color: #fff; }
     /* Others' messages are buttons: tap to report or block the sender */
     button.bubble { font: inherit; color: inherit; text-align: left; cursor: pointer; }
-    button.bubble:active { background: #EFEAD9; }
-    .time { font-size: 11px; color: #5F5B4E; margin: 0 12px; }
-    .compose { display: flex; align-items: flex-end; gap: 8px; padding: 10px 12px 18px; background: #F4F1E8; border-top: 1px solid #E6DFC9; }
-    ion-textarea { --background: #fff; --padding-start: 14px; --padding-end: 14px; border: 1px solid #D9D2BA; border-radius: 22px; min-height: 44px; }
+    button.bubble:active { background: var(--pp-rule-soft); }
+    .time { font-size: 11px; color: var(--pp-ink2); margin: 0 12px; }
+    .compose { display: flex; align-items: flex-end; gap: 8px; padding: 10px 12px 18px; background: var(--pp-bg); border-top: 1px solid var(--pp-rule); }
+    ion-textarea { --background: var(--pp-surface); --padding-start: 14px; --padding-end: 14px; border: 1px solid var(--pp-rule-strong); border-radius: 22px; min-height: 44px; }
     .send { --border-radius: 999px; width: 48px; height: 48px; margin: 0; }
   `],
   template: `
@@ -59,7 +59,7 @@ const POLL_MS = 30_000;
       @if (loading()) {
         <div style="display: flex; justify-content: center; padding: 64px"><ion-spinner></ion-spinner></div>
       } @else if (loadError()) {
-        <p role="alert" class="page-pad" style="color: #9C5428">{{ loadError() }}</p>
+        <p role="alert" class="page-pad" style="color: var(--pp-accent-ink)">{{ loadError() }}</p>
       } @else {
         <div class="list" role="log" aria-live="polite" [attr.aria-label]="t('chat.title')">
           @for (m of messages(); track m.id; let i = $index) {
@@ -90,7 +90,7 @@ const POLL_MS = 30_000;
 
     @if (!loading() && !loadError()) {
       <ion-footer class="ion-no-border">
-        @if (error()) { <p role="alert" style="color: #9C5428; margin: 0; padding: 8px 16px 0; background: #F4F1E8; font-size: 14px">{{ error() }}</p> }
+        @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0; padding: 8px 16px 0; background: var(--pp-bg); font-size: 14px">{{ error() }}</p> }
         <div class="compose">
           <ion-textarea #box [(ngModel)]="draft" [autoGrow]="true" [rows]="1" [maxlength]="maxLength" [placeholder]="t('chat.placeholder')"
                         [attr.aria-label]="t('chat.placeholder')" autocapitalize="sentences" style="flex: 1"></ion-textarea>

@@ -1,9 +1,30 @@
-/* Coastal Links palette (from the Par Partners design) */
+/* PARtners theme: blend H, Fairway scheme (design/blends.html).
+   Newsreader (light serif) for dates and headings, Hanken Grotesk for everything else.
+   Every page colour comes from the --pp-* tokens below; don't hard-code hex values in pages. */
 :root {
-  --ion-font-family: 'Work Sans', sans-serif;
-  --ion-background-color: #F4F1E8;
-  --ion-text-color: #1F3532;
-  --ion-text-color-rgb: 31, 53, 50;
+  --pp-bg: #F3F1EA;
+  --pp-surface: #FFFFFF;
+  --pp-ink: #1C302C;
+  --pp-ink2: #4F5B57;
+  --pp-ink3: #6B736E;
+  --pp-rule: #DCD8CB;
+  --pp-rule-strong: #CBC6B6;
+  --pp-rule-soft: #E9E6DD;
+  --pp-deep: #2E5F5A;
+  --pp-deep-soft: #E2EBE8;
+  --pp-accent: #B8643A;
+  --pp-accent-soft: #F3E4D6;
+  --pp-accent-ink: #9A4F2A;
+
+  --pp-serif: 'Newsreader Variable', Georgia, serif;
+  --pp-sans: 'Hanken Grotesk Variable', system-ui, sans-serif;
+  --pp-radius-group: 14px;
+  --pp-radius-control: 10px;
+
+  --ion-font-family: var(--pp-sans);
+  --ion-background-color: var(--pp-bg);
+  --ion-text-color: var(--pp-ink);
+  --ion-text-color-rgb: 28, 48, 44;
 
   --ion-color-primary: #2E5F5A;
   --ion-color-primary-rgb: 46, 95, 90;
@@ -12,37 +33,54 @@
   --ion-color-primary-shade: #285450;
   --ion-color-primary-tint: #437069;
 
-  --ion-color-secondary: #C97B4A;
-  --ion-color-secondary-rgb: 201, 123, 74;
-  --ion-color-secondary-contrast: #1F3532;
-  --ion-color-secondary-contrast-rgb: 31, 53, 50;
-  --ion-color-secondary-shade: #b16c41;
-  --ion-color-secondary-tint: #ce8847;
+  --ion-color-secondary: #B8643A;
+  --ion-color-secondary-rgb: 184, 100, 58;
+  --ion-color-secondary-contrast: #FFFFFF;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #a25833;
+  --ion-color-secondary-tint: #bf744e;
 
-  --ion-color-medium: #5F5B4E;
-  --ion-color-medium-rgb: 95, 91, 78;
+  --ion-color-medium: #4F5B57;
+  --ion-color-medium-rgb: 79, 91, 87;
   --ion-color-medium-contrast: #FFFFFF;
   --ion-color-medium-contrast-rgb: 255, 255, 255;
-  --ion-color-medium-shade: #545044;
-  --ion-color-medium-tint: #6f6b5e;
+  --ion-color-medium-shade: #46504d;
+  --ion-color-medium-tint: #616b68;
 
-  --ion-border-color: #E6DFC9;
-  --ion-item-background: #FFFFFF;
-  --ion-toolbar-background: #F4F1E8;
-  --ion-tab-bar-background: #F4F1E8;
-  --ion-tab-bar-color: #5F5B4E;
-  --ion-tab-bar-color-selected: #2E5F5A;
+  --ion-border-color: var(--pp-rule);
+  --ion-item-background: var(--pp-surface);
+  --ion-toolbar-background: var(--pp-bg);
+  --ion-tab-bar-background: var(--pp-surface);
+  --ion-tab-bar-color: var(--pp-ink3);
+  --ion-tab-bar-color-selected: var(--pp-deep);
 }
 
-h1, h2, h3, ion-title { font-family: 'Fraunces Variable', serif; }
-ion-button { --border-radius: 999px; min-height: 48px; font-weight: 600; text-transform: none; letter-spacing: 0; }
-ion-card { margin: 0 0 12px; border-radius: 16px; box-shadow: none; border: 1px solid #E6DFC9; background: #fff; }
-.page-pad { padding: 8px 24px 24px; }
+/* Serif carries dates and headings only, light and tight; body text stays sans */
+h1, h2, h3, ion-title { font-family: var(--pp-serif); font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; }
+h1 { font-weight: 300; letter-spacing: -0.035em; line-height: 0.98; }
+
+ion-button { --border-radius: var(--pp-radius-control); min-height: 48px; font-weight: 600; text-transform: none; letter-spacing: 0; }
+/* Segment switches (Find, Scorecard): readable sentence-case labels, not Ionic's small caps */
+ion-segment-button { font-size: 14px; font-weight: 600; letter-spacing: 0; text-transform: none; min-height: 40px; }
+ion-card { margin: 0 0 12px; border-radius: var(--pp-radius-group); box-shadow: none; border: 1px solid var(--pp-rule); background: var(--pp-surface); }
+
+.page-pad { padding: 8px 18px 24px; }
 /* For pages without a header bar: keep clear of the status bar / notch */
 .page-pad.top-safe { padding-top: calc(var(--ion-safe-area-top, 0px) + 20px); }
 /* Visually hidden, still read by screen readers */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .muted { color: var(--ion-color-medium); }
-.pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; background: #F3E4D6; color: #9C5428; }
-.pill.ok { background: #E3ECE9; color: #2E5F5A; }
-.pill.full { background: #ECE8DA; color: #5F5B4E; }
+
+/* Grouped inset list: a white group with hairline rows (blend H). Named pp-group because pages use .group for their own layouts */
+.pp-group { background: var(--pp-surface); border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); overflow: hidden; }
+.group-row { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 11px 14px; border-bottom: 1px solid var(--pp-rule-soft); color: inherit; text-decoration: none; }
+.group-row:last-child { border-bottom: 0; }
+.group-row .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.group-row .txt small { color: var(--pp-ink3); font-size: 13px; }
+.group-row .val { color: var(--pp-ink2); text-align: right; flex: none; }
+.section-title { font-family: var(--pp-serif); font-weight: 400; font-size: 22px; letter-spacing: -0.02em; line-height: 1.15; margin: 0 2px 10px; }
+
+/* Status words: plain coloured text, not chips */
+.pill { display: inline; font-size: 13px; font-weight: 600; color: var(--pp-accent-ink); }
+.pill.ok { color: var(--pp-deep); }
+.pill.full { color: var(--pp-ink3); }

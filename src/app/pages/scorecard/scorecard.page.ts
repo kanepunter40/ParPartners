@@ -16,36 +16,36 @@ const POLL_MS = 20_000;
   imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner, IonSelect, IonSelectOption],
   styles: [`
     .hole-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
-    .hole-no { font-family: 'Fraunces Variable', serif; font-size: 44px; line-height: 1; margin: 0; }
-    .par-btn { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; font: inherit; font-weight: 600; color: #1F3532; }
-    .par-btn.unknown { border-style: dashed; color: #5F5B4E; }
+    .hole-no { font-family: 'Newsreader Variable', serif; font-size: 44px; line-height: 1; margin: 0; }
+    .par-btn { min-height: 44px; padding: 0 16px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); font: inherit; font-weight: 600; color: var(--pp-ink); }
+    .par-btn.unknown { border-style: dashed; color: var(--pp-ink2); }
     .par-btn:disabled { opacity: 1; border-color: transparent; background: transparent; }
     .pars { display: flex; gap: 8px; }
-    .pars button { flex: 1; min-height: 48px; border-radius: 12px; border: 1px solid #D9D2BA; background: #fff; font: inherit; font-weight: 600; color: #1F3532; }
-    .pars button[aria-pressed="true"] { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
-    .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
-    .prow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #EFEAD9; }
+    .pars button { flex: 1; min-height: 48px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); font: inherit; font-weight: 600; color: var(--pp-ink); }
+    .pars button[aria-pressed="true"] { background: var(--pp-deep); border-color: var(--pp-deep); color: #fff; }
+    .card { background: var(--pp-surface); border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); overflow: hidden; }
+    .prow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--pp-rule-soft); }
     .prow:last-child { border-bottom: 0; }
     .pname { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .pname strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .stepper { display: flex; align-items: center; gap: 6px; flex: none; }
-    .stepper .round { width: 48px; height: 48px; border-radius: 999px; border: 1px solid #D9D2BA; background: #F4F1E8; font-size: 22px; color: #1F3532; }
-    .stepper .num { width: 56px; height: 56px; border-radius: 14px; border: 2px solid #2E5F5A; background: #fff; font: inherit; font-size: 24px; font-weight: 700; color: #1F3532; }
-    .stepper .num.empty { border: 2px dashed #D9D2BA; color: #5F5B4E; font-weight: 500; }
-    .under { color: #2E5F5A; }
-    .over { color: #9C5428; }
-    .nav { display: flex; gap: 10px; padding: 12px 24px 24px; background: #F4F1E8; border-top: 1px solid #E6DFC9; }
+    .stepper .round { width: 48px; height: 48px; border-radius: 999px; border: 1px solid var(--pp-rule-strong); background: var(--pp-bg); font-size: 22px; color: var(--pp-ink); }
+    .stepper .num { width: 56px; height: 56px; border-radius: var(--pp-radius-control); border: 2px solid var(--pp-deep); background: var(--pp-surface); font: inherit; font-size: 24px; font-weight: 700; color: var(--pp-ink); }
+    .stepper .num.empty { border: 2px dashed var(--pp-rule-strong); color: var(--pp-ink2); font-weight: 500; }
+    .under { color: var(--pp-deep); }
+    .over { color: var(--pp-accent-ink); }
+    .nav { display: flex; gap: 10px; padding: 12px 24px 24px; background: var(--pp-bg); border-top: 1px solid var(--pp-rule); }
     .nav ion-button { flex: 1; }
-    .grid-wrap { overflow-x: auto; border: 1px solid #E6DFC9; border-radius: 16px; background: #fff; }
+    .grid-wrap { overflow-x: auto; border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); background: var(--pp-surface); }
     table { border-collapse: collapse; font-size: 14px; min-width: 100%; }
-    th, td { padding: 0; text-align: center; border-bottom: 1px solid #EFEAD9; min-width: 36px; height: 40px; }
-    th:first-child, td:first-child { position: sticky; left: 0; background: #fff; text-align: left; padding: 0 12px; min-width: 96px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-right: 1px solid #EFEAD9; }
+    th, td { padding: 0; text-align: center; border-bottom: 1px solid var(--pp-rule-soft); min-width: 36px; height: 40px; }
+    th:first-child, td:first-child { position: sticky; left: 0; background: var(--pp-surface); text-align: left; padding: 0 12px; min-width: 96px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-right: 1px solid var(--pp-rule-soft); }
     tr:last-child td { border-bottom: 0; }
-    .sum { background: #F4F1E8; font-weight: 700; }
-    .hole-link { width: 100%; height: 40px; border: 0; background: none; font: inherit; font-weight: 600; color: #2E5F5A; }
-    .par-row td { color: #5F5B4E; }
-    .result { padding: 14px 16px; border-radius: 16px; background: #E3ECE9; color: #1F3532; display: flex; flex-direction: column; gap: 2px; }
-    .format-select { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font-weight: 600; font-size: 14px; }
+    .sum { background: var(--pp-bg); font-weight: 700; }
+    .hole-link { width: 100%; height: 40px; border: 0; background: none; font: inherit; font-weight: 600; color: var(--pp-deep); }
+    .par-row td { color: var(--pp-ink2); }
+    .result { padding: 14px 16px; border-radius: var(--pp-radius-control); background: var(--pp-deep-soft); color: var(--pp-ink); display: flex; flex-direction: column; gap: 2px; }
+    .format-select { min-height: 44px; padding: 0 16px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-ink); font-weight: 600; font-size: 14px; }
   `],
   template: `
     <ion-header class="ion-no-border">
@@ -69,7 +69,7 @@ const POLL_MS = 20_000;
           @if (unsaved()) {
             <p role="status" class="muted" style="margin: 0; font-size: 13px">{{ t('card.unsaved', { count: unsaved() }) }}</p>
           }
-          @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+          @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
 
           @if (view() === 'hole') {
             <div class="hole-head">
@@ -180,7 +180,7 @@ const POLL_MS = 20_000;
       } @else if (loading()) {
         <div style="display: flex; justify-content: center; padding: 64px"><ion-spinner></ion-spinner></div>
       } @else {
-        <p role="alert" class="page-pad" style="color: #9C5428">{{ error() || t('card.gone') }}</p>
+        <p role="alert" class="page-pad" style="color: var(--pp-accent-ink)">{{ error() || t('card.gone') }}</p>
       }
     </ion-content>
 

@@ -9,8 +9,8 @@ import { BlockedPlayer, SafetyService } from '../../core/safety.service';
   selector: 'app-blocked',
   imports: [AvatarComponent, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSpinner],
   styles: [`
-    .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
-    .row { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 12px 8px 16px; border-bottom: 1px solid #EFEAD9; }
+    .card { background: var(--pp-surface); border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); overflow: hidden; }
+    .row { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 12px 8px 16px; border-bottom: 1px solid var(--pp-rule-soft); }
     .row:last-child { border-bottom: 0; }
     .name { flex: 1; min-width: 0; }
   `],
@@ -24,7 +24,7 @@ import { BlockedPlayer, SafetyService } from '../../core/safety.service';
     <ion-content>
       <div class="page-pad" style="display: flex; flex-direction: column; gap: 16px">
         <p class="muted" style="margin: 0">{{ t('safety.blockedIntro') }}</p>
-        @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+        @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
         @if (loaded()) {
           @if (list().length) {
             <div class="card">

@@ -17,35 +17,35 @@ import { MyRound } from '../../core/models';
     <ion-content>
       <ion-refresher slot="fixed" (ionRefresh)="refresh($event)"><ion-refresher-content></ion-refresher-content></ion-refresher>
       <div class="page-pad">
-        <h1 class="sr-only">{{ t('rounds.title') }}</h1>
+        <h1 style="font-size: 38px; margin: 0 2px 18px">{{ t('rounds.title') }}</h1>
         <!-- At the top, so it doesn't end up below a long list of rounds -->
         @if (items().length) {
           <ion-button fill="outline" expand="block" routerLink="/create" style="margin: 0">{{ t('rounds.post') }}</ion-button>
         }
         <ion-button fill="clear" expand="block" routerLink="/free" style="margin: 4px 0 16px">{{ t('free.cta') }}</ion-button>
-        @for (r of items(); track r.round_id) {
-          <a [routerLink]="['/round', r.round_id]" style="text-decoration: none; color: inherit; display: block">
-            <div style="background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px">
-              <div style="display: flex; justify-content: space-between; align-items: center">
-                @switch (r.status) {
-                  @case ('host') { <span class="pill ok">{{ t('home.youHost') }}</span> }
-                  @case ('waitlisted') { <span class="pill full">{{ t('rounds.waitlisted') }}</span> }
-                  @case ('invited') { <span class="pill" style="background: #F3E4D6; color: #7A4220">{{ t('rounds.invited') }}</span> }
-                  @default { <span class="pill ok">{{ t('rounds.youreIn') }}</span> }
-                }
-                <span style="font-size: 13px; font-weight: 600">{{ t('home.inCount', { n: r.confirmed, max: r.max_players }) }}</span>
-              </div>
-              <h3 style="margin: 0; font-size: 18px">{{ r.course_name }}</h3>
-              <div style="display: flex; justify-content: space-between">
-                <strong style="font-size: 14px">{{ i18n.date(r.tee_time) }}</strong>
-                <span class="muted" style="font-size: 13px">{{ r.status === 'host' ? t('rounds.hostedByYou') : t('home.hostedBy', { name: r.host_name }) }}</span>
-              </div>
-            </div>
-          </a>
-        } @empty {
+        @if (items().length) {
+          <div class="pp-group">
+            @for (r of items(); track r.round_id) {
+              <a class="group-row" [routerLink]="['/round', r.round_id]">
+                <span class="txt">
+                  <span>{{ r.course_name }}</span>
+                  <small>{{ i18n.date(r.tee_time) }} · {{ r.status === 'host' ? t('rounds.hostedByYou') : t('home.hostedBy', { name: r.host_name }) }}</small>
+                  @switch (r.status) {
+                    @case ('host') { <span class="pill ok" style="margin-top: 2px">{{ t('home.youHost') }}</span> }
+                    @case ('waitlisted') { <span class="pill full" style="margin-top: 2px">{{ t('rounds.waitlisted') }}</span> }
+                    @case ('invited') { <span class="pill" style="margin-top: 2px">{{ t('rounds.invited') }}</span> }
+                    @default { <span class="pill ok" style="margin-top: 2px">{{ t('rounds.youreIn') }}</span> }
+                  }
+                </span>
+                <span class="val" style="font-size: 14px">{{ t('home.inCount', { n: r.confirmed, max: r.max_players }) }}</span>
+              </a>
+            }
+          </div>
+        }
+        @if (!items().length) {
           @if (loaded()) {
-            <div style="text-align: center; padding: 64px 16px; display: flex; flex-direction: column; gap: 10px; align-items: center">
-              <h2 style="margin: 0">{{ t('rounds.emptyTitle') }}</h2>
+            <div style="padding: 24px 2px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
+              <h2 style="margin: 0; font-size: 24px">{{ t('rounds.emptyTitle') }}</h2>
               <p class="muted" style="margin: 0">{{ t('rounds.emptyText') }}</p>
               <ion-button routerLink="/create">{{ t('rounds.post') }}</ion-button>
             </div>

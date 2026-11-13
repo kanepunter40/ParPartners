@@ -22,16 +22,18 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
   selector: 'app-round-detail',
   imports: [AvatarComponent, PlayerMenuComponent, RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner, IonIcon],
   styles: [`
-    .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
-    .player { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 6px 16px; border-bottom: 1px solid #EFEAD9; }
+    .hero { display: block; width: 100%; height: 210px; object-fit: cover; background: var(--pp-rule-soft); }
+    .sheet { position: relative; margin-top: -22px; border-radius: 22px 22px 0 0; background: var(--pp-bg); display: flex; flex-direction: column; gap: 22px; }
+    h1 { font-size: 38px; margin: 0; }
+    .player { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 8px 14px; border-bottom: 1px solid var(--pp-rule-soft); }
     .player:last-child { border-bottom: 0; }
     /* Name with the handicap under it, so a long German button label still fits beside them */
     .who { flex: 1; min-width: 0; display: flex; align-items: center; }
     .who .name { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
     .player-actions { flex: none; display: flex; align-items: center; gap: 8px; }
-    .weather { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
-    .weather ion-icon { font-size: 32px; color: #C97B4A; flex: none; }
-    .notice { margin: 0; padding: 12px 16px; border-radius: 12px; background: #E3ECE9; color: #1F3532; }
+    .wx { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+    .wx ion-icon { font-size: 20px; color: var(--pp-accent); flex: none; }
+    .notice { margin: 0; padding: 12px 14px; border-radius: var(--pp-radius-control); background: var(--pp-deep-soft); color: var(--pp-ink); }
     .actions { display: flex; gap: 10px; }
     .actions ion-button { flex: 1; }
   `],
@@ -41,35 +43,35 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
     </ion-header>
     <ion-content>
       @if (round(); as r) {
-        <div class="page-pad" style="display: flex; flex-direction: column; gap: 20px">
+        <img class="hero" src="course-placeholder.jpg" alt="">
+        <div class="page-pad sheet" style="padding-top: 22px">
           @if (cancelled()) {
-            <p role="status" style="margin: 0; padding: 12px 16px; border-radius: 12px; background: #F3E4D6; color: #9C5428; font-weight: 600">{{ t('round.cancelled') }}</p>
+            <p role="status" style="margin: 0; padding: 12px 14px; border-radius: var(--pp-radius-control); background: var(--pp-accent-soft); color: var(--pp-accent-ink); font-weight: 600">{{ t('round.cancelled') }}</p>
           } @else if (myStatus() === 'invited') {
             <p role="status" class="notice">{{ t('round.invitedBy', { name: r.host.display_name }) }}</p>
           } @else if (myStatus() === 'waitlisted') {
             <p role="status" class="notice">{{ waitlistPos() ? t('round.waitlistPos', { n: waitlistPos()! }) : t('round.onWaitlist') }}</p>
           }
-          <div>
-            <div style="font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em">{{ isHost() ? t('rounds.hostedByYou') : t('home.hostedBy', { name: r.host.display_name }) }}</div>
-            <h2 style="font-size: 26px; margin: 6px 0">{{ r.courses.name }}</h2>
-            <div class="muted">{{ i18n.date(r.tee_time, 'longDayTime') }}</div>
-            <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 10px">
-              <span class="pill" style="background: #F3E4D6; color: #7A4220">{{ t('format.' + (r.format || 'casual')) }}</span>
-              @if (r.cart) { <span class="pill" style="background: #E3ECE9; color: #1F3532">{{ t('cart.' + r.cart) }}</span> }
-              @if (r.women_only) { <span class="pill" style="background: #E3ECE9; color: #1F3532">{{ t('womenOnly.label') }}</span> }
-              <span class="muted" style="font-size: 13px">{{ t('format.hint.' + (r.format || 'casual')) }}</span>
-            </div>
-          </div>
+          <h1>{{ i18n.date(r.tee_time, 'longDay') }}</h1>
 
-          @if (weather(); as w) {
-            <div class="card weather" role="group" [attr.aria-label]="t('weather.label')">
-              <ion-icon [name]="weatherIcon(w)" aria-hidden="true"></ion-icon>
-              <div style="display: flex; flex-direction: column; gap: 2px">
-                <strong>{{ t('weather.' + w.kind) }} · {{ w.temp }}°C</strong>
-                <span class="muted" style="font-size: 13px">{{ t('weather.detail', { rain: w.rainChance, wind: w.wind }) }}</span>
+          <div class="pp-group">
+            <div class="group-row"><span class="txt">{{ t('round.teeTime') }}</span><span class="val">{{ i18n.date(r.tee_time, 'time') }}</span></div>
+            <div class="group-row"><span class="txt">{{ t('round.course') }}</span><span class="val" style="flex: 0 1 auto; overflow-wrap: anywhere">{{ r.courses.name }}</span></div>
+            <div class="group-row"><span class="txt">{{ t('round.host') }}</span><span class="val">{{ r.host.display_name }}</span></div>
+            <div class="group-row"><span class="txt"><span>{{ t('format.label') }}</span><small>{{ t('format.hint.' + (r.format || 'casual')) }}</small></span><span class="val">{{ t('format.' + (r.format || 'casual')) }}</span></div>
+            @if (r.cart) {
+              <div class="group-row"><span class="txt">{{ t('cart.label') }}</span><span class="val">{{ t('cart.' + r.cart) }}</span></div>
+            }
+            @if (r.women_only) {
+              <div class="group-row"><span class="txt">{{ t('womenOnly.label') }}</span><span class="val">&#10003;</span></div>
+            }
+            @if (weather(); as w) {
+              <div class="group-row" role="group" [attr.aria-label]="t('weather.label')">
+                <span class="txt"><span>{{ t('weather.label') }}</span><small>{{ t('weather.detail', { rain: w.rainChance, wind: w.wind }) }}</small></span>
+                <span class="val wx"><ion-icon [name]="weatherIcon(w)" aria-hidden="true"></ion-icon>{{ t('weather.' + w.kind) }} · {{ w.temp }}°C</span>
               </div>
-            </div>
-          }
+            }
+          </div>
 
           @if (inLineUp() && !cancelled()) {
             <div class="actions">
@@ -81,11 +83,11 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
           }
 
           <div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px">
-              <strong>{{ t('round.players') }}</strong>
-              <span class="muted">{{ t('home.inCount', { n: confirmed().length, max: r.max_players }) }}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+              <h2 class="section-title">{{ t('round.whoPlays') }}</h2>
+              <span class="muted" style="font-size: 14px">{{ t('home.inCount', { n: confirmed().length, max: r.max_players }) }}</span>
             </div>
-            <div class="card">
+            <div class="pp-group">
               @for (p of confirmed(); track p.player_id) {
                 <div class="player">
                   <span class="who">
@@ -119,16 +121,16 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
           @if (isHost() && (waitlist().length || invited().length)) {
             <div>
               @if (waitlist().length) {
-                <strong style="display: block; margin-bottom: 8px">{{ t('round.waitlist', { count: waitlist().length }) }}</strong>
-                <div class="card" style="margin-bottom: 12px">
+                <h2 class="section-title">{{ t('round.waitlist', { count: waitlist().length }) }}</h2>
+                <div class="pp-group" style="margin-bottom: 18px">
                   @for (p of waitlist(); track p.player_id; let i = $index) {
                     <div class="player"><span style="display: flex; align-items: center"><app-avatar [name]="p.profiles.display_name" [path]="p.profiles.avatar_url" [size]="32" style="margin-right: 10px" />{{ i + 1 }}. {{ p.profiles.display_name }}</span></div>
                   }
                 </div>
               }
               @if (invited().length) {
-                <strong style="display: block; margin-bottom: 8px">{{ t('round.invitedList') }}</strong>
-                <div class="card">
+                <h2 class="section-title">{{ t('round.invitedList') }}</h2>
+                <div class="pp-group">
                   @for (p of invited(); track p.player_id) {
                     <div class="player"><span style="display: flex; align-items: center"><app-avatar [name]="p.profiles.display_name" [path]="p.profiles.avatar_url" [size]="32" style="margin-right: 10px" />{{ p.profiles.display_name }}</span><span class="pill full">{{ t('round.invitedPill') }}</span></div>
                   }
@@ -138,7 +140,7 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
           }
 
           @if (r.notes) {
-            <div><strong>{{ t('round.notes') }}</strong><p class="muted" style="margin: 6px 0 0">{{ r.notes }}</p></div>
+            <div><h2 class="section-title">{{ t('round.notes') }}</h2><p style="margin: 0 2px; color: var(--pp-ink2)">{{ r.notes }}</p></div>
           }
 
           @if (!cancelled() && inLineUp()) {
@@ -152,17 +154,17 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
             </ion-button>
           }
 
-          @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+          @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
         </div>
       } @else if (loading()) {
         <div style="display: flex; justify-content: center; padding: 64px"><ion-spinner></ion-spinner></div>
       } @else {
-        <p role="alert" class="page-pad" style="color: #9C5428">{{ error() || t('round.gone') }}</p>
+        <p role="alert" class="page-pad" style="color: var(--pp-accent-ink)">{{ error() || t('round.gone') }}</p>
       }
     </ion-content>
 
     @if (round() && !isHost() && !cancelled()) {
-      <div style="padding: 14px 24px 28px; background: #F4F1E8; border-top: 1px solid #E6DFC9; display: flex; flex-direction: column; gap: 8px">
+      <div style="padding: 14px 18px 28px; background: var(--pp-bg); border-top: 1px solid var(--pp-rule); display: flex; flex-direction: column; gap: 8px">
         @if (started()) {
           <p class="muted" style="margin: 0; text-align: center">{{ t('round.started') }}</p>
         } @else if (myStatus() === 'confirmed') {

@@ -47,31 +47,31 @@ const MY_LOCATION = '@me';
   imports: [RouterLink, AvatarComponent, PlayerMenuComponent, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
   styles: [`
     .find { display: flex; flex-direction: column; gap: 28px; }
-    .filters { background: #ECE8DA; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+    .filters { display: flex; flex-direction: column; gap: 16px; }
     .where { display: flex; align-items: center; gap: 12px; }
     .group { display: flex; flex-direction: column; gap: 8px; }
-    .group-label { font-size: 12px; font-weight: 600; color: #5F5B4E; text-transform: uppercase; letter-spacing: .04em; }
+    .group-label { font-size: 14px; font-weight: 600; color: var(--pp-ink2); }
     /* Equal-width chips, so each row fits the panel without scrolling */
     .chips { display: flex; gap: 8px; }
-    .chip { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 6px; line-height: 1.15; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
-    .chip.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
+    .chip { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 6px; line-height: 1.15; border-radius: 10px; border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-ink); font: 600 13px 'Hanken Grotesk Variable', sans-serif; }
+    .chip.on { background: var(--pp-deep); border-color: var(--pp-deep); color: #fff; }
     /* Date filter: long German labels ("Nächstes Wochenende") get two per row instead of being cut mid-word */
     .chips.when { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
     .chips .chip { overflow-wrap: normal; word-break: normal; hyphens: auto; }
     .results-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
     .results-head h2 { margin: 0; font-size: 22px; }
-    ion-searchbar { padding: 0; --background: #fff; }
-    ion-segment { --background: #fff; }
-    .home-chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; max-width: 100%; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #2E5F5A; font: 600 13px 'Work Sans', sans-serif; }
+    ion-searchbar { padding: 0; --background: var(--pp-surface); }
+    ion-segment { --background: var(--pp-surface); }
+    .home-chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; max-width: 100%; min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-deep); font: 600 13px 'Hanken Grotesk Variable', sans-serif; }
     .home-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .course-opt { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid #EFEAD9; background: #fff; font-family: inherit; color: #1F3532; }
-    .format-select { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font-weight: 600; font-size: 14px; }
-    .format-pill { background: #F3E4D6; color: #7A4220; }
+    .course-opt { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid var(--pp-rule-soft); background: var(--pp-surface); font-family: inherit; color: var(--pp-ink); }
+    .format-select { min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-ink); font-weight: 600; font-size: 14px; }
+    .format-pill { color: var(--pp-ink2); font-weight: 500; }
     .alert-row { display: flex; align-items: center; gap: 12px; margin: -8px 0 4px; }
-    .alert-row a { font-size: 13px; font-weight: 600; color: #2E5F5A; }
-    .free { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .alert-row a { font-size: 13px; font-weight: 600; color: var(--pp-deep); }
     .free-top { display: flex; align-items: center; gap: 12px; }
-    .result { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; }
+    .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 3px; }
+    .chev { color: var(--pp-ink3); font-size: 22px; flex: none; }
   `],
   template: `
     <ion-header class="ion-no-border">
@@ -107,7 +107,7 @@ const MY_LOCATION = '@me';
               <span class="group-label">{{ t('find.course') }}</span>
               <ion-searchbar [placeholder]="t('find.searchCourse')" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="searchCourse($event)"></ion-searchbar>
               @if (suggestions().length) {
-                <div style="border: 1px solid #E6DFC9; border-radius: 12px; overflow: hidden">
+                <div style="border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); overflow: hidden">
                   @for (c of suggestions(); track c.id) {
                     <button type="button" class="course-opt" (click)="pickCourse(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px">{{ c.city }}</span></button>
                   }
@@ -159,31 +159,32 @@ const MY_LOCATION = '@me';
               <span class="muted" style="font-size: 13px" aria-live="polite">{{ loading() ? t('find.searching') : results().length ? results().length + ' · ' + areaLabel() : areaLabel() }}</span>
             }
           </div>
-          @if (error()) { <p role="alert" style="color: #9C5428; margin: 0 0 12px">{{ error() }}</p> }
+          @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0 0 12px">{{ error() }}</p> }
 
         <div>
-          @for (r of results(); track r.round_id) {
-            <a class="result" [routerLink]="['/round', r.round_id]">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px">
-                <span style="display: flex; gap: 6px; flex-wrap: wrap">
-                  @if (r.spots_left > 0) {
-                    <span class="pill">{{ t('home.spotsLeft', { count: r.spots_left }) }}</span>
-                  } @else {
-                    <span class="pill full">{{ t('find.fullWaitlist') }}</span>
-                  }
-                  @if (r.format && r.format !== 'casual') { <span class="pill format-pill">{{ t('format.' + r.format) }}</span> }
-                  @if (r.cart) { <span class="pill format-pill">{{ t('cart.' + r.cart) }}</span> }
-                  @if (r.women_only) { <span class="pill format-pill">{{ t('womenOnly.label') }}</span> }
-                </span>
-                @if (r.distance_km !== null) { <span class="muted" style="font-size: 13px">{{ t('find.kmAway', { km: r.distance_km }) }}</span> }
-              </div>
-              <h3 style="margin: 0 0 6px; font-size: 18px">{{ r.course_name }}</h3>
-              <strong style="font-size: 14px">{{ i18n.date(r.tee_time) }}</strong>
-              <div style="display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EFEAD9">
-                <span class="muted" style="font-size: 13px">{{ r.host_name }}{{ r.host_handicap !== null ? ' · ' + t('common.hcp', { hcp: r.host_handicap }) : '' }}</span>
-                <span style="font-size: 13px; font-weight: 600; color: #2E5F5A">{{ t('find.viewJoin') }}</span>
-              </div>
-            </a>
+          @if (results().length) {
+            <div class="pp-group">
+              @for (r of results(); track r.round_id) {
+                <a class="group-row" [routerLink]="['/round', r.round_id]">
+                  <span class="txt">
+                    <span>{{ r.course_name }}</span>
+                    <small>{{ i18n.date(r.tee_time) }}{{ r.distance_km !== null ? ' · ' + t('find.kmAway', { km: r.distance_km }) : '' }}</small>
+                    <small>{{ r.host_name }}{{ r.host_handicap !== null ? ' · ' + t('common.hcp', { hcp: r.host_handicap }) : '' }}</small>
+                    <span class="meta">
+                      @if (r.spots_left > 0) {
+                        <span class="pill">{{ t('home.spotsLeft', { count: r.spots_left }) }}</span>
+                      } @else {
+                        <span class="pill full">{{ t('find.fullWaitlist') }}</span>
+                      }
+                      @if (r.format && r.format !== 'casual') { <span class="pill format-pill">{{ t('format.' + r.format) }}</span> }
+                      @if (r.cart) { <span class="pill format-pill">{{ t('cart.' + r.cart) }}</span> }
+                      @if (r.women_only) { <span class="pill format-pill">{{ t('womenOnly.label') }}</span> }
+                    </span>
+                  </span>
+                  <span class="chev" aria-hidden="true">&#8250;</span>
+                </a>
+              }
+            </div>
           }
           @if (mode() === 'course' && !course()) {
             <p class="muted" style="text-align: center; padding: 32px 8px; margin: 0">{{ t('find.pickCourseHint') }}</p>
@@ -203,27 +204,32 @@ const MY_LOCATION = '@me';
           <section aria-labelledby="free-title">
             <div class="results-head">
               <h2 id="free-title">{{ t('free.findTitle') }}</h2>
-              <a routerLink="/free" style="font-size: 13px; font-weight: 600; color: #2E5F5A">{{ t('free.cta') }}</a>
+              <a routerLink="/free" style="font-size: 13px; font-weight: 600; color: var(--pp-deep)">{{ t('free.cta') }}</a>
             </div>
-            @for (f of free(); track f.id) {
-              <div class="free">
-                <div class="free-top">
-                  <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="40" />
-                  <div style="flex: 1; min-width: 0">
-                    <strong>{{ f.display_name }}</strong>
-                    <div class="muted" style="font-size: 13px">{{ f.handicap_index !== null ? t('common.hcp', { hcp: f.handicap_index }) + ' · ' : '' }}{{ f.place_name && f.place_name !== 'my location' && f.place_name !== 'mein Standort' ? t('find.nearName', { name: f.place_name }) : '' }}</div>
+            @if (free().length) {
+              <div class="pp-group">
+                @for (f of free(); track f.id) {
+                  <div class="group-row" style="align-items: flex-start">
+                    <app-avatar [name]="f.display_name" [path]="f.avatar_url" [size]="36" />
+                    <span class="txt">
+                      <span>{{ f.display_name }}</span>
+                      <small>{{ f.handicap_index !== null ? t('common.hcp', { hcp: f.handicap_index }) + ' · ' : '' }}{{ f.place_name && f.place_name !== 'my location' && f.place_name !== 'mein Standort' ? t('find.nearName', { name: f.place_name }) : '' }}</small>
+                      <span style="font-size: 14px; font-weight: 600; margin-top: 4px">{{ dayLabel(f.day) }} · {{ t('free.part.' + f.part_of_day) }}{{ f.cart ? ' · ' + t('cart.' + f.cart) : '' }}</span>
+                      @if (f.note) { <small>“{{ f.note }}”</small> }
+                    </span>
+                    <span style="display: flex; align-items: center; flex: none">
+                      @if (invitedIds().has(f.user_id)) {
+                        <span class="pill ok">{{ t('free.invited') }}</span>
+                      } @else {
+                        <ion-button size="small" (click)="invite(f)">{{ t('free.invite') }}</ion-button>
+                      }
+                      <app-player-menu [playerId]="f.user_id" [name]="f.display_name" (blocked)="load()" style="margin-right: -10px" />
+                    </span>
                   </div>
-                  @if (invitedIds().has(f.user_id)) {
-                    <span class="pill ok">{{ t('free.invited') }}</span>
-                  } @else {
-                    <ion-button size="small" (click)="invite(f)">{{ t('free.invite') }}</ion-button>
-                  }
-                  <app-player-menu [playerId]="f.user_id" [name]="f.display_name" (blocked)="load()" style="margin-right: -10px" />
-                </div>
-                <strong style="font-size: 14px">{{ dayLabel(f.day) }} · {{ t('free.part.' + f.part_of_day) }}{{ f.cart ? ' · ' + t('cart.' + f.cart) : '' }}</strong>
-                @if (f.note) { <span class="muted" style="font-size: 14px">“{{ f.note }}”</span> }
+                }
               </div>
-            } @empty {
+            }
+            @if (!free().length) {
               <p class="muted" style="margin: 0; font-size: 14px">{{ t('free.noneHere') }}</p>
             }
           </section>

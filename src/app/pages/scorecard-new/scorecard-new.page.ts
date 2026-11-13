@@ -15,13 +15,13 @@ const MAX_GUESTS = 7;
   imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonInput, IonSpinner],
   styles: [`
     .opts { display: flex; gap: 8px; margin-top: 8px; }
-    .opts button { flex: 1; min-height: 48px; border-radius: 12px; border: 1px solid #D9D2BA; background: #fff; font: inherit; font-weight: 600; color: #1F3532; }
-    .opts button[aria-pressed="true"] { background: #E3ECE9; border-color: #2E5F5A; color: #2E5F5A; }
-    .sug { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid #EFEAD9; background: #fff; font-family: inherit; color: #1F3532; }
+    .opts button { flex: 1; min-height: 48px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); font: inherit; font-weight: 600; color: var(--pp-ink); }
+    .opts button[aria-pressed="true"] { background: var(--pp-deep-soft); border-color: var(--pp-deep); color: var(--pp-deep); }
+    .sug { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid var(--pp-rule-soft); background: var(--pp-surface); font-family: inherit; color: var(--pp-ink); }
     .guest { display: flex; gap: 8px; align-items: center; }
-    .guest ion-input { --background: #fff; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; --padding-start: 12px; min-height: 48px; }
-    .me { display: flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 14px; border: 1px solid #E6DFC9; border-radius: 12px; background: #fff; font-weight: 600; }
-    .remove { min-width: 44px; min-height: 44px; border: 0; background: none; font-size: 22px; color: #5F5B4E; }
+    .guest ion-input { --background: var(--pp-surface); border: 1px solid var(--pp-rule-strong); border-radius: var(--pp-radius-control); overflow: hidden; --padding-start: 12px; min-height: 48px; }
+    .me { display: flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 14px; border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); background: var(--pp-surface); font-weight: 600; }
+    .remove { min-width: 44px; min-height: 44px; border: 0; background: none; font-size: 22px; color: var(--pp-ink2); }
   `],
   template: `
     <ion-header class="ion-no-border">
@@ -46,7 +46,7 @@ const MAX_GUESTS = 7;
               <strong>{{ t('find.course') }}</strong>
               <ion-searchbar [placeholder]="t('find.searchCourse')" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="search($event)"></ion-searchbar>
               @if (suggestions().length) {
-                <div style="border: 1px solid #E6DFC9; border-radius: 12px; overflow: hidden">
+                <div style="border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); overflow: hidden">
                   @for (c of suggestions(); track c.id) {
                     <button type="button" class="sug" (click)="pick(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px">{{ c.city }}</span></button>
                   }
@@ -84,7 +84,7 @@ const MAX_GUESTS = 7;
             </div>
           }
 
-          @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+          @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
 
           <ion-button expand="block" [disabled]="!course() || busy()" (click)="start()">
             @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ t('scores.start') }} }

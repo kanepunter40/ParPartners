@@ -6,7 +6,7 @@ import { initials } from './format';
 @Component({
   selector: 'app-avatar',
   styles: [`
-    :host { display: inline-flex; flex: none; border-radius: 999px; overflow: hidden; background: #2E5F5A; color: #fff;
+    :host { display: inline-flex; flex: none; border-radius: 999px; overflow: hidden; background: var(--pp-deep); color: #fff;
             align-items: center; justify-content: center; font-weight: 600; line-height: 1; }
     img { width: 100%; height: 100%; object-fit: cover; display: block; }
   `],

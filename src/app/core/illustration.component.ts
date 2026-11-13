@@ -47,7 +47,7 @@ export type Scene = 'friends' | 'search' | 'scorecard' | 'green';
               <line x1="86" y1="68" x2="154" y2="68" /><line x1="86" y1="80" x2="154" y2="80" /><line x1="86" y1="92" x2="154" y2="92" /><line x1="86" y1="104" x2="154" y2="104" />
               <line x1="108" y1="60" x2="108" y2="110" /><line x1="131" y1="60" x2="131" y2="110" />
             </g>
-            <g fill="#5F5B4E" font-family="Work Sans, sans-serif" font-size="8" font-weight="600" text-anchor="middle">
+            <g fill="#5F5B4E" font-family="Hanken Grotesk Variable, sans-serif" font-size="8" font-weight="600" text-anchor="middle">
               <text x="97" y="77">4</text><text x="120" y="77">5</text><text x="97" y="89">3</text><text x="120" y="89">4</text>
             </g>
             <circle cx="120" cy="86" r="6" fill="none" stroke="#C97B4A" stroke-width="1.4" />

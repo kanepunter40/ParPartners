@@ -21,27 +21,27 @@ const MIN_PASSWORD = 8;
   selector: 'app-welcome',
   imports: [RouterLink, FormsModule, IonContent, IonButton, IonInput, IonInputPasswordToggle, IonSpinner, IonIcon],
   styles: [`
-    .hero { background: #2E5F5A; color: #F4F1E8; padding: calc(var(--ion-safe-area-top, 0px) + 56px) 32px 44px; text-align: center; }
+    .hero { background: var(--pp-deep); color: var(--pp-bg); padding: calc(var(--ion-safe-area-top, 0px) + 56px) 32px 44px; text-align: center; }
     .hero .mark { display: block; width: 96px; height: 96px; margin: 0 auto 8px; }
     .hero h1 { font-size: 38px; margin: 0 0 10px; }
-    .hero p { margin: 0 auto; max-width: 280px; line-height: 1.5; color: #E3ECE9; }
-    .sheet { background: #F4F1E8; border-radius: 28px 28px 0 0; margin-top: -24px; padding: 24px 24px 40px; display: flex; flex-direction: column; gap: 14px; }
-    .tabs { display: flex; background: #ECE8DA; border-radius: 999px; padding: 4px; }
-    .tabs button { flex: 1; min-height: 40px; border: 0; border-radius: 999px; background: transparent; color: #5F5B4E; font: 600 14px 'Work Sans', sans-serif; }
-    .tabs button.on { background: #fff; color: #1F3532; box-shadow: 0 1px 2px rgba(31, 53, 50, .12); }
-    .sso { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 50px; border-radius: 999px; font: 600 15px 'Work Sans', sans-serif; }
+    .hero p { margin: 0 auto; max-width: 280px; line-height: 1.5; color: var(--pp-deep-soft); }
+    .sheet { background: var(--pp-bg); border-radius: 28px 28px 0 0; margin-top: -24px; padding: 24px 24px 40px; display: flex; flex-direction: column; gap: 14px; }
+    .tabs { display: flex; background: var(--pp-rule-soft); border-radius: var(--pp-radius-control); padding: 4px; }
+    .tabs button { flex: 1; min-height: 40px; border: 0; border-radius: 10px; background: transparent; color: var(--pp-ink2); font: 600 14px 'Hanken Grotesk Variable', sans-serif; }
+    .tabs button.on { background: var(--pp-surface); color: var(--pp-ink); }
+    .sso { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 50px; border-radius: 10px; font: 600 15px 'Hanken Grotesk Variable', sans-serif; }
     .sso:disabled { opacity: .6; }
-    .google { background: #fff; color: #1F3532; border: 1px solid #D9D2BA; }
+    .google { background: var(--pp-surface); color: var(--pp-ink); border: 1px solid var(--pp-rule-strong); }
     .apple { background: #000; color: #fff; border: 1px solid #000; }
     .apple ion-icon { font-size: 20px; margin-top: -2px; }
-    .or { display: flex; align-items: center; gap: 12px; color: #5F5B4E; font-size: 13px; }
-    .or::before, .or::after { content: ''; flex: 1; height: 1px; background: #D9D2BA; }
+    .or { display: flex; align-items: center; gap: 12px; color: var(--pp-ink2); font-size: 13px; }
+    .or::before, .or::after { content: ''; flex: 1; height: 1px; background: var(--pp-rule-strong); }
     .field { display: flex; flex-direction: column; gap: 6px; }
     .field label { font-weight: 600; font-size: 14px; }
-    ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; min-height: 48px; }
+    ion-input { --background: var(--pp-surface); --padding-start: 14px; border: 1px solid var(--pp-rule-strong); border-radius: var(--pp-radius-control); overflow: hidden; min-height: 48px; }
     .links { display: flex; justify-content: space-between; gap: 12px; }
-    .link { background: none; border: 0; padding: 8px 0; color: #2E5F5A; font: 600 14px 'Work Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; }
-    .error { color: #9C5428; margin: 0; font-size: 14px; }
+    .link { background: none; border: 0; padding: 8px 0; color: var(--pp-deep); font: 600 14px 'Hanken Grotesk Variable', sans-serif; text-decoration: underline; text-underline-offset: 3px; }
+    .error { color: var(--pp-accent-ink); margin: 0; font-size: 14px; }
   `],
   template: `
     <ion-content [fullscreen]="true">

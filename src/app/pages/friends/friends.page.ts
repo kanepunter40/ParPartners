@@ -11,13 +11,13 @@ import { Friend, FriendStatus } from '../../core/models';
   imports: [AvatarComponent, PlayerMenuComponent, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonSpinner],
   styles: [`
     .wrap { display: flex; flex-direction: column; gap: 24px; }
-    .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; display: block; }
-    .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
-    .row { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 12px 8px 16px; border-bottom: 1px solid #EFEAD9; }
+    .label { font-family: 'Newsreader Variable', serif; font-size: 22px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; color: var(--pp-ink); margin-bottom: 8px; display: block; }
+    .card { background: var(--pp-surface); border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); overflow: hidden; }
+    .row { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 12px 8px 16px; border-bottom: 1px solid var(--pp-rule-soft); }
     .row:last-child { border-bottom: 0; }
     .name { flex: 1; min-width: 0; display: flex; flex-direction: column; }
     .actions { display: flex; gap: 4px; flex: none; }
-    ion-searchbar { padding: 0; --background: #fff; }
+    ion-searchbar { padding: 0; --background: var(--pp-surface); }
     ion-button { min-height: 40px; }
   `],
   template: `
@@ -55,7 +55,7 @@ import { Friend, FriendStatus } from '../../core/models';
           }
         </section>
 
-        @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+        @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
 
         @if (incoming().length) {
           <section>

@@ -13,11 +13,11 @@ import { SearchAlert } from '../../core/models';
   selector: 'app-alerts',
   imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonIcon, IonToggle],
   styles: [`
-    .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
-    .item { border-bottom: 1px solid #EFEAD9; }
+    .card { background: var(--pp-surface); border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); overflow: hidden; }
+    .item { border-bottom: 1px solid var(--pp-rule-soft); }
     .item:last-child { border-bottom: 0; }
     .row { display: flex; align-items: center; gap: 4px; min-height: 64px; padding-right: 6px; }
-    .free { display: block; padding: 0 16px 12px; font-size: 14px; --track-background-checked: #2E5F5A; }
+    .free { display: block; padding: 0 16px 12px; font-size: 14px; --track-background-checked: var(--pp-deep); }
     .open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 4px 10px 16px;
             background: none; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
     .open:disabled { cursor: default; }
@@ -35,7 +35,7 @@ import { SearchAlert } from '../../core/models';
       <div class="page-pad" style="display: flex; flex-direction: column; gap: 16px">
         <p class="muted" style="margin: 0">{{ t('alerts.intro') }}</p>
         @if (!push.available) { <p class="muted" style="margin: 0; font-size: 13px">{{ t('alerts.inAppOnly') }}</p> }
-        @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+        @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
         @if (items().length) {
           <div class="card">
             @for (a of items(); track a.id) {
@@ -60,7 +60,7 @@ import { SearchAlert } from '../../core/models';
           </div>
         } @else if (loaded()) {
           <div style="text-align: center; padding: 40px 16px; display: flex; flex-direction: column; gap: 10px; align-items: center">
-            <ion-icon name="notifications-outline" style="font-size: 40px; color: #2E5F5A" aria-hidden="true"></ion-icon>
+            <ion-icon name="notifications-outline" style="font-size: 40px; color: var(--pp-deep)" aria-hidden="true"></ion-icon>
             <h2 style="margin: 0">{{ t('alerts.emptyTitle') }}</h2>
             <p class="muted" style="margin: 0">{{ t('alerts.emptyText') }}</p>
             <ion-button routerLink="/tabs/find">{{ t('alerts.goFind') }}</ion-button>

@@ -87,7 +87,8 @@
     "findFriends": "Find friends",
     "older": "Show older updates",
     "loadError": "Could not load your updates.",
-    "olderError": "Could not load older updates."
+    "olderError": "Could not load older updates.",
+    "fromFriends": "From your friends"
   },
   "feed": {
     "scorecard": {
@@ -375,7 +376,11 @@
     "leaveWaitlist": "Leave waitlist",
     "joinWaitlist": "Join waitlist",
     "waitlistHint": "The round is full. Join the waitlist and you'll be moved in if someone drops out.",
-    "decline": "No thanks"
+    "decline": "No thanks",
+    "teeTime": "Tee time",
+    "course": "Course",
+    "host": "Host",
+    "whoPlays": "Who's playing"
   },
   "create": {
     "dateTime": "Date and tee time",

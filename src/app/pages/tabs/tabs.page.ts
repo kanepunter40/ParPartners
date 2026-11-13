@@ -17,9 +17,9 @@ const TABS = [
   selector: 'app-tabs',
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
   styles: [`
-    /* The selected tab gets a filled icon on a pill and a bold label, not just a different colour */
-    ion-tab-button ion-icon { box-sizing: content-box; padding: 3px 18px; border-radius: 999px; transition: background-color 150ms; }
-    ion-tab-button.tab-selected ion-icon { background: #D6E6E0; }
+    /* The selected tab gets a filled icon and a bold label, not just a different colour */
+    ion-tab-bar { border-top: 1px solid var(--pp-rule); }
+    ion-tab-button ion-label { font-size: 11px; margin-top: 2px; }
     ion-tab-button.tab-selected ion-label { font-weight: 700; }
   `],
   template: `

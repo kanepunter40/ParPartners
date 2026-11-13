@@ -10,12 +10,12 @@ import { AppNotification } from '../../core/models';
   selector: 'app-notifications',
   imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonRefresher, IonRefresherContent],
   styles: [`
-    .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
-    .row { display: flex; gap: 12px; align-items: flex-start; min-height: 64px; padding: 14px 16px; border-bottom: 1px solid #EFEAD9; text-decoration: none; color: inherit; }
+    .card { background: var(--pp-surface); border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); overflow: hidden; }
+    .row { display: flex; gap: 12px; align-items: flex-start; min-height: 64px; padding: 14px 16px; border-bottom: 1px solid var(--pp-rule-soft); text-decoration: none; color: inherit; }
     .row:last-child { border-bottom: 0; }
-    .row.unread { background: #E3ECE9; }
+    .row.unread { background: var(--pp-deep-soft); }
     .dot { flex: none; width: 8px; height: 8px; margin-top: 7px; border-radius: 999px; background: transparent; }
-    .unread .dot { background: #C97B4A; }
+    .unread .dot { background: var(--pp-accent); }
     .text { display: flex; flex-direction: column; gap: 3px; }
     .row.free { align-items: center; }
     .row.free .text { flex: 1; min-width: 0; }
@@ -32,7 +32,7 @@ import { AppNotification } from '../../core/models';
     <ion-content>
       <ion-refresher slot="fixed" (ionRefresh)="refresh($event)"><ion-refresher-content></ion-refresher-content></ion-refresher>
       <div class="page-pad">
-        @if (error()) { <p role="alert" style="color: #9C5428">{{ error() }}</p> }
+        @if (error()) { <p role="alert" style="color: var(--pp-accent-ink)">{{ error() }}</p> }
         @if (items().length) {
           <div class="card">
             @for (n of items(); track n.id) {

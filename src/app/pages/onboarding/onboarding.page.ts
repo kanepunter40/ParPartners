@@ -15,15 +15,15 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
   imports: [FormsModule, IonContent, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonProgressBar, IonSpinner],
   styles: [`
     .wrap { padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 20px; min-height: 100%; }
-    .eyebrow { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; }
+    .eyebrow { font-size: 14px; font-weight: 600; color: var(--pp-deep); }
     h2 { font-size: 28px; margin: 4px 0 8px; line-height: 1.2; }
     .chips { display: flex; flex-wrap: wrap; gap: 10px; }
-    .chip { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 14px 'Work Sans', sans-serif; }
-    .chip.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
-    .row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: 14px; border: 1px solid #E6DFC9; background: #fff; text-align: left; color: #1F3532; font-family: inherit; }
-    .row.on { background: #E3ECE9; border-color: #2E5F5A; }
-    .row small { color: #5F5B4E; }
-    ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; min-height: 48px; }
+    .chip { min-height: 44px; padding: 0 18px; border-radius: 10px; border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-ink); font: 600 14px 'Hanken Grotesk Variable', sans-serif; }
+    .chip.on { background: var(--pp-deep); border-color: var(--pp-deep); color: #fff; }
+    .row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule); background: var(--pp-surface); text-align: left; color: var(--pp-ink); font-family: inherit; }
+    .row.on { background: var(--pp-deep-soft); border-color: var(--pp-deep); }
+    .row small { color: var(--pp-ink2); }
+    ion-input { --background: var(--pp-surface); --padding-start: 14px; border: 1px solid var(--pp-rule-strong); border-radius: var(--pp-radius-control); overflow: hidden; min-height: 48px; }
     .footer { margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
     .nav { display: flex; align-items: center; gap: 12px; padding: 12px 16px 0; }
     .nav button { width: 44px; height: 44px; border: 0; background: none; font-size: 22px; }
@@ -108,7 +108,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
           }
         }
 
-        @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+        @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
 
         <div class="footer">
           <ion-button expand="block" [disabled]="!canContinue() || busy()" (click)="next()">

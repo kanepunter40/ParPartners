@@ -1,7 +1,4 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { IonIcon } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { trophy, sparkles } from 'ionicons/icons';
 import { I18nService } from './i18n.service';
 import { CardStats } from './scorecards.service';
 
@@ -10,61 +7,55 @@ const FLAT = 0.5;
 const W = 100;
 const H = 28;
 
-/** The 18-hole rounds / average / best tiles, with a score graph under the average and a trophy on the best. */
+/** Average (with a score graph), best and 18-hole round count, as one grouped block. */
 @Component({
   selector: 'app-golf-stats',
-  imports: [IonIcon],
+  imports: [],
   styles: [`
-    /* The three tiles share their rows (label / number / extra), so a label that wraps in one
-       language pushes all the numbers down together instead of just its own. */
-    :host { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto 1fr; column-gap: 12px; }
-    .stat { grid-row: span 3; display: grid; grid-template-rows: subgrid; align-content: start; min-width: 0;
-      background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 12px 14px; }
-    .lbl { font-size: 13px; color: #5F5B4E; display: flex; align-items: flex-start; gap: 4px; }
-    strong { display: block; font-family: 'Fraunces Variable', serif; font-size: 22px; }
-    .row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
-    .trend { font-size: 12px; font-weight: 600; white-space: nowrap; }
+    /* One block, not three tiles: the average leads, best and round count are list rows (blend H) */
+    :host { display: block; }
+    .lead { padding: 14px 14px 12px; border-bottom: 1px solid var(--pp-rule-soft); }
+    .lbl { font-size: 14px; color: var(--pp-ink2); }
+    .avg { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+    .avg strong { font-family: var(--pp-serif); font-weight: 300; font-size: 44px; line-height: 1; letter-spacing: -0.03em; }
+    .trend { font-size: 13px; font-weight: 600; }
     .good { color: #2E7D5B; }
-    .bad { color: #B0552A; }
-    .flat { color: #5F5B4E; }
-    svg { display: block; width: 100%; height: 28px; margin-top: 6px; overflow: visible; }
-    .trophy { color: #B8892B; font-size: 15px; }
-    .best { background: linear-gradient(160deg, #FFF8E6, #fff 60%); }
-    .best.new { border-color: #E3C77A; }
-    /* Never wider than its tile; wraps inside it if a translation is long */
-    .badge { justify-self: start; align-self: start; max-width: 100%; display: inline-flex; align-items: center; gap: 3px; margin-top: 6px;
-      padding: 2px 8px; border-radius: 10px; background: #F6E7BC; color: #6E5214; font-size: 11px; font-weight: 600; line-height: 1.3; }
-    .badge ion-icon { flex: none; font-size: 12px; }
-    @media (prefers-reduced-motion: no-preference) {
-      .new .trophy { animation: pop .7s cubic-bezier(.3, 1.6, .5, 1) both; }
-      @keyframes pop { 0% { transform: scale(.4) rotate(-20deg); } 100% { transform: none; } }
-    }
+    .bad { color: var(--pp-accent-ink); }
+    .flat { color: var(--pp-ink2); }
+    .graph { position: relative; display: block; height: 32px; margin-top: 10px; }
+    svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .dot { position: absolute; width: 6px; height: 6px; border-radius: 50%; transform: translate(-50%, -50%); }
+    .num { font-family: var(--pp-serif); font-size: 22px; line-height: 1; color: var(--pp-ink); }
+    .txt .new { color: var(--pp-accent-ink); font-weight: 600; font-size: 13px; }
   `],
   template: `
-    <div class="stat"><span class="lbl">{{ t('scores.rounds18') }}</span><strong>{{ i18n.num(stats().rounds18) }}</strong></div>
-
-    <div class="stat">
-      <span class="lbl">{{ t('scores.average') }}</span>
-      <span class="row">
-        <strong>{{ num(stats().average) }}</strong>
-        @if (trend(); as tr) {
-          <span class="trend" [class]="tr.cls" [attr.aria-label]="tr.label" role="img">{{ tr.arrow }}{{ tr.text }}</span>
+    <div class="pp-group">
+      <div class="lead">
+        <span class="lbl">{{ t('scores.average') }}</span>
+        <span class="avg">
+          <strong>{{ num(stats().average) }}</strong>
+          @if (trend(); as tr) {
+            <span class="trend" [class]="tr.cls" [attr.aria-label]="tr.label" role="img">{{ tr.arrow }}{{ tr.text }}</span>
+          }
+        </span>
+        @if (line(); as l) {
+          <!-- The line stretches to the width; the end dot is HTML so it stays round -->
+          <span class="graph">
+            <svg [attr.viewBox]="'0 0 ' + W + ' ' + H" preserveAspectRatio="none" aria-hidden="true">
+              <polyline [attr.points]="l.points" fill="none" [attr.stroke]="l.color" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+            </svg>
+            <span class="dot" [style.left.%]="l.last[0] / W * 100" [style.top.%]="l.last[1] / H * 100" [style.background]="l.color"></span>
+          </span>
         }
-      </span>
-      @if (line(); as l) {
-        <svg [attr.viewBox]="'0 0 ' + W + ' ' + H" preserveAspectRatio="none" aria-hidden="true">
-          <polyline [attr.points]="l.points" fill="none" [attr.stroke]="l.color" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />
-          <circle [attr.cx]="l.last[0]" [attr.cy]="l.last[1]" r="2.5" [attr.fill]="l.color" vector-effect="non-scaling-stroke" />
-        </svg>
-      }
-    </div>
-
-    <div class="stat best" [class.new]="stats().newBest">
-      <span class="lbl"><ion-icon class="trophy" name="trophy" aria-hidden="true"></ion-icon>{{ t('scores.best') }}</span>
-      <strong>{{ num(stats().best) }}</strong>
-      @if (stats().newBest) {
-        <span class="badge"><ion-icon name="sparkles" aria-hidden="true"></ion-icon>{{ t('scores.newBest') }}</span>
-      }
+      </div>
+      <div class="group-row">
+        <span class="txt"><span>{{ t('scores.best') }}</span>@if (stats().newBest) { <small class="new">{{ t('scores.newBest') }}</small> }</span>
+        <span class="num">{{ num(stats().best) }}</span>
+      </div>
+      <div class="group-row">
+        <span class="txt">{{ t('scores.rounds18') }}</span>
+        <span class="num">{{ i18n.num(stats().rounds18) }}</span>
+      </div>
     </div>
   `
 })
@@ -98,13 +89,9 @@ export class GolfStatsComponent {
     // SVG y grows downwards, so flip: low scores sit low
     const flipped = pts.map(([x, y]) => [x, H - y]);
     const d = this.stats().trend ?? 0;
-    const color = d <= -FLAT ? '#2E7D5B' : d >= FLAT ? '#B0552A' : '#5F5B4E';
+    const color = d <= -FLAT ? '#2E7D5B' : d >= FLAT ? '#9A4F2A' : '#4F5B57';
     return { points: flipped.map((p) => p.join(',')).join(' '), last: flipped.at(-1)!, color };
   });
-
-  constructor() {
-    addIcons({ trophy, sparkles });
-  }
 
   /** Average ("93.1", always one decimal) and best can be missing before there are 18-hole cards. */
   num(n: number | string | null | undefined) {

@@ -12,15 +12,15 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
   selector: 'app-create-round',
   imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle],
   styles: [`
-    .opt { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: 14px; border: 1px solid #E6DFC9; background: #fff; text-align: left; color: #1F3532; font-family: inherit; }
-    .opt.on { background: #E3ECE9; border-color: #2E5F5A; }
-    .opt small { color: #5F5B4E; }
-    .stepper { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #D9D2BA; border-radius: 12px; padding: 6px 8px; }
-    .stepper button { width: 44px; height: 44px; border-radius: 999px; border: 1px solid #D9D2BA; background: #F4F1E8; font-size: 20px; color: #1F3532; }
+    .opt { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule); background: var(--pp-surface); text-align: left; color: var(--pp-ink); font-family: inherit; }
+    .opt.on { background: var(--pp-deep-soft); border-color: var(--pp-deep); }
+    .opt small { color: var(--pp-ink2); }
+    .stepper { display: flex; align-items: center; justify-content: space-between; background: var(--pp-surface); border: 1px solid var(--pp-rule-strong); border-radius: var(--pp-radius-control); padding: 6px 8px; }
+    .stepper button { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--pp-rule-strong); background: var(--pp-bg); font-size: 20px; color: var(--pp-ink); }
     .formats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
-    .fmt { min-height: 44px; padding: 0 6px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 13px 'Work Sans', sans-serif; }
-    .fmt.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
-    .sug { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid #EFEAD9; background: #fff; font-family: inherit; color: #1F3532; }
+    .fmt { min-height: 44px; padding: 0 6px; border-radius: 10px; border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-ink); font: 600 13px 'Hanken Grotesk Variable', sans-serif; }
+    .fmt.on { background: var(--pp-deep); border-color: var(--pp-deep); color: #fff; }
+    .sug { display: block; width: 100%; text-align: left; min-height: 48px; padding: 8px 14px; border: 0; border-bottom: 1px solid var(--pp-rule-soft); background: var(--pp-surface); font-family: inherit; color: var(--pp-ink); }
   `],
   template: `
     <ion-header class="ion-no-border">
@@ -36,7 +36,7 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
           <strong>{{ t('find.course') }}</strong>
           <ion-searchbar [placeholder]="t('find.searchCourse')" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="search($event)"></ion-searchbar>
           @if (suggestions().length) {
-            <div style="border: 1px solid #E6DFC9; border-radius: 12px; overflow: hidden">
+            <div style="border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); overflow: hidden">
               @for (c of suggestions(); track c.id) {
                 <button type="button" class="sug" (click)="pick(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px">{{ c.city }}</span></button>
               }
@@ -46,7 +46,7 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 
         <div>
           <strong>{{ t('create.dateTime') }}</strong>
-          <ion-datetime presentation="date-time" [locale]="i18n.locale()" [firstDayOfWeek]="1" [min]="minDate" [(ngModel)]="teeTime" [minuteValues]="'0,10,20,30,40,50'" style="margin-top: 6px; border-radius: 12px"><span slot="time-label">{{ t('create.time') }}</span></ion-datetime>
+          <ion-datetime presentation="date-time" [locale]="i18n.locale()" [firstDayOfWeek]="1" [min]="minDate" [(ngModel)]="teeTime" [minuteValues]="'0,10,20,30,40,50'" style="margin-top: 6px; border-radius: var(--pp-radius-control)"><span slot="time-label">{{ t('create.time') }}</span></ion-datetime>
         </div>
 
         <div>
@@ -97,10 +97,10 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 
         <div>
           <strong>{{ t('round.notes') }}</strong>
-          <ion-textarea [(ngModel)]="notes" rows="3" maxlength="500" [placeholder]="t('create.notesPlaceholder')" style="margin-top: 6px; --background: #fff; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; --padding-start: 12px"></ion-textarea>
+          <ion-textarea [(ngModel)]="notes" rows="3" maxlength="500" [placeholder]="t('create.notesPlaceholder')" style="margin-top: 6px; --background: var(--pp-surface); border: 1px solid var(--pp-rule-strong); border-radius: var(--pp-radius-control); overflow: hidden; --padding-start: 12px"></ion-textarea>
         </div>
 
-        @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+        @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
 
         <ion-button expand="block" [disabled]="!course() || busy()" (click)="post()">
           @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ t('create.submit') }} }

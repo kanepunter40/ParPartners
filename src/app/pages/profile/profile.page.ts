@@ -9,28 +9,24 @@ import { RoundsService } from '../../core/rounds.service';
 import { ScorecardsService, cardStats } from '../../core/scorecards.service';
 import { FriendsService } from '../../core/friends.service';
 import { VIBES, genderKey, langKey } from '../../core/profile-options';
-import { IllustrationComponent } from '../../core/illustration.component';
 import { AvatarComponent } from '../../core/avatar.component';
 import { GolfStatsComponent } from '../../core/golf-stats.component';
 import { Friend, PlayerCard, ScorecardSummary } from '../../core/models';
 
 @Component({
   selector: 'app-profile',
-  imports: [AvatarComponent, GolfStatsComponent, RouterLink, IllustrationComponent, IonContent, IonButton, IonSpinner, IonIcon],
+  imports: [AvatarComponent, GolfStatsComponent, RouterLink, IonContent, IonButton, IonSpinner, IonIcon],
   styles: [`
-    .section { display: flex; flex-direction: column; gap: 8px; }
-    .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; }
-    .card { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
-    .who { display: flex; align-items: center; gap: 12px; }
-    .facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; font-size: 15px; }
-    .facts dt { color: #5F5B4E; }
-    .facts dd { margin: 0; }
-    .friends-link { flex-direction: row; justify-content: space-between; align-items: center; text-decoration: none; color: inherit; }
-    .empty { align-items: center; text-align: center; gap: 8px; padding: 20px 18px; }
-    .page { display: flex; flex-direction: column; gap: 24px; min-height: 100%; box-sizing: border-box; }
-    .top { display: flex; justify-content: flex-end; margin: -8px -8px -16px 0; }
-    .gear { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; color: #1F3532; }
+    .section { display: flex; flex-direction: column; gap: 10px; }
+    .label { font-family: var(--pp-serif); font-size: 22px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; color: var(--pp-ink); margin: 0 2px; }
+    .who { display: flex; align-items: center; gap: 14px; margin: 0 2px; }
+    .who h2 { font-family: var(--pp-serif); font-weight: 300; font-size: 34px; line-height: 1; letter-spacing: -0.03em; margin: 0 0 4px; }
+    .note { color: var(--pp-ink3); font-size: 13px; margin: 0 2px; }
+    .page { display: flex; flex-direction: column; gap: 26px; min-height: 100%; box-sizing: border-box; }
+    .top { display: flex; justify-content: flex-end; margin: -8px -8px -20px 0; }
+    .gear { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--pp-ink); }
     .gear ion-icon { font-size: 24px; }
+    .chev { color: var(--pp-ink3); font-size: 22px; flex: none; }
   `],
   template: `
     <ion-content>
@@ -38,51 +34,50 @@ import { Friend, PlayerCard, ScorecardSummary } from '../../core/models';
         <h1 class="sr-only">{{ t('tabs.profile') }}</h1>
         <div class="top"><a class="gear" routerLink="/settings" [attr.aria-label]="t('settings.title')"><ion-icon name="settings-outline" aria-hidden="true"></ion-icon></a></div>
         @if (card(); as c) {
+          <div class="who">
+            <app-avatar [name]="c.display_name" [path]="c.avatar_url" [size]="64" />
+            <span>
+              <h2>{{ c.display_name }}</h2>
+              <span class="muted">{{ c.handicap_index !== null ? t('profile.handicap', { hcp: c.handicap_index }) : t('profile.noHandicap') }}</span>
+            </span>
+          </div>
+
           <div class="section">
             <span class="label">{{ t('profile.othersSee') }}</span>
-            <div class="card">
-              <div class="who">
-                <app-avatar [name]="c.display_name" [path]="c.avatar_url" [size]="56" />
-                <span style="display: flex; flex-direction: column; gap: 2px">
-                  <strong style="font-size: 20px">{{ c.display_name }}</strong>
-                  <span class="muted">{{ c.handicap_index !== null ? t('profile.handicap', { hcp: c.handicap_index }) : t('profile.noHandicap') }}</span>
-                </span>
-              </div>
-              <dl class="facts">
-                <dt>{{ t('profile.homeCourse') }}</dt><dd>{{ homeCourse() || t('profile.none') }}</dd>
-                <dt>{{ t('profile.vibe') }}</dt><dd>{{ vibeLabel(c.vibe) }}</dd>
-                <dt>{{ t('profile.languages') }}</dt><dd>{{ languages(c) || t('profile.none') }}</dd>
-                @if (c.age !== null || c.gender) {
-                  <dt>{{ t('profile.about') }}</dt><dd>{{ about(c) }}</dd>
-                }
-              </dl>
-              @if (c.age === null && !c.gender) {
-                <span class="muted" style="font-size: 13px">{{ t('profile.ageHidden') }}</span>
+            <div class="pp-group">
+              <div class="group-row"><span class="txt">{{ t('profile.homeCourse') }}</span><span class="val" style="flex: 0 1 auto">{{ homeCourse() || t('profile.none') }}</span></div>
+              <div class="group-row"><span class="txt">{{ t('profile.vibe') }}</span><span class="val">{{ vibeLabel(c.vibe) }}</span></div>
+              <div class="group-row"><span class="txt">{{ t('profile.languages') }}</span><span class="val" style="flex: 0 1 auto">{{ languages(c) || t('profile.none') }}</span></div>
+              @if (c.age !== null || c.gender) {
+                <div class="group-row"><span class="txt">{{ t('profile.about') }}</span><span class="val">{{ about(c) }}</span></div>
               }
             </div>
+            @if (c.age === null && !c.gender) {
+              <p class="note">{{ t('profile.ageHidden') }}</p>
+            }
             <ion-button fill="outline" expand="block" routerLink="/profile/edit">{{ t('profile.edit') }}</ion-button>
           </div>
 
-          <a class="card friends-link" routerLink="/friends">
-            <span style="display: flex; flex-direction: column; gap: 2px">
-              <strong>{{ t('home.friends') }}</strong>
-              <span class="muted" style="font-size: 13px">{{ friendsSummary() }}</span>
+          <a class="pp-group" routerLink="/friends" style="display: block; text-decoration: none; color: inherit">
+            <span class="group-row">
+              <span class="txt"><span>{{ t('home.friends') }}</span><small>{{ friendsSummary() }}</small></span>
+              <span class="chev" aria-hidden="true">&#8250;</span>
             </span>
-            <span aria-hidden="true" style="font-size: 22px; color: #5F5B4E">&#8250;</span>
           </a>
 
           <div class="section">
             <span class="label">{{ t('profile.yourGolf') }}</span>
             @if (stats().rounds18) {
               <app-golf-stats [stats]="stats()" />
-              <span class="muted" style="font-size: 13px">{{ t('profile.cardsTotal', { count: cards().length }) }}</span>
+              <p class="note">{{ t('profile.cardsTotal', { count: cards().length }) }}</p>
             } @else {
-              <div class="card empty">
-                <app-illustration scene="scorecard" style="width: 200px" />
-                <strong style="font-size: 17px">{{ cards().length ? t('profile.finish18') : t('profile.statsStart') }}</strong>
-                <span class="muted" style="font-size: 14px">
-                  {{ cards().length ? t('profile.soFar', { count: cards().length }) : t('profile.keepScore') }}
-                </span>
+              <div class="pp-group">
+                <div class="group-row">
+                  <span class="txt">
+                    <span>{{ cards().length ? t('profile.finish18') : t('profile.statsStart') }}</span>
+                    <small>{{ cards().length ? t('profile.soFar', { count: cards().length }) : t('profile.keepScore') }}</small>
+                  </span>
+                </div>
               </div>
             }
           </div>
@@ -90,7 +85,7 @@ import { Friend, PlayerCard, ScorecardSummary } from '../../core/models';
           <div style="display: flex; justify-content: center; padding: 64px"><ion-spinner></ion-spinner></div>
         }
 
-        @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+        @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
 
       </div>
     </ion-content>

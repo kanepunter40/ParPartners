@@ -12,7 +12,7 @@ import { NotificationsService } from './notifications.service';
   imports: [RouterLink, IonButton, IonIcon],
   styles: [`
     ion-button { position: relative; min-width: 44px; min-height: 44px; --padding-start: 10px; --padding-end: 10px; }
-    .dot { position: absolute; top: 9px; right: 9px; width: 10px; height: 10px; border-radius: 999px; background: #C97B4A; border: 2px solid #F4F1E8; }
+    .dot { position: absolute; top: 9px; right: 9px; width: 10px; height: 10px; border-radius: 999px; background: var(--pp-accent); border: 2px solid var(--pp-bg); }
   `],
   template: `
     <ion-button fill="clear" color="dark" routerLink="/notifications"

@@ -17,16 +17,16 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, genderKey,
     fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
     legend { font-weight: 700; font-size: 17px; padding: 0; margin-bottom: 10px; }
     .chips { display: flex; flex-wrap: wrap; gap: 10px; }
-    .chip { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #D9D2BA; background: #fff; color: #1F3532; font: 600 14px 'Work Sans', sans-serif; }
-    .chip.on { background: #2E5F5A; border-color: #2E5F5A; color: #fff; }
-    .row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: 14px; border: 1px solid #E6DFC9; background: #fff; text-align: left; color: #1F3532; font-family: inherit; }
-    .row.on { background: #E3ECE9; border-color: #2E5F5A; }
-    .row small { color: #5F5B4E; }
-    ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; min-height: 48px; }
+    .chip { min-height: 44px; padding: 0 18px; border-radius: 10px; border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-ink); font: 600 14px 'Hanken Grotesk Variable', sans-serif; }
+    .chip.on { background: var(--pp-deep); border-color: var(--pp-deep); color: #fff; }
+    .row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule); background: var(--pp-surface); text-align: left; color: var(--pp-ink); font-family: inherit; }
+    .row.on { background: var(--pp-deep-soft); border-color: var(--pp-deep); }
+    .row small { color: var(--pp-ink2); }
+    ion-input { --background: var(--pp-surface); --padding-start: 14px; border: 1px solid var(--pp-rule-strong); border-radius: var(--pp-radius-control); overflow: hidden; min-height: 48px; }
     ion-searchbar { padding: 0; }
     .photo { display: flex; align-items: center; gap: 18px; }
     .photo-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-    .footer { position: sticky; bottom: 0; padding: 14px 0 24px; background: #F4F1E8; display: flex; flex-direction: column; gap: 6px; }
+    .footer { position: sticky; bottom: 0; padding: 14px 0 24px; background: var(--pp-bg); display: flex; flex-direction: column; gap: 6px; }
   `],
   template: `
     <ion-header class="ion-no-border">
@@ -52,7 +52,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, genderKey,
                 }
               </div>
             </div>
-            @if (photoError()) { <p role="alert" style="color: #9C5428; margin: 0">{{ photoError() }}</p> }
+            @if (photoError()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ photoError() }}</p> }
             @else if (!avatar()) { <span class="muted" style="font-size: 13px">{{ t('edit.initialsHint') }}</span> }
           </fieldset>
 
@@ -136,14 +136,14 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, genderKey,
 
           <div class="footer">
             @if (problem(); as p) { <p class="muted" style="margin: 0">{{ p }}</p> }
-            @if (error()) { <p role="alert" style="color: #9C5428; margin: 0">{{ error() }}</p> }
+            @if (error()) { <p role="alert" style="color: var(--pp-accent-ink); margin: 0">{{ error() }}</p> }
             <ion-button expand="block" [disabled]="!!problem() || busy()" (click)="save()">
               @if (busy()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ t('common.save') }} }
             </ion-button>
           </div>
         </div>
       } @else if (error()) {
-        <p role="alert" class="page-pad" style="color: #9C5428">{{ error() }}</p>
+        <p role="alert" class="page-pad" style="color: var(--pp-accent-ink)">{{ error() }}</p>
       } @else {
         <div style="display: flex; justify-content: center; padding: 64px"><ion-spinner></ion-spinner></div>
       }

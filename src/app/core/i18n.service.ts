@@ -48,7 +48,7 @@ const SERVER_ERRORS: [RegExp, string][] = [
 ];
 
 /** Named date formats used across the app. */
-export type DateStyle = 'dayTime' | 'longDayTime' | 'dayDateYear' | 'time';
+export type DateStyle = 'dayTime' | 'longDayTime' | 'longDay' | 'dayDateYear' | 'time';
 
 /**
  * English/German text for the whole app.
@@ -111,6 +111,7 @@ export class I18nService {
     switch (style) {
       case 'time': return time;
       case 'dayDateYear': return new Intl.DateTimeFormat(loc, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(d);
+      case 'longDay': return new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long' }).format(d);
       case 'longDayTime': return `${new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long' }).format(d)} · ${time}`;
       default: return `${new Intl.DateTimeFormat(loc, { weekday: 'short', day: 'numeric', month: 'short' }).format(d)} · ${time}`;
     }

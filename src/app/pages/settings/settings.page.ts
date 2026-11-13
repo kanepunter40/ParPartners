@@ -20,18 +20,18 @@ const FEEDBACK_TO = 'parpartners.app@gmail.com';
   styles: [`
     .wrap { display: flex; flex-direction: column; gap: 28px; padding-bottom: 32px; }
     .section { display: flex; flex-direction: column; gap: 8px; }
-    .label { font-size: 12px; font-weight: 600; color: #2E5F5A; text-transform: uppercase; letter-spacing: .04em; }
-    .group { background: #fff; border: 1px solid #E6DFC9; border-radius: 16px; overflow: hidden; }
+    .label { font-family: 'Newsreader Variable', serif; font-size: 22px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; color: var(--pp-ink); }
+    .group { background: var(--pp-surface); border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-group); overflow: hidden; }
     .item { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 54px; padding: 12px 16px;
-            box-sizing: border-box; border: 0; background: none; text-align: left; color: #1F3532; font: 400 16px 'Work Sans', sans-serif; text-decoration: none; }
-    .item + .item, .item + .pw, .pw + .item { border-top: 1px solid #E6DFC9; }
-    .item small { color: #5F5B4E; font-size: 14px; text-align: right; overflow-wrap: anywhere; }
-    .chev { color: #5F5B4E; font-size: 22px; line-height: 1; }
+            box-sizing: border-box; border: 0; background: none; text-align: left; color: var(--pp-ink); font: 400 16px 'Hanken Grotesk Variable', sans-serif; text-decoration: none; }
+    .item + .item, .item + .pw, .pw + .item { border-top: 1px solid var(--pp-rule); }
+    .item small { color: var(--pp-ink2); font-size: 14px; text-align: right; overflow-wrap: anywhere; }
+    .chev { color: var(--pp-ink2); font-size: 22px; line-height: 1; }
     .pw { display: flex; flex-direction: column; gap: 10px; padding: 4px 16px 16px; }
-    ion-input { --background: #fff; --padding-start: 14px; border: 1px solid #D9D2BA; border-radius: 12px; overflow: hidden; min-height: 48px; }
-    .error { color: #9C5428; margin: 0; font-size: 14px; }
+    ion-input { --background: var(--pp-surface); --padding-start: 14px; border: 1px solid var(--pp-rule-strong); border-radius: var(--pp-radius-control); overflow: hidden; min-height: 48px; }
+    .error { color: var(--pp-accent-ink); margin: 0; font-size: 14px; }
     .danger { display: flex; flex-direction: column; gap: 6px; }
-    .tick { color: #2E5F5A; font-weight: 700; }
+    .tick { color: var(--pp-deep); font-weight: 700; }
   `],
   template: `
     <ion-header class="ion-no-border">
@@ -99,7 +99,7 @@ const FEEDBACK_TO = 'parpartners.app@gmail.com';
 
         <div class="section danger">
           <span class="label">{{ t('settings.deleteAccount') }}</span>
-          <ion-button fill="outline" expand="block" style="--color: #9C5428; --border-color: #9C5428" [disabled]="deleting()" (click)="deleteAccount()">
+          <ion-button fill="outline" expand="block" style="--color: var(--pp-accent-ink); --border-color: var(--pp-accent-ink)" [disabled]="deleting()" (click)="deleteAccount()">
             @if (deleting()) { <ion-spinner name="dots"></ion-spinner> } @else { {{ confirmDelete() ? t('settings.deleteConfirm') : t('settings.deleteMine') }} }
           </ion-button>
           <p class="muted" style="margin: 0; font-size: 14px">

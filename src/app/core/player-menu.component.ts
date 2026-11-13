@@ -14,8 +14,8 @@ import { PlayerActionsService } from './player-actions.service';
   imports: [IonIcon],
   styles: [`
     button { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; flex: none;
-      border: 0; border-radius: 999px; background: none; color: #5F5B4E; padding: 0; }
-    button:active { background: #EFEAD9; }
+      border: 0; border-radius: 999px; background: none; color: var(--pp-ink2); padding: 0; }
+    button:active { background: var(--pp-rule-soft); }
     ion-icon { font-size: 20px; }
   `],
   template: `
