@@ -44,6 +44,17 @@ const POLL_MS = 20_000;
     .sum { background: var(--pp-bg); font-weight: 700; }
     .hole-link { width: 100%; height: 40px; border: 0; background: none; font: inherit; font-weight: 600; color: var(--pp-deep); }
     .par-row td { color: var(--pp-ink2); }
+    /* Scorecard marks, as golfers draw them on paper: circle birdie, double circle eagle or better,
+       square bogey, double square double bogey or worse. The second ring is an outline, so it follows the shape. */
+    .mark { display: inline-grid; place-items: center; width: 24px; height: 24px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .mark.birdie, .mark.eagle { border: 1.5px solid currentColor; border-radius: 50%; }
+    .mark.bogey, .mark.double { border: 1.5px solid currentColor; border-radius: 2px; }
+    .mark.eagle, .mark.double { outline: 1.5px solid currentColor; outline-offset: 1.5px; }
+    /* One row on a phone: short labels, spread across the width */
+    .legend { display: flex; justify-content: space-between; gap: 10px; margin: 0 4px; font-size: 12px; color: var(--pp-ink2); white-space: nowrap; }
+    .legend > span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend .mark { width: 13px; height: 13px; }
+    .legend .mark.eagle, .legend .mark.double { outline-offset: 1px; }
     .result { padding: 14px 16px; border-radius: var(--pp-radius-control); background: var(--pp-deep-soft); color: var(--pp-ink); display: flex; flex-direction: column; gap: 2px; }
     .format-select { min-height: 44px; padding: 0 16px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); color: var(--pp-ink); font-weight: 600; font-size: 14px; }
   `],
@@ -154,7 +165,11 @@ const POLL_MS = 20_000;
                     <tr>
                       <td>{{ p.name }}</td>
                       @for (h of holes(); track h) {
-                        <td [class.under]="diff(p.id, h) < 0" [class.over]="diff(p.id, h) > 0">{{ strokes(p.id, h) ?? '' }}</td>
+                        <td [class.under]="diff(p.id, h) < 0" [class.over]="diff(p.id, h) > 0">
+                          @if (strokes(p.id, h) !== undefined) {
+                            <span class="mark" [class]="'mark ' + mark(p.id, h)" [attr.aria-label]="mark(p.id, h) ? strokes(p.id, h) + ', ' + t('card.mark.' + mark(p.id, h)) : null">{{ strokes(p.id, h) }}</span>
+                          }
+                        </td>
                         @if (h === 9 && c.holes === '18') { <td class="sum">{{ sum(p.id, 1, 9) || '' }}</td> }
                       }
                       @if (c.holes === '18') { <td class="sum">{{ sum(p.id, 10, 18) || '' }}</td> }
@@ -164,6 +179,12 @@ const POLL_MS = 20_000;
                 </tbody>
               </table>
             </div>
+            <p class="legend" aria-hidden="true">
+              <span><span class="mark eagle"></span>{{ t('card.markShort.eagle') }}</span>
+              <span><span class="mark birdie"></span>{{ t('card.markShort.birdie') }}</span>
+              <span><span class="mark bogey"></span>{{ t('card.markShort.bogey') }}</span>
+              <span><span class="mark double"></span>{{ t('card.markShort.double') }}</span>
+            </p>
             <div class="card">
               @for (p of players(); track p.id) {
                 <div class="prow" style="min-height: 52px">
@@ -316,6 +337,12 @@ export class ScorecardPage {
   diff(playerId: string, h: number) {
     const s = this.strokes(playerId, h);
     return s === undefined ? 0 : s - this.par(h);
+  }
+  /** Paper-scorecard mark for a hole. Only against a known par, so a guessed par never draws a circle or square. */
+  mark(playerId: string, h: number): '' | 'eagle' | 'birdie' | 'bogey' | 'double' {
+    if (this.strokes(playerId, h) === undefined || !this.parKnown(h)) return '';
+    const d = this.diff(playerId, h);
+    return d <= -2 ? 'eagle' : d === -1 ? 'birdie' : d === 1 ? 'bogey' : d >= 2 ? 'double' : '';
   }
   sum(playerId: string, from: number, to: number) {
     return this.holes().filter((h) => h >= from && h <= to).reduce((t, h) => t + (this.strokes(playerId, h) ?? 0), 0);

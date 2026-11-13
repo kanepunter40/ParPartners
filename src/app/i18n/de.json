@@ -461,7 +461,19 @@
     "winsAnd": "{name} gewinnt {up}&{left}",
     "winsUp": "{name} gewinnt {up} auf",
     "up": "{name} {up} auf nach {n}",
-    "allSquare": "Gleichstand nach {n}"
+    "allSquare": "Gleichstand nach {n}",
+    "mark": {
+      "eagle": "Eagle oder besser",
+      "birdie": "Birdie",
+      "bogey": "Bogey",
+      "double": "Doppelbogey oder schlechter"
+    },
+    "markShort": {
+      "eagle": "Eagle+",
+      "birdie": "Birdie",
+      "bogey": "Bogey",
+      "double": "Doppelbogey+"
+    }
   },
   "join": {
     "cant": "Beitritt nicht möglich",

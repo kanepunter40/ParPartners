@@ -461,7 +461,19 @@
     "winsAnd": "{name} win {up}&{left}",
     "winsUp": "{name} win {up} up",
     "up": "{name} {up} up thru {n}",
-    "allSquare": "All square thru {n}"
+    "allSquare": "All square thru {n}",
+    "mark": {
+      "eagle": "Eagle or better",
+      "birdie": "Birdie",
+      "bogey": "Bogey",
+      "double": "Double bogey or worse"
+    },
+    "markShort": {
+      "eagle": "Eagle+",
+      "birdie": "Birdie",
+      "bogey": "Bogey",
+      "double": "Double bogey+"
+    }
   },
   "join": {
     "cant": "Can't join this round",
