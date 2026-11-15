@@ -14,7 +14,9 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
   selector: 'app-onboarding',
   imports: [FormsModule, IonContent, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonProgressBar, IonSpinner],
   styles: [`
-    .wrap { padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 20px; min-height: 100%; }
+    /* Progress bar + steps fill the screen exactly, so Continue sits at the bottom, above the phone's navigation bar */
+    .page { display: flex; flex-direction: column; min-height: 100%; }
+    .wrap { flex: 1; padding: 16px 24px calc(24px + var(--ion-safe-area-bottom, 0px)); display: flex; flex-direction: column; gap: 20px; }
     .eyebrow { font-size: 14px; font-weight: 600; color: var(--pp-deep); }
     h2 { font-size: 28px; margin: 4px 0 8px; line-height: 1.2; }
     .chips { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -30,6 +32,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
   `],
   template: `
     <ion-content>
+      <div class="page">
       <div class="nav">
         <button type="button" [attr.aria-label]="t('common.back')" [style.visibility]="step() === 0 ? 'hidden' : 'visible'" (click)="back()">&#8592;</button>
         <ion-progress-bar [value]="(step() + 1) / total"></ion-progress-bar>
@@ -41,6 +44,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
           @case (0) {
             <div><div class="eyebrow">{{ t('onboarding.eyebrow') }}</div><h2>{{ t('onboarding.nameQ') }}</h2></div>
             <ion-input [attr.aria-label]="t('edit.name')" [placeholder]="t('onboarding.namePlaceholder')" autocomplete="name" [(ngModel)]="name"></ion-input>
+            <ion-checkbox [(ngModel)]="adult" labelPlacement="end" justify="start" style="margin-top: 4px">{{ t('onboarding.adult') }}</ion-checkbox>
           }
           @case (1) {
             <div><div class="eyebrow">{{ t('onboarding.eyebrow') }}</div><h2>{{ t('onboarding.courseQ') }}</h2>
@@ -119,6 +123,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
           }
         </div>
       </div>
+      </div>
     </ion-content>
   `
 })
@@ -144,6 +149,8 @@ export class OnboardingPage {
   error = signal('');
 
   name = '';
+  /** "I'm 18 or over": required to continue (terms of service, minimum age 18). */
+  adult = false;
   courses = signal<Course[]>([]);
   homeCourse = signal<Course | null>(null);
   handicapText = '';
@@ -178,7 +185,7 @@ export class OnboardingPage {
 
   canContinue(): boolean {
     switch (this.step()) {
-      case 0: return this.name.trim().length > 0;
+      case 0: return this.name.trim().length > 0 && this.adult;
       case 2: return this.noHandicap || parseHandicap(this.handicapText) !== null;
       default: return true;
     }
@@ -193,10 +200,15 @@ export class OnboardingPage {
       this.step.update((s) => s + 1);
       return;
     }
+    const year = parseInt(this.birthYearText, 10);
+    // A year of birth that makes them under 18 contradicts the tick box on the first step
+    if (Number.isFinite(year) && year > new Date().getFullYear() - 18) {
+      this.error.set(this.t('onboarding.tooYoung'));
+      return;
+    }
     this.busy.set(true);
     this.error.set('');
     try {
-      const year = parseInt(this.birthYearText, 10);
       await this.profiles.save({
         displayName: this.name,
         homeCourseId: this.homeCourse()?.id ?? null,

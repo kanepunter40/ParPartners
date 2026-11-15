@@ -317,7 +317,9 @@
     "finish": "Fertig",
     "continue": "Weiter",
     "noHome": "Ich habe keinen Heimatplatz",
-    "skip": "Erst mal überspringen"
+    "skip": "Erst mal überspringen",
+    "adult": "Ich bin mindestens 18 Jahre alt",
+    "tooYoung": "PARtners ist für Menschen ab 18 Jahren. Prüfe dein Geburtsjahr oder lass das Feld leer."
   },
   "friends": {
     "search": "Spieler nach Namen suchen",

@@ -317,7 +317,9 @@
     "finish": "Finish",
     "continue": "Continue",
     "noHome": "I don't have a home course",
-    "skip": "Skip for now"
+    "skip": "Skip for now",
+    "adult": "I’m 18 or over",
+    "tooYoung": "PARtners is for people aged 18 and over. Check your year of birth, or leave it empty."
   },
   "friends": {
     "search": "Search players by name",
