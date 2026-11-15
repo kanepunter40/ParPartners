@@ -12,14 +12,15 @@ export const ADDRESS = 'Augustenstraße 85, 70197 Stuttgart';
 
 export const PRIVACY: LegalDoc = {
   title: 'Privacy policy',
-  updated: '9 November 2026',
+  updated: '15 November 2026',
   intro: 'PARtners helps golfers find people to play with. This page explains what we store about you, who can see it, and what you can do about it. Short version: we only keep what the app needs to work, we never sell your data, and there are no ads or trackers.',
   sections: [
     {
       heading: 'Who is responsible',
       body: [
         `PARtners is run by ${OPERATOR} as a private project. ${OPERATOR} is responsible for your data under the GDPR.`,
-        `${OPERATOR}, ${ADDRESS}, Germany. Email: ${CONTACT}`
+        `${OPERATOR}, ${ADDRESS}, Germany. Email: ${CONTACT}`,
+        'If you live in the UK, the UK GDPR and the Data Protection Act 2018 also apply. If you live in Australia, we handle your data in line with the Australian Privacy Principles.'
       ]
     },
     {
@@ -27,7 +28,7 @@ export const PRIVACY: LegalDoc = {
       body: [
         'Your account: your email address and, if you use one, your password (stored only as a secure hash). If you sign in with Google, we receive your name and email address from Google.',
         'Your profile: name, photo (optional), home course, handicap, languages, when you like to play, round length and how competitive you are. Year of birth and gender are optional.',
-        'What you do in the app: rounds you post or join, requests to join, scorecards and scores, friends and friend requests, and the notifications we send you.',
+        'What you do in the app: rounds you post or join, requests to join, messages you write in a round’s chat, scorecards and scores, friends and friend requests, the notifications we send you, and which kinds of notification you’ve turned off.',
         'Guests: if you add someone to a scorecard who isn’t on PARtners, we store the name you type for them and their scores. Only add people who are happy with that.',
         'Safety: players you block, and reports you send. If someone reports you, we store the report and the reason they gave. We use reports only to keep PARtners safe, and the person reported never sees who reported them.',
         'Push notifications: if you allow them, a token that identifies your phone to the notification service, and your app language.'
@@ -67,7 +68,8 @@ export const PRIVACY: LegalDoc = {
         'Firebase Cloud Messaging (Google) delivers push notifications to Android phones. It receives your phone’s token and the text of each notification (for example "Lena joined your round"). You can turn notifications off at any time in your phone’s settings.',
         'Firebase Crashlytics (Google) receives the crash reports described above. Google may process them outside the EU; this is covered by the EU-US Data Privacy Framework and the EU Standard Contractual Clauses.',
         'Golf course names and locations come from OpenStreetMap. No personal data is sent to OpenStreetMap.',
-        'We don’t sell your data or share it with anyone else, unless the law requires us to.'
+        'We don’t sell your data or share it with anyone else, unless the law requires us to.',
+        'If you live in the UK or Australia, your data is sent to and stored in the EU (Frankfurt, Germany), and some of the services above may process it in the USA. The UK recognises the EU as giving adequate protection, and transfers to the USA are covered as described above. We protect your data the same way wherever you live.'
       ]
     },
     {
@@ -75,13 +77,14 @@ export const PRIVACY: LegalDoc = {
       body: [
         'We use your data to provide the app you signed up for (GDPR Article 6(1)(b)).',
         'Optional details, like your year of birth, gender and location, are used because you chose to give them (Article 6(1)(a)). If your gender is Woman, we also use it to let you see, post and join women-only rounds. Your gender itself isn’t shown, but the players in a women-only round can tell that everyone in it is a woman. You can withdraw that consent at any time by removing them in Edit profile or turning off location access. This doesn’t affect anything we did with them before.',
-        'Technical data is used because we have a legitimate interest in keeping the app secure and working (Article 6(1)(f)).'
+        'Technical data is used because we have a legitimate interest in keeping the app secure and working (Article 6(1)(f)).',
+        'For players in the UK, the same legal bases apply under the UK GDPR.'
       ]
     },
     {
       heading: 'How long we keep it',
       body: [
-        'As long as you have an account. If you delete your account in Settings, your profile, photo, solo scorecards, friendships and notifications are removed straight away. Upcoming rounds you host pass to another player, and your scores stay on other players’ cards as "Deleted player" so their cards still add up.',
+        'As long as you have an account. If you delete your account in Settings, your profile, photo, solo scorecards, friendships and notifications are removed straight away. Upcoming rounds you host pass to another player, and your scores stay on other players’ cards as "Deleted player" so their cards still add up. Chat messages you wrote stay in the round’s chat without your name, so the conversation still makes sense, and are deleted with the round.',
         'Copies in our backups are overwritten within 7 days.'
       ]
     },
@@ -93,12 +96,13 @@ export const PRIVACY: LegalDoc = {
       heading: 'Your rights',
       body: [
         `You can ask for a copy of your data, have it corrected or deleted, limit how we use it, object to its use, or take it with you. Email ${CONTACT} and we’ll reply within a month.`,
-        'You can also complain to a data protection authority, for example the Landesbeauftragte für den Datenschutz und die Informationsfreiheit Baden-Württemberg.'
+        'You can also complain to a data protection authority, for example the Landesbeauftragte für den Datenschutz und die Informationsfreiheit Baden-Württemberg.',
+        'In the UK, you can complain to the Information Commissioner’s Office (ico.org.uk). In Australia, please contact us first; if you’re not happy with our answer, you can complain to the Office of the Australian Information Commissioner (oaic.gov.au).'
       ]
     },
     {
       heading: 'Age',
-      body: ['PARtners is for people aged 16 and over.']
+      body: ['PARtners is for people aged 18 and over.']
     },
     {
       heading: 'Changes',
@@ -109,7 +113,7 @@ export const PRIVACY: LegalDoc = {
 
 export const TERMS: LegalDoc = {
   title: 'Terms of service',
-  updated: '9 November 2026',
+  updated: '15 November 2026',
   intro: 'These terms apply when you use PARtners. By creating an account you agree to them.',
   sections: [
     {
@@ -118,7 +122,7 @@ export const TERMS: LegalDoc = {
     },
     {
       heading: 'Your account',
-      body: ['You need to be at least 16. Use your real name, keep your sign-in details to yourself, and tell us if you think someone else is using your account.']
+      body: ['You need to be at least 18. Use your real name, keep your sign-in details to yourself, and tell us if you think someone else is using your account.']
     },
     {
       heading: 'Playing with people you meet here',
@@ -137,11 +141,11 @@ export const TERMS: LegalDoc = {
     },
     {
       heading: 'Availability',
-      body: ['We work to keep PARtners running and your data safe, but the app is provided as it is, without a guarantee that it is always available or free of errors. Scores and handicaps in the app are for your own use and are not official.']
+      body: ['We work to keep PARtners running and your data safe, but the app is provided as it is, without a guarantee that it is always available or free of errors. Scores and handicaps in the app are for your own use and are not official. This doesn’t affect rights you have by law that can’t be excluded.']
     },
     {
       heading: 'Liability',
-      body: ['We are fully liable for intent and gross negligence, and for injury to life, body or health. For slight negligence we are only liable for breaches of essential obligations, limited to the damage that was typically foreseeable. Otherwise our liability is excluded.']
+      body: ['We are fully liable for intent and gross negligence, and for injury to life, body or health. For slight negligence we are only liable for breaches of essential obligations, limited to the damage that was typically foreseeable. Otherwise our liability is excluded, to the extent the law allows. Nothing in these terms limits rights you have as a consumer that can’t be excluded, for example under the Australian Consumer Law or UK consumer law.']
     },
     {
       heading: 'Ending',
@@ -150,7 +154,7 @@ export const TERMS: LegalDoc = {
     {
       heading: 'Changes and law',
       body: [
-        'If these terms change in a way that matters, we’ll tell you in the app before they apply. German law applies.',
+        'If these terms change in a way that matters, we’ll tell you in the app before they apply. German law applies. If you use PARtners as a consumer and live in another country, you keep the protection of the mandatory consumer laws of that country.',
         `Questions: ${CONTACT}`
       ]
     }

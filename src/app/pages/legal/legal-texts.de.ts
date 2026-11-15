@@ -3,14 +3,15 @@ import { ADDRESS, CONTACT, LegalDoc, OPERATOR } from './legal-texts';
 
 export const PRIVACY_DE: LegalDoc = {
   title: 'Datenschutzerklärung',
-  updated: '9. November 2026',
+  updated: '15. November 2026',
   intro: 'PARtners hilft Golfern, Mitspieler zu finden. Hier erklären wir, was wir über dich speichern, wer es sehen kann und was du tun kannst. Kurz gesagt: Wir speichern nur, was die App zum Funktionieren braucht, verkaufen deine Daten nie, und es gibt weder Werbung noch Tracking.',
   sections: [
     {
       heading: 'Verantwortlicher',
       body: [
         `PARtners wird von ${OPERATOR} als privates Projekt betrieben. Verantwortlicher im Sinne der DSGVO ist ${OPERATOR}.`,
-        `${OPERATOR}, ${ADDRESS}, Deutschland. E-Mail: ${CONTACT}`
+        `${OPERATOR}, ${ADDRESS}, Deutschland. E-Mail: ${CONTACT}`,
+        'Wenn du im Vereinigten Königreich lebst, gelten außerdem die UK GDPR und der Data Protection Act 2018. Wenn du in Australien lebst, behandeln wir deine Daten nach den Australian Privacy Principles.'
       ]
     },
     {
@@ -18,7 +19,7 @@ export const PRIVACY_DE: LegalDoc = {
       body: [
         'Dein Konto: deine E-Mail-Adresse und, falls du eins nutzt, dein Passwort (nur als sicherer Hash gespeichert). Wenn du dich mit Google anmeldest, erhalten wir deinen Namen und deine E-Mail-Adresse von Google.',
         'Dein Profil: Name, Foto (freiwillig), Heimatplatz, Handicap, Sprachen, wann du gern spielst, Rundenlänge und wie ehrgeizig du spielst. Geburtsjahr und Geschlecht sind freiwillig.',
-        'Was du in der App tust: Runden, die du einstellst oder denen du beitrittst, Beitrittsanfragen, Scorekarten und Ergebnisse, Freunde und Freundschaftsanfragen sowie die Mitteilungen, die wir dir schicken.',
+        'Was du in der App tust: Runden, die du einstellst oder denen du beitrittst, Beitrittsanfragen, Nachrichten, die du im Chat einer Runde schreibst, Scorekarten und Ergebnisse, Freunde und Freundschaftsanfragen, die Mitteilungen, die wir dir schicken, und welche Arten von Mitteilungen du ausgeschaltet hast.',
         'Gäste: Wenn du jemanden ohne PARtners-Konto auf eine Scorekarte setzt, speichern wir den eingegebenen Namen und die Ergebnisse. Füge nur Leute hinzu, die damit einverstanden sind.',
         'Sicherheit: Spieler, die du blockierst, und Meldungen, die du sendest. Wenn dich jemand meldet, speichern wir die Meldung und den angegebenen Grund. Wir nutzen Meldungen nur, um PARtners sicher zu halten; die gemeldete Person erfährt nie, wer sie gemeldet hat.',
         'Push-Mitteilungen: Wenn du sie erlaubst, ein Token, das dein Handy beim Benachrichtigungsdienst kennzeichnet, und deine App-Sprache.'
@@ -58,7 +59,8 @@ export const PRIVACY_DE: LegalDoc = {
         'Firebase Cloud Messaging (Google) stellt Push-Mitteilungen auf Android-Handys zu. Dabei erhält der Dienst das Token deines Handys und den Text jeder Mitteilung (zum Beispiel „Lena ist deiner Runde beigetreten“). Du kannst Mitteilungen jederzeit in den Einstellungen deines Handys ausschalten.',
         'Firebase Crashlytics (Google) erhält die oben beschriebenen Absturzberichte. Google kann sie außerhalb der EU verarbeiten; das ist durch das EU-US Data Privacy Framework und die EU-Standardvertragsklauseln abgesichert.',
         'Namen und Lage der Golfplätze stammen von OpenStreetMap. An OpenStreetMap werden keine personenbezogenen Daten übermittelt.',
-        'Wir verkaufen deine Daten nicht und geben sie an niemanden sonst weiter, außer wenn das Gesetz es verlangt.'
+        'Wir verkaufen deine Daten nicht und geben sie an niemanden sonst weiter, außer wenn das Gesetz es verlangt.',
+        'Wenn du im Vereinigten Königreich oder in Australien lebst, werden deine Daten in die EU übermittelt und dort gespeichert (Frankfurt am Main), und einige der oben genannten Dienste können sie in den USA verarbeiten. Das Vereinigte Königreich erkennt das Datenschutzniveau der EU als angemessen an; für Übermittlungen in die USA gilt, was oben steht. Wir schützen deine Daten gleich, egal wo du wohnst.'
       ]
     },
     {
@@ -66,13 +68,14 @@ export const PRIVACY_DE: LegalDoc = {
       body: [
         'Wir nutzen deine Daten, um dir die App bereitzustellen, für die du dich angemeldet hast (Art. 6 Abs. 1 lit. b DSGVO).',
         'Freiwillige Angaben wie Geburtsjahr, Geschlecht und Standort nutzen wir, weil du sie uns gegeben hast (Art. 6 Abs. 1 lit. a DSGVO). Wenn du „Frau“ angegeben hast, nutzen wir das auch, damit du Runden nur für Frauen sehen, einstellen und ihnen beitreten kannst. Dein Geschlecht selbst wird nicht angezeigt, aber die Spielerinnen einer Runde nur für Frauen können erkennen, dass alle darin Frauen sind. Du kannst diese Einwilligung jederzeit widerrufen, indem du sie unter „Profil bearbeiten“ entfernst oder den Standortzugriff ausschaltest. Was wir vorher damit getan haben, bleibt davon unberührt.',
-        'Technische Daten nutzen wir, weil wir ein berechtigtes Interesse daran haben, die App sicher und funktionsfähig zu halten (Art. 6 Abs. 1 lit. f DSGVO).'
+        'Technische Daten nutzen wir, weil wir ein berechtigtes Interesse daran haben, die App sicher und funktionsfähig zu halten (Art. 6 Abs. 1 lit. f DSGVO).',
+        'Für Spieler im Vereinigten Königreich gelten dieselben Rechtsgrundlagen nach der UK GDPR.'
       ]
     },
     {
       heading: 'Wie lange wir Daten speichern',
       body: [
-        'So lange du ein Konto hast. Wenn du dein Konto in den Einstellungen löschst, werden Profil, Foto, eigene Scorekarten, Freundschaften und Mitteilungen sofort entfernt. Anstehende Runden, die du organisierst, gehen an einen anderen Spieler, und deine Ergebnisse bleiben auf den Karten anderer Spieler als „Gelöschter Spieler“ stehen, damit deren Karten stimmen.',
+        'So lange du ein Konto hast. Wenn du dein Konto in den Einstellungen löschst, werden Profil, Foto, eigene Scorekarten, Freundschaften und Mitteilungen sofort entfernt. Anstehende Runden, die du organisierst, gehen an einen anderen Spieler, und deine Ergebnisse bleiben auf den Karten anderer Spieler als „Gelöschter Spieler“ stehen, damit deren Karten stimmen. Deine Chat-Nachrichten bleiben ohne deinen Namen im Chat der Runde, damit das Gespräch verständlich bleibt, und werden mit der Runde gelöscht.',
         'Kopien in unseren Sicherungen werden innerhalb von 7 Tagen überschrieben.'
       ]
     },
@@ -84,12 +87,13 @@ export const PRIVACY_DE: LegalDoc = {
       heading: 'Deine Rechte',
       body: [
         `Du kannst Auskunft über deine Daten verlangen, sie berichtigen oder löschen lassen, ihre Verarbeitung einschränken, ihr widersprechen oder sie mitnehmen. Schreib an ${CONTACT}; wir antworten innerhalb eines Monats.`,
-        'Du kannst dich außerdem bei einer Datenschutzaufsichtsbehörde beschweren, zum Beispiel beim Landesbeauftragten für den Datenschutz und die Informationsfreiheit Baden-Württemberg.'
+        'Du kannst dich außerdem bei einer Datenschutzaufsichtsbehörde beschweren, zum Beispiel beim Landesbeauftragten für den Datenschutz und die Informationsfreiheit Baden-Württemberg.',
+        'Im Vereinigten Königreich kannst du dich beim Information Commissioner’s Office beschweren (ico.org.uk). In Australien wende dich bitte zuerst an uns; wenn du mit unserer Antwort nicht zufrieden bist, kannst du dich beim Office of the Australian Information Commissioner beschweren (oaic.gov.au).'
       ]
     },
     {
       heading: 'Alter',
-      body: ['PARtners ist für Menschen ab 16 Jahren.']
+      body: ['PARtners ist für Menschen ab 18 Jahren.']
     },
     {
       heading: 'Änderungen',
@@ -100,7 +104,7 @@ export const PRIVACY_DE: LegalDoc = {
 
 export const TERMS_DE: LegalDoc = {
   title: 'Nutzungsbedingungen',
-  updated: '9. November 2026',
+  updated: '15. November 2026',
   intro: 'Diese Bedingungen gelten, wenn du PARtners nutzt. Mit dem Erstellen eines Kontos stimmst du ihnen zu.',
   sections: [
     {
@@ -109,7 +113,7 @@ export const TERMS_DE: LegalDoc = {
     },
     {
       heading: 'Dein Konto',
-      body: ['Du musst mindestens 16 Jahre alt sein. Nutze deinen echten Namen, gib deine Anmeldedaten nicht weiter und sag uns Bescheid, wenn du glaubst, dass jemand anderes dein Konto nutzt.']
+      body: ['Du musst mindestens 18 Jahre alt sein. Nutze deinen echten Namen, gib deine Anmeldedaten nicht weiter und sag uns Bescheid, wenn du glaubst, dass jemand anderes dein Konto nutzt.']
     },
     {
       heading: 'Spielen mit Leuten, die du hier triffst',
@@ -128,11 +132,11 @@ export const TERMS_DE: LegalDoc = {
     },
     {
       heading: 'Verfügbarkeit',
-      body: ['Wir geben uns Mühe, dass PARtners läuft und deine Daten sicher sind, können aber nicht garantieren, dass die App immer verfügbar und fehlerfrei ist. Ergebnisse und Handicaps in der App sind für deinen eigenen Gebrauch und nicht offiziell.']
+      body: ['Wir geben uns Mühe, dass PARtners läuft und deine Daten sicher sind, können aber nicht garantieren, dass die App immer verfügbar und fehlerfrei ist. Ergebnisse und Handicaps in der App sind für deinen eigenen Gebrauch und nicht offiziell. Gesetzliche Rechte, die nicht ausgeschlossen werden können, bleiben davon unberührt.']
     },
     {
       heading: 'Haftung',
-      body: ['Wir haften unbeschränkt bei Vorsatz und grober Fahrlässigkeit sowie bei Verletzung von Leben, Körper oder Gesundheit. Bei leichter Fahrlässigkeit haften wir nur für die Verletzung wesentlicher Pflichten, begrenzt auf den typischerweise vorhersehbaren Schaden. Im Übrigen ist die Haftung ausgeschlossen.']
+      body: ['Wir haften unbeschränkt bei Vorsatz und grober Fahrlässigkeit sowie bei Verletzung von Leben, Körper oder Gesundheit. Bei leichter Fahrlässigkeit haften wir nur für die Verletzung wesentlicher Pflichten, begrenzt auf den typischerweise vorhersehbaren Schaden. Im Übrigen ist die Haftung ausgeschlossen, soweit das Gesetz es zulässt. Nichts in diesen Bedingungen schränkt Rechte ein, die du als Verbraucher hast und die nicht ausgeschlossen werden können, etwa nach dem australischen Verbraucherrecht (Australian Consumer Law) oder dem Verbraucherrecht des Vereinigten Königreichs.']
     },
     {
       heading: 'Beenden',
@@ -141,7 +145,7 @@ export const TERMS_DE: LegalDoc = {
     {
       heading: 'Änderungen und anwendbares Recht',
       body: [
-        'Wenn sich diese Bedingungen wesentlich ändern, sagen wir dir in der App Bescheid, bevor sie gelten. Es gilt deutsches Recht.',
+        'Wenn sich diese Bedingungen wesentlich ändern, sagen wir dir in der App Bescheid, bevor sie gelten. Es gilt deutsches Recht. Wenn du PARtners als Verbraucher nutzt und in einem anderen Land lebst, behältst du den Schutz der zwingenden Verbraucherschutzvorschriften dieses Landes.',
         `Fragen: ${CONTACT}`
       ]
     }
