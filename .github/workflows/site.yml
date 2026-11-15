@@ -1,10 +1,11 @@
-# Publishes site/ to GitHub Pages at https://parpartners.app whenever it changes on main.
+# Publishes the website (website/, a Next.js static export) to GitHub Pages at https://parpartners.app
+# whenever it changes on main. The legal pages read the app's legal texts, so changes there publish too.
 name: Website
 
 on:
   push:
     branches: [main]
-    paths: ['site/**', '.github/workflows/site.yml']
+    paths: ['website/**', 'src/app/pages/legal/**', 'src/app/i18n/**', '.github/workflows/site.yml']
   workflow_dispatch:
 
 permissions:
@@ -24,10 +25,18 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - name: Build the website
+        working-directory: website
+        run: npm ci && npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: website/out
           include-hidden-files: true
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -13,7 +13,7 @@ export function inviteUrl(code: string) {
 
 /**
  * Android App Links: tapping https://parpartners.app/join/<code> opens the app (see the intent filter in
- * AndroidManifest.xml and site/.well-known/assetlinks.json) and lands on the join screen, whether the
+ * AndroidManifest.xml and website/public/.well-known/assetlinks.json) and lands on the join screen, whether the
  * app was already running or is being started by the link.
  */
 @Injectable({ providedIn: 'root' })
