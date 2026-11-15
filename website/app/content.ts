@@ -1,131 +1,138 @@
 // Every word on the home page, in English and German.
-// The examples (names, clubs, scores) are made up, but each one shows something the app really does.
+// The screens in public/screens/{en,de} are the real app with made-up demo data (seeded demo players, no real people).
 
 export type Lang = 'en' | 'de';
+export type Shot = 'home' | 'find' | 'round' | 'chat' | 'scorecard' | 'notifications';
+export type Icon = 'find' | 'chat' | 'card' | 'friends' | 'bell' | 'free';
 
-export type Round = { day: string; date: string; line: string; detail: string; km: string };
-export type Note = { when: string; text: string };
+const COURSES = { en: '5,294', de: '5.294' };
 
 export const CONTENT = {
   en: {
     title: 'PARtners: find people to play golf with',
-    description: 'PARtners helps golfers find people to play with: post a round, join one nearby, keep score together.',
+    description: 'PARtners helps golfers find people to play with: see open rounds near you, ask to join, chat and keep score together.',
     other: 'Deutsch',
+    nav: { how: 'How it works', features: 'Features', questions: 'Questions', get: 'Get the app' },
     h1: 'Find people to play golf with.',
-    lead: 'PARtners shows you rounds with open spots at courses near you. Ask to join one, or post your own tee time and let other golfers find you.',
-    soon: 'Coming soon to Google Play.',
-    how: 'See how it works',
-    photoAlt: 'A fairway in morning light',
+    lead: 'See open tee times at courses near you, ask to join, and keep score together on one card.',
+    soon: 'Coming soon to',
+    meta: `Free · ${COURSES.en} courses in Germany, France, England and Australia`,
+    heroAlt: ['Find: open rounds near you', 'Home: your next round and what your friends are playing'],
 
-    s1: {
-      h: 'See who’s playing near you',
-      p: 'Open the app and you see the rounds coming up around you: the course, the tee time, who’s hosting and how many spots are left. Narrow it down by distance, day and handicap.',
-      list: 'Rounds near you this weekend',
-      rounds: [
-        { day: 'Sat', date: '22', line: 'Lena is playing Lindenhof at 09:10', detail: '2 spots open · handicap 10–25', km: '8 km' },
-        { day: 'Sat', date: '22', line: 'Tom is playing Riverside at 13:40', detail: '1 spot open · any handicap', km: '14 km' },
-        { day: 'Sun', date: '23', line: 'Priya is playing Hollow Oak at 08:30', detail: '3 spots open · handicap up to 36', km: '21 km' }
-      ] as Round[]
+    how: {
+      h: 'How a round comes together',
+      p: 'From an open spot to a finished card, everything happens in one place.',
+      step: 'Step',
+      steps: [
+        { shot: 'find', t: 'Find an open spot', p: 'Rounds within your distance, with the tee time, the host and their handicap.' },
+        { shot: 'notifications', t: 'Ask to join', p: 'The host accepts your request and you get a notification: you’re in.' },
+        { shot: 'chat', t: 'Sort out the details', p: 'Every round has its own chat for lifts, meeting points and tees.' },
+        { shot: 'scorecard', t: 'Keep score together', p: 'One card for the group, hole by hole, with totals as you go.' }
+      ] as { shot: Shot; t: string; p: string }[]
     },
 
-    s2: {
-      h: 'Join with one tap',
-      p: 'Tap a round to ask the host if you can join. They see your name and handicap, and say yes or no. Once you’re in, the round has its own chat.',
-      list: 'Your notifications',
-      notes: [
-        { when: 'Tue', text: 'You asked to join Lena’s round on Sat 22 Nov at 09:10' },
-        { when: 'Tue', text: 'You’re in. Lena accepted your request' },
-        { when: 'Wed', text: 'Lena: Shall we meet at the pro shop at 08:45?' },
-        { when: 'Fri', text: 'Reminder: you tee off tomorrow at 09:10' }
-      ] as Note[]
-    },
-
-    s3: {
-      h: 'Keep score on one card',
-      p: 'On the day, the whole group shares one scorecard. Enter strokes hole by hole and the totals add up as you go. Afterwards the card stays with the round.',
-      list: 'Lindenhof · front nine',
-      hole: 'Hole', par: 'Par', out: 'Out',
-      players: [
-        { name: 'You', scores: [5, 4, 3, 6, 4, 5, 3, 5, 4] },
-        { name: 'Lena', scores: [4, 4, 4, 5, 5, 4, 3, 4, 5] },
-        { name: 'Tom', scores: [5, 5, 3, 5, 4, 6, 4, 5, 4] }
-      ]
-    },
-
-    more: {
-      h: 'Also in the app',
-      items: [
-        ['Friends', 'Add the people you play with and invite them straight to your next round.'],
-        ['Saved searches', 'Tell PARtners what you’re looking for and get a notification when a round like that is posted.'],
-        ['Free to play', 'Say which days you’re free, and hosts nearby with room in their round can invite you.'],
-        ['Courses in four countries', 'Germany, France, England and Australia, with tee times shown on the course’s own clock.']
+    round: {
+      h: 'Everything about the round on one page',
+      p: 'Open a round and you see what you need to decide.',
+      alt: 'A round: tee time, course, host, format and the weather at tee time',
+      left: [
+        ['Tee time on the course’s clock', 'Playing abroad? Times show as the course sees them.'],
+        ['Weather at tee time', 'Chance of rain and wind for the hour you tee off.']
+      ] as [string, string][],
+      right: [
+        ['Hosts decide who joins', 'Requests come in with the player’s name and handicap.'],
+        ['Add to calendar', 'One tap puts the tee time in your calendar.']
       ] as [string, string][]
     },
 
-    end: 'Your next four‑ball is in the app.',
-    endP: 'PARtners is free. It’s coming to Google Play soon.',
+    features: {
+      h: 'Everything in the app',
+      items: [
+        ['find', 'Find', 'Rounds by distance, day and handicap'],
+        ['chat', 'Round chat', 'One thread for everyone in the round'],
+        ['card', 'Scorecards', 'A shared card, and your stats over time'],
+        ['friends', 'Friends', 'Invite them straight to your next round'],
+        ['bell', 'Saved searches', 'A notification when a matching round is posted'],
+        ['free', 'I’m free to play', 'Say when you’re free and hosts nearby can invite you']
+      ] as [Icon, string, string][]
+    },
+
+    faq: {
+      h: 'Questions',
+      items: [
+        ['Does it cost anything?', 'No. PARtners is free, with no ads and no trackers.'],
+        ['Which courses are in the app?', `${COURSES.en} courses in Germany, France, England and Australia.`],
+        ['Who can see my profile?', 'Other players see your name, handicap, home course and the details you add, like your languages. Your age and gender stay hidden.'],
+        ['Do I need a handicap?', 'No. You can play without one. Rounds show each player’s handicap, so you can pick one that suits you.'],
+        ['When can I download it?', 'PARtners is coming to Google Play soon.']
+      ] as [string, string][]
+    },
+
+    end: { h: 'Your next four‑ball is in the app.', p: 'Free to use. No ads, no trackers.' },
     links: [['/privacy/', 'Privacy'], ['/terms/', 'Terms'], ['/delete-account/', 'Delete account'], ['/imprint/', 'Imprint']] as [string, string][]
   },
 
   de: {
     title: 'PARtners: Finde Leute zum Golfspielen',
-    description: 'Mit PARtners findest du Leute zum Golfspielen: Runde einstellen, einer in der Nähe beitreten, gemeinsam Schläge zählen.',
+    description: 'Mit PARtners findest du Leute zum Golfspielen: offene Runden in deiner Nähe sehen, mitspielen, chatten und gemeinsam Schläge zählen.',
     other: 'English',
+    nav: { how: 'So geht’s', features: 'Funktionen', questions: 'Fragen', get: 'App holen' },
     h1: 'Finde Leute zum Golfspielen.',
-    lead: 'PARtners zeigt dir Runden mit freien Plätzen auf Plätzen in deiner Nähe. Frag, ob du mitspielen kannst, oder stell deine eigene Startzeit ein und lass dich finden.',
-    soon: 'Bald bei Google Play.',
-    how: 'So funktioniert’s',
-    photoAlt: 'Ein Fairway im Morgenlicht',
+    lead: 'Sieh freie Startzeiten auf Plätzen in deiner Nähe, frag, ob du mitspielen kannst, und zählt gemeinsam auf einer Karte.',
+    soon: 'Bald bei',
+    meta: `Kostenlos · ${COURSES.de} Plätze in Deutschland, Frankreich, England und Australien`,
+    heroAlt: ['Finden: offene Runden in deiner Nähe', 'Start: deine nächste Runde und was deine Freunde spielen'],
 
-    s1: {
-      h: 'Sieh, wer in deiner Nähe spielt',
-      p: 'Öffne die App und du siehst die nächsten Runden um dich herum: den Platz, die Startzeit, wer einlädt und wie viele Plätze noch frei sind. Filtere nach Entfernung, Tag und Handicap.',
-      list: 'Runden in deiner Nähe am Wochenende',
-      rounds: [
-        { day: 'Sa', date: '22', line: 'Lena spielt um 09:10 in Lindenhof', detail: '2 Plätze frei · Handicap 10–25', km: '8 km' },
-        { day: 'Sa', date: '22', line: 'Tom spielt um 13:40 in Riverside', detail: '1 Platz frei · jedes Handicap', km: '14 km' },
-        { day: 'So', date: '23', line: 'Priya spielt um 08:30 in Hollow Oak', detail: '3 Plätze frei · Handicap bis 36', km: '21 km' }
-      ] as Round[]
+    how: {
+      h: 'So kommt eine Runde zustande',
+      p: 'Vom freien Platz bis zur fertigen Scorekarte passiert alles an einem Ort.',
+      step: 'Schritt',
+      steps: [
+        { shot: 'find', t: 'Freien Platz finden', p: 'Runden in deinem Umkreis, mit Startzeit, Gastgeber und dessen Handicap.' },
+        { shot: 'notifications', t: 'Mitspielen anfragen', p: 'Der Gastgeber nimmt deine Anfrage an und du bekommst eine Mitteilung: Du bist dabei.' },
+        { shot: 'chat', t: 'Details klären', p: 'Jede Runde hat ihren eigenen Chat für Mitfahrten, Treffpunkt und Abschläge.' },
+        { shot: 'scorecard', t: 'Gemeinsam zählen', p: 'Eine Karte für die Gruppe, Loch für Loch, die Summen rechnen sich mit.' }
+      ] as { shot: Shot; t: string; p: string }[]
     },
 
-    s2: {
-      h: 'Mit einem Tippen dabei',
-      p: 'Tippe auf eine Runde und frag den Gastgeber, ob du mitspielen kannst. Der Gastgeber sieht deinen Namen und dein Handicap und sagt zu oder ab. Sobald du dabei bist, hat die Runde ihren eigenen Chat.',
-      list: 'Deine Mitteilungen',
-      notes: [
-        { when: 'Di', text: 'Du hast gefragt, ob du bei Lenas Runde am Sa., 22. Nov. um 09:10 Uhr mitspielen kannst' },
-        { when: 'Di', text: 'Du bist dabei. Lena hat deine Anfrage angenommen' },
-        { when: 'Mi', text: 'Lena: Treffen wir uns um 08:45 am Pro-Shop?' },
-        { when: 'Fr', text: 'Erinnerung: Abschlag morgen um 09:10 Uhr' }
-      ] as Note[]
-    },
-
-    s3: {
-      h: 'Alle auf einer Scorekarte',
-      p: 'Auf der Runde teilt sich die ganze Gruppe eine Scorekarte. Trag die Schläge Loch für Loch ein, die Summen rechnen sich mit. Danach bleibt die Karte bei der Runde.',
-      list: 'Lindenhof · Loch 1–9',
-      hole: 'Loch', par: 'Par', out: 'Out',
-      players: [
-        { name: 'Du', scores: [5, 4, 3, 6, 4, 5, 3, 5, 4] },
-        { name: 'Lena', scores: [4, 4, 4, 5, 5, 4, 3, 4, 5] },
-        { name: 'Tom', scores: [5, 5, 3, 5, 4, 6, 4, 5, 4] }
-      ]
-    },
-
-    more: {
-      h: 'Außerdem in der App',
-      items: [
-        ['Freunde', 'Füg die Leute hinzu, mit denen du spielst, und lade sie direkt zu deiner nächsten Runde ein.'],
-        ['Gespeicherte Suchen', 'Sag PARtners, was du suchst, und bekomm eine Mitteilung, sobald so eine Runde eingestellt wird.'],
-        ['Zeit zum Spielen', 'Sag, an welchen Tagen du Zeit hast, und Gastgeber in der Nähe mit freien Plätzen können dich einladen.'],
-        ['Plätze in vier Ländern', 'Deutschland, Frankreich, England und Australien, mit Startzeiten in der Uhrzeit des Platzes.']
+    round: {
+      h: 'Alles zur Runde auf einer Seite',
+      p: 'Öffne eine Runde und du siehst, was du zum Entscheiden brauchst.',
+      alt: 'Eine Runde: Abschlag, Platz, Gastgeber, Spielform und das Wetter zur Abschlagszeit',
+      left: [
+        ['Abschlag in der Uhrzeit des Platzes', 'Im Ausland? Zeiten stehen so da, wie der Platz sie sieht.'],
+        ['Wetter zur Abschlagszeit', 'Regenrisiko und Wind für die Stunde, in der du abschlägst.']
+      ] as [string, string][],
+      right: [
+        ['Gastgeber entscheiden, wer mitspielt', 'Anfragen kommen mit Name und Handicap.'],
+        ['In den Kalender', 'Ein Tippen trägt die Startzeit in deinen Kalender ein.']
       ] as [string, string][]
     },
 
-    end: 'Dein nächster Vierer wartet in der App.',
-    endP: 'PARtners ist kostenlos. Bald bei Google Play.',
+    features: {
+      h: 'Alles in der App',
+      items: [
+        ['find', 'Finden', 'Runden nach Entfernung, Tag und Handicap'],
+        ['chat', 'Runden-Chat', 'Ein Chat für alle in der Runde'],
+        ['card', 'Scorekarten', 'Eine gemeinsame Karte und deine Statistik'],
+        ['friends', 'Freunde', 'Lade sie direkt zu deiner nächsten Runde ein'],
+        ['bell', 'Gespeicherte Suchen', 'Eine Mitteilung, sobald eine passende Runde eingestellt wird'],
+        ['free', 'Ich hätte Zeit', 'Sag, wann du Zeit hast, und Gastgeber in der Nähe können dich einladen']
+      ] as [Icon, string, string][]
+    },
+
+    faq: {
+      h: 'Fragen',
+      items: [
+        ['Kostet das etwas?', 'Nein. PARtners ist kostenlos, ohne Werbung und ohne Tracker.'],
+        ['Welche Plätze gibt es in der App?', `${COURSES.de} Plätze in Deutschland, Frankreich, England und Australien.`],
+        ['Wer sieht mein Profil?', 'Andere sehen deinen Namen, dein Handicap, deinen Heimatplatz und die Angaben, die du ergänzt, etwa deine Sprachen. Alter und Geschlecht bleiben verborgen.'],
+        ['Brauche ich ein Handicap?', 'Nein, du kannst auch ohne spielen. Bei jeder Runde steht das Handicap der Mitspieler, so findest du eine, die passt.'],
+        ['Wann kann ich die App laden?', 'PARtners kommt bald zu Google Play.']
+      ] as [string, string][]
+    },
+
+    end: { h: 'Dein nächster Vierer wartet in der App.', p: 'Kostenlos. Ohne Werbung, ohne Tracker.' },
     links: [['/privacy/', 'Datenschutz'], ['/terms/', 'Nutzungsbedingungen'], ['/delete-account/', 'Konto löschen'], ['/imprint/', 'Impressum']] as [string, string][]
   }
 };
-
-export const PARS = [4, 4, 3, 5, 4, 4, 3, 5, 4];

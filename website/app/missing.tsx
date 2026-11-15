@@ -48,7 +48,7 @@ export default function Missing() {
           <>
             <h1>{t.invited}</h1>
             <p className="lead">{t.invitedP}</p>
-            <p><a className="button" href={PLAY}>{t.get}</a></p>
+            <p><a className="btn" href={PLAY}>{t.get}</a></p>
             <p className="code">{t.code}: <code>{code}</code></p>
           </>
         )}

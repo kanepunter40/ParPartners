@@ -33,11 +33,18 @@ export const withLang = (href: string, lang: Lang) => (lang === 'de' ? `${href}?
 
 export function Header({ lang, choose }: { lang: Lang; choose: (l: Lang) => void }) {
   const other: Lang = lang === 'de' ? 'en' : 'de';
+  const t = CONTENT[lang].nav;
+  const home = (hash: string) => withLang('/', lang) + hash;
   return (
     <header className="top wrap">
       <a className="brand" href={withLang('/', lang)}>
         <img src="/favicon.svg" alt="" width={28} height={28} /> PARtners
       </a>
+      <nav className="top-links" aria-label="PARtners">
+        <a href={home('#how')}>{t.how}</a>
+        <a href={home('#features')}>{t.features}</a>
+        <a href={home('#questions')}>{t.questions}</a>
+      </nav>
       <a
         className="lang"
         href={`?lang=${other}`}
@@ -49,7 +56,20 @@ export function Header({ lang, choose }: { lang: Lang; choose: (l: Lang) => void
       >
         {CONTENT[lang].other}
       </a>
+      <a className="btn small" href={home('#get')}>{t.get}</a>
     </header>
+  );
+}
+
+/** "Coming soon to Google Play". Not a link yet: the app isn't on Google Play. */
+export function PlayBadge({ lang }: { lang: Lang }) {
+  return (
+    <span className="btn play">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M4 3.5v17l9-8.5-9-8.5zm10.4 9.9 2.6 2.4-11 6.3 8.4-8.7zm0-2.8L6 1.9l11 6.3-2.6 2.4zm3.6 3.6-2.9-2.7 2.9-2.7 3.4 1.9c1 .6 1 1.4 0 2l-3.4 1.5z" />
+      </svg>
+      <span><small>{CONTENT[lang].soon}</small>Google Play</span>
+    </span>
   );
 }
 
