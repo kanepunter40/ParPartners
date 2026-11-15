@@ -53,7 +53,7 @@ const PAGE = 30;
         <h1 class="sr-only">{{ t('tabs.home') }}</h1>
         @if (next(); as r) {
           <section [attr.aria-label]="t('home.upNext')">
-            <p class="when">{{ i18n.date(r.tee_time) }}</p>
+            <p class="when">{{ i18n.date(r.tee_time, 'dayTime', r.time_zone) }}</p>
             <a class="pp-group next" [routerLink]="['/round', r.round_id]">
               <img src="course-placeholder.jpg" alt="" loading="lazy">
               <span class="group-row">
@@ -82,7 +82,7 @@ const PAGE = 30;
                       <small>{{ f.course_name }} · {{ holesLabel(f) }} · {{ i18n.ago(f.at) }}</small>
                       @if (f.personal_best) { <span class="pill" style="margin-top: 2px">{{ t('home.personalBest') }}</span> }
                     } @else if (f.kind !== 'new_friend') {
-                      <small>{{ f.course_name }} · {{ i18n.date(f.tee_time) }}</small>
+                      <small>{{ f.course_name }} · {{ i18n.date(f.tee_time, 'dayTime', f.time_zone) }}</small>
                       <span [class]="f.spots_left ? 'pill ok' : 'pill full'" style="margin-top: 2px">{{ f.spots_left ? t('home.spotsLeft', { count: f.spots_left }) : t('home.full') }}</span>
                     } @else {
                       <small>{{ i18n.ago(f.at) }}</small>

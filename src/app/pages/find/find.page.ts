@@ -168,7 +168,7 @@ const MY_LOCATION = '@me';
                 <a class="group-row" [routerLink]="['/round', r.round_id]">
                   <span class="txt">
                     <span>{{ r.course_name }}</span>
-                    <small>{{ i18n.date(r.tee_time) }}{{ r.distance_km !== null ? ' · ' + t('find.kmAway', { km: r.distance_km }) : '' }}</small>
+                    <small>{{ i18n.date(r.tee_time, 'dayTime', r.time_zone) }}{{ r.distance_km !== null ? ' · ' + t('find.kmAway', { km: r.distance_km }) : '' }}</small>
                     <small>{{ r.host_name }}{{ r.host_handicap !== null ? ' · ' + t('common.hcp', { hcp: r.host_handicap }) : '' }}</small>
                     <span class="meta">
                       @if (r.spots_left > 0) {
@@ -420,13 +420,13 @@ export class FindPage {
 
   /** Pick one of my rounds with room to invite them to, or post a new one. */
   async invite(f: FreePlayer) {
-    let mine: { id: string; tee_time: string; course_name: string }[] = [];
+    let mine: { id: string; tee_time: string; course_name: string; time_zone: string }[] = [];
     try { mine = await this.rounds.myOpenHostedRounds(); } catch { /* offer to post a round instead */ }
     const sheet = await this.actionSheets.create({
       header: this.t('free.inviteTo', { name: f.display_name }),
       buttons: [
         ...mine.map((r) => ({
-          text: r.course_name + ' · ' + this.i18n.date(r.tee_time),
+          text: r.course_name + ' · ' + this.i18n.date(r.tee_time, 'dayTime', r.time_zone),
           handler: () => { this.sendInvite(r.id, f); }
         })),
         { text: this.t('free.postForThem'), handler: () => { this.router.navigateByUrl('/create'); } },

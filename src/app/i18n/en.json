@@ -388,7 +388,8 @@
     "declineFrom": "Decline {name}",
     "requestsFull": "The round is full. Free a spot to accept someone.",
     "requestedNotice": "You asked {name} if you can join. You’ll be told when they answer.",
-    "withdrawRequest": "Withdraw request"
+    "withdrawRequest": "Withdraw request",
+    "courseTime": "Local time at the course"
   },
   "create": {
     "dateTime": "Date and tee time",
@@ -404,7 +405,8 @@
     "notesPlaceholder": "Meeting point, trolley, anything to flag",
     "submit": "Post round",
     "error": "Could not post the round.",
-    "time": "Time"
+    "time": "Time",
+    "courseTime": "Enter the tee time as local time at the course."
   },
   "cardNew": {
     "title": "New scorecard",

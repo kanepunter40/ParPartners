@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle } from '@ionic/angular/standalone';
 import { RoundsService } from '../../core/rounds.service';
+import { deviceTimeZone, differsFromDevice, wallTimeToIso } from '../../core/time-zone';
 import { ProfileService } from '../../core/profile.service';
 import { CartPref, Course } from '../../core/models';
 import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
@@ -47,6 +48,7 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
         <div>
           <strong>{{ t('create.dateTime') }}</strong>
           <ion-datetime presentation="date-time" [locale]="i18n.locale()" [firstDayOfWeek]="1" [min]="minDate" [(ngModel)]="teeTime" [minuteValues]="'0,10,20,30,40,50'" style="margin-top: 6px; border-radius: var(--pp-radius-control)"><span slot="time-label">{{ t('create.time') }}</span></ion-datetime>
+          @if (otherZone()) { <p class="muted" style="margin: 6px 2px 0; font-size: 13px">{{ t('create.courseTime') }}</p> }
         </div>
 
         <div>
@@ -131,18 +133,22 @@ export class CreateRoundPage {
   busy = signal(false);
   error = signal('');
   minDate = new Date().toISOString();
+  /** A clock time at the course, "YYYY-MM-DDTHH:mm" (no offset). Turned into a moment with the course's time zone on posting. */
   teeTime = this.defaultTeeTime();
+  /** The chosen course's time zone; the phone's until a course is picked. */
+  zone = signal(deviceTimeZone());
+  otherZone = signal(false);
 
   constructor() {
     this.profiles.isWoman().then((w) => this.isWoman.set(w), () => {});
   }
 
-  /** Next Saturday at 10:00 local time, as an ISO string for ion-datetime. */
+  /** Next Saturday at 10:00, as a clock time for ion-datetime. */
   private defaultTeeTime(): string {
     const d = new Date();
     d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7));
-    d.setHours(10, 0, 0, 0);
-    return d.toISOString();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T10:00`;
   }
 
   async search(ev: Event) {
@@ -151,9 +157,14 @@ export class CreateRoundPage {
     this.suggestions.set(await this.rounds.searchCourses(q));
   }
 
-  pick(c: Course) {
+  async pick(c: Course) {
     this.course.set(c);
     this.suggestions.set([]);
+    try {
+      const zone = await this.rounds.courseTimeZone(c.id);
+      this.zone.set(zone);
+      this.otherZone.set(differsFromDevice(wallTimeToIso(this.teeTime.slice(0, 16), zone), zone));
+    } catch { /* keep the phone's time zone */ }
   }
 
   async post() {
@@ -163,7 +174,7 @@ export class CreateRoundPage {
     try {
       const id = await this.rounds.createRound({
         course_id: this.course()!.id,
-        tee_time: new Date(this.teeTime).toISOString(),
+        tee_time: wallTimeToIso(this.teeTime.slice(0, 16), this.zone()),
         max_players: this.players(),
         visibility: this.visibility(),
         notes: this.notes.trim() || null,

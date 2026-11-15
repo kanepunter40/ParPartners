@@ -29,7 +29,7 @@ import { MyRound } from '../../core/models';
               <a class="group-row" [routerLink]="['/round', r.round_id]">
                 <span class="txt">
                   <span>{{ r.course_name }}</span>
-                  <small>{{ i18n.date(r.tee_time) }} · {{ r.status === 'host' ? t('rounds.hostedByYou') : t('home.hostedBy', { name: r.host_name }) }}</small>
+                  <small>{{ i18n.date(r.tee_time, 'dayTime', r.time_zone) }} · {{ r.status === 'host' ? t('rounds.hostedByYou') : t('home.hostedBy', { name: r.host_name }) }}</small>
                   @switch (r.status) {
                     @case ('host') { <span class="pill ok" style="margin-top: 2px">{{ t('home.youHost') }}</span> }
                     @case ('waitlisted') { <span class="pill full" style="margin-top: 2px">{{ t('rounds.waitlisted') }}</span> }

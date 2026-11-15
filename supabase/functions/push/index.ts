@@ -74,9 +74,8 @@ const GROUP: Record<string, string> = {
   round_alert: 'searches', free_alert: 'searches'
 };
 
-/** "tomorrow at 09:10" / "today at 15:30", in German time (where the courses are). */
-function when(teeTime: string, locale: Locale): string {
-  const tz = 'Europe/Berlin';
+/** "tomorrow at 09:10" / "today at 15:30", on the course's clock (courses.time_zone). */
+function when(teeTime: string, locale: Locale, tz: string): string {
   const day = (d: Date) => new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(d);
   const tee = new Date(teeTime);
   const time = new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit' }).format(tee);
@@ -85,9 +84,8 @@ function when(teeTime: string, locale: Locale): string {
   return `${today ? 'today' : 'tomorrow'} at ${time}`;
 }
 
-/** "on Sat 15 Nov at 09:10" / "am Sa., 15. Nov. um 09:10 Uhr", in German time. */
-function onDay(teeTime: string, locale: Locale): string {
-  const tz = 'Europe/Berlin';
+/** "on Sat 15 Nov at 09:10" / "am Sa., 15. Nov. um 09:10 Uhr", on the course's clock. */
+function onDay(teeTime: string, locale: Locale, tz: string): string {
   const tee = new Date(teeTime);
   const loc = locale === 'de' ? 'de-DE' : 'en-GB';
   const day = new Intl.DateTimeFormat(loc, { timeZone: tz, weekday: 'short', day: 'numeric', month: 'short' }).format(tee);
@@ -141,7 +139,7 @@ Deno.serve(async (req) => {
   const { id } = await req.json();
   const { data: n, error } = await sb
     .from('notifications')
-    .select('id, user_id, type, round_id, detail, day, actor:profiles!notifications_actor_id_fkey(display_name), rounds(tee_time, courses(name))')
+    .select('id, user_id, type, round_id, detail, day, actor:profiles!notifications_actor_id_fkey(display_name), rounds(tee_time, courses(name, time_zone))')
     .eq('id', id)
     .maybeSingle();
   if (error || !n) return new Response('Notification not found', { status: 404 });
@@ -157,7 +155,8 @@ Deno.serve(async (req) => {
   if (!devices?.length) return new Response('No devices', { status: 200 });
 
   const actor = (n as any).actor?.display_name as string | undefined;
-  const round = (n as any).rounds as { tee_time: string; courses: { name: string } } | null;
+  const round = (n as any).rounds as { tee_time: string; courses: { name: string; time_zone: string | null } } | null;
+  const tz = round?.courses.time_zone || 'Europe/Berlin';
   // player_free: the Invite button is in the notifications list. free_alert: Find lists free players.
   const route = n.type === 'report_received' || n.type === 'player_free' ? '/notifications'
     : n.type === 'free_alert' ? '/tabs/find'
@@ -173,8 +172,8 @@ Deno.serve(async (req) => {
     // Replacer functions, so a "$" in a name or chat message is kept as typed
     const body = (t[n.type] ?? t.other)
       .replace('{who}', () => actor ?? t.aPlayer)
-      .replace('{when}', () => (round ? when(round.tee_time, locale) : ''))
-      .replace('{when2}', () => (round ? onDay(round.tee_time, locale) : ''))
+      .replace('{when}', () => (round ? when(round.tee_time, locale, tz) : ''))
+      .replace('{when2}', () => (round ? onDay(round.tee_time, locale, tz) : ''))
       .replace('{detail}', () => (n as any).detail ?? '')
       .replace('{day}', () => ((n as any).day ? onDate((n as any).day, locale) : ''));
 

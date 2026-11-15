@@ -1,4 +1,5 @@
 import { Component, inject, input, signal, computed } from '@angular/core';
+import { differsFromDevice } from '../../core/time-zone';
 import { I18nService } from '../../core/i18n.service';
 import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonSpinner, IonIcon } from '@ionic/angular/standalone';
@@ -54,10 +55,13 @@ const WEATHER_ICON: Record<TeeWeather['kind'], string> = {
           } @else if (myStatus() === 'waitlisted') {
             <p role="status" class="notice">{{ waitlistPos() ? t('round.waitlistPos', { n: waitlistPos()! }) : t('round.onWaitlist') }}</p>
           }
-          <h1>{{ i18n.date(r.tee_time, 'longDay') }}</h1>
+          <h1>{{ i18n.date(r.tee_time, 'longDay', r.courses.time_zone) }}</h1>
 
           <div class="pp-group">
-            <div class="group-row"><span class="txt">{{ t('round.teeTime') }}</span><span class="val">{{ i18n.date(r.tee_time, 'time') }}</span></div>
+            <div class="group-row">
+              <span class="txt"><span>{{ t('round.teeTime') }}</span>@if (otherZone()) { <small>{{ t('round.courseTime') }}</small> }</span>
+              <span class="val">{{ i18n.date(r.tee_time, 'time', r.courses.time_zone) }}</span>
+            </div>
             <div class="group-row"><span class="txt">{{ t('round.course') }}</span><span class="val" style="flex: 0 1 auto; overflow-wrap: anywhere">{{ r.courses.name }}</span></div>
             <div class="group-row"><span class="txt">{{ t('round.host') }}</span><span class="val">{{ r.host.display_name }}</span></div>
             <div class="group-row"><span class="txt"><span>{{ t('format.label') }}</span><small>{{ t('format.hint.' + (r.format || 'casual')) }}</small></span><span class="val">{{ t('format.' + (r.format || 'casual')) }}</span></div>
@@ -249,6 +253,8 @@ export class RoundDetailPage {
   /** Players who asked to join (e.g. after first saying no to an invite). The host decides. Oldest first. */
   requests = computed(() => (this.round()?.round_players.filter((p) => p.status === 'requested') ?? []).sort((a, b) => a.created_at.localeCompare(b.created_at)));
   /** Past the tee time: no joining or leaving. Checked on load, which is enough for a detail page. */
+  /** The course's clock differs from the phone's, e.g. a German player looking at a round in England. */
+  otherZone = computed(() => !!this.round() && differsFromDevice(this.round()!.tee_time, this.round()!.courses.time_zone));
   started = computed(() => !!this.round() && new Date(this.round()!.tee_time).getTime() <= Date.now());
   spotsLeft = computed(() => (this.round()?.max_players ?? 0) - this.confirmed().length);
   emptySpots = computed(() => Array.from({ length: Math.max(0, this.spotsLeft()) }, (_, i) => i));

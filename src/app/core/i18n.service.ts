@@ -103,17 +103,19 @@ export class I18nService {
   num = (n: number, maxDecimals = 3): string =>
     new Intl.NumberFormat(this.locale(), { maximumFractionDigits: maxDecimals, useGrouping: false }).format(n);
 
-  date = (value: string | Date | null | undefined, style: DateStyle = 'dayTime'): string => {
+  /** A date in the player's language. Pass the course's time zone for tee times, so they show the course's clock. */
+  date = (value: string | Date | null | undefined, style: DateStyle = 'dayTime', timeZone?: string | null): string => {
     if (!value) return '';
     const d = new Date(value);
     const loc = this.locale();
-    const time = new Intl.DateTimeFormat(loc, { hour: '2-digit', minute: '2-digit' }).format(d);
+    const tz = timeZone ? { timeZone } : {};
+    const time = new Intl.DateTimeFormat(loc, { ...tz, hour: '2-digit', minute: '2-digit' }).format(d);
     switch (style) {
       case 'time': return time;
-      case 'dayDateYear': return new Intl.DateTimeFormat(loc, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(d);
-      case 'longDay': return new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long' }).format(d);
-      case 'longDayTime': return `${new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long' }).format(d)} · ${time}`;
-      default: return `${new Intl.DateTimeFormat(loc, { weekday: 'short', day: 'numeric', month: 'short' }).format(d)} · ${time}`;
+      case 'dayDateYear': return new Intl.DateTimeFormat(loc, { ...tz, weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(d);
+      case 'longDay': return new Intl.DateTimeFormat(loc, { ...tz, weekday: 'long', day: 'numeric', month: 'long' }).format(d);
+      case 'longDayTime': return `${new Intl.DateTimeFormat(loc, { ...tz, weekday: 'long', day: 'numeric', month: 'long' }).format(d)} · ${time}`;
+      default: return `${new Intl.DateTimeFormat(loc, { ...tz, weekday: 'short', day: 'numeric', month: 'short' }).format(d)} · ${time}`;
     }
   };
 

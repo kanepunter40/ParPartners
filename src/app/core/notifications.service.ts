@@ -15,7 +15,7 @@ export class NotificationsService {
       .select(
         `id, type, round_id, read_at, created_at, detail, day, actor_id,
          actor:profiles!notifications_actor_id_fkey(display_name),
-         rounds(tee_time, courses(name))`
+         rounds(tee_time, courses(name, time_zone))`
       )
       .eq('user_id', this.sb.userId)
       .order('created_at', { ascending: false })

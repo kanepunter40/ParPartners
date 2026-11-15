@@ -27,6 +27,8 @@ export interface RoundResult {
   cart: CartPref | null;
   /** only women can see and join */
   women_only: boolean;
+  /** The course's IANA time zone; tee times are shown in it */
+  time_zone: string;
 }
 
 /** waitlisted: joined a full round, moved in when a spot opens. invited: a host invited them from Free to play. */
@@ -45,7 +47,7 @@ export interface RoundDetail {
   cart: CartPref | null;
   /** only women can see and join */
   women_only: boolean;
-  courses: { id: string; name: string; city: string | null };
+  courses: { id: string; name: string; city: string | null; time_zone: string };
   host: { display_name: string; avatar_url: string | null; handicap_index: number | null };
   round_players: { player_id: string; status: PlayerStatus; created_at: string; profiles: { display_name: string; avatar_url: string | null; handicap_index: number | null } }[];
 }
@@ -55,6 +57,7 @@ export interface MyRound {
   round_id: string;
   tee_time: string;
   course_name: string;
+  time_zone: string;
   host_name: string;
   confirmed: number;
   max_players: number;
@@ -103,7 +106,7 @@ export interface AppNotification {
   actor_id: string | null;
   actor: { display_name: string } | null;
   /** null when the round was deleted or is no longer visible to this user */
-  rounds: { tee_time: string; courses: { name: string } } | null;
+  rounds: { tee_time: string; courses: { name: string; time_zone: string } } | null;
 }
 
 /** Which holes a scorecard covers. */
@@ -175,6 +178,8 @@ export interface FeedItem {
   strokes: number | null;
   to_par: number | null;
   personal_best: boolean;
+  /** The course's time zone, for round_posted and round_joined */
+  time_zone: string | null;
 }
 
 export interface Position {

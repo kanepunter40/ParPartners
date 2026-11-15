@@ -50,7 +50,7 @@ const POLL_MS = 30_000;
         <ion-buttons slot="start"><ion-back-button [defaultHref]="'/round/' + id()" text=""></ion-back-button></ion-buttons>
         <ion-title>
           {{ t('chat.title') }}
-          @if (round(); as r) { <div class="muted" style="font-size: 12px; font-weight: 400">{{ r.courses.name }} · {{ i18n.date(r.tee_time) }}</div> }
+          @if (round(); as r) { <div class="muted" style="font-size: 12px; font-weight: 400">{{ r.courses.name }} · {{ i18n.date(r.tee_time, 'dayTime', r.courses.time_zone) }}</div> }
         </ion-title>
       </ion-toolbar>
     </ion-header>

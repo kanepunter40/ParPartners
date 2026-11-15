@@ -54,6 +54,13 @@ export class RoundsService {
     return data as Course[];
   }
 
+  /** The course's IANA time zone; tee times are entered and shown in it. */
+  async courseTimeZone(courseId: string): Promise<string> {
+    const { data, error } = await this.sb.client.from('courses').select('time_zone').eq('id', courseId).single();
+    if (error) throw error;
+    return data.time_zone;
+  }
+
   async getCourse(id: string): Promise<Course | null> {
     const { data, error } = await this.sb.client.rpc('get_course', { p_id: id });
     if (error) throw error;
@@ -75,7 +82,7 @@ export class RoundsService {
       .from('rounds')
       .select(
         `id, host_id, tee_time, max_players, visibility, notes, status, format, cart, women_only,
-         courses(id, name, city),
+         courses(id, name, city, time_zone),
          host:profiles!rounds_host_id_fkey(display_name, avatar_url, handicap_index),
          round_players(player_id, status, created_at, profiles(display_name, avatar_url, handicap_index))`
       )
@@ -91,7 +98,7 @@ export class RoundsService {
       .from('round_players')
       .select(
         `status, round_id,
-         rounds(tee_time, max_players, status, courses(name), host:profiles!rounds_host_id_fkey(display_name), round_players(status))`
+         rounds(tee_time, max_players, status, courses(name, time_zone), host:profiles!rounds_host_id_fkey(display_name), round_players(status))`
       )
       .eq('player_id', this.sb.userId)
       .in('status', ['host', 'confirmed', 'waitlisted', 'invited']);
@@ -104,6 +111,7 @@ export class RoundsService {
         round_id: row.round_id,
         tee_time: row.rounds.tee_time,
         course_name: row.rounds.courses.name,
+        time_zone: row.rounds.courses.time_zone,
         host_name: row.rounds.host.display_name,
         max_players: row.rounds.max_players,
         confirmed: row.rounds.round_players.filter((p: any) => p.status === 'host' || p.status === 'confirmed').length
@@ -149,16 +157,16 @@ export class RoundsService {
   }
 
   /** My upcoming rounds that still have room: the ones I can invite someone to. */
-  async myOpenHostedRounds(): Promise<{ id: string; tee_time: string; course_name: string }[]> {
+  async myOpenHostedRounds(): Promise<{ id: string; tee_time: string; course_name: string; time_zone: string }[]> {
     const { data, error } = await this.sb.client
       .from('rounds')
-      .select('id, tee_time, courses(name)')
+      .select('id, tee_time, courses(name, time_zone)')
       .eq('host_id', this.sb.userId)
       .eq('status', 'open')
       .gt('tee_time', new Date().toISOString())
       .order('tee_time');
     if (error) throw error;
-    return (data as any[]).map((r) => ({ id: r.id, tee_time: r.tee_time, course_name: r.courses.name }));
+    return (data as any[]).map((r) => ({ id: r.id, tee_time: r.tee_time, course_name: r.courses.name, time_zone: r.courses.time_zone }));
   }
 
   /** The invite code for the share link; null if I can't share this round. (Not readable from rounds directly.) */

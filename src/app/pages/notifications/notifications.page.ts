@@ -43,7 +43,7 @@ import { AppNotification } from '../../core/models';
                   <span class="text">
                     <span>@if (!n.read_at) { <span class="sr-only">{{ t('notifications.new') }} </span> }{{ message(n) }}</span>
                     @if (n.rounds; as r) {
-                      <a class="muted" style="font-size: 13px" [routerLink]="['/round', n.round_id]">{{ r.courses.name }} · {{ i18n.date(r.tee_time) }}</a>
+                      <a class="muted" style="font-size: 13px" [routerLink]="['/round', n.round_id]">{{ r.courses.name }} · {{ i18n.date(r.tee_time, 'dayTime', r.courses.time_zone) }}</a>
                     }
                     <span class="muted" style="font-size: 12px">{{ i18n.ago(n.created_at) }}</span>
                   </span>
@@ -61,7 +61,7 @@ import { AppNotification } from '../../core/models';
                   <span>@if (!n.read_at) { <span class="sr-only">{{ t('notifications.new') }} </span> }{{ message(n) }}</span>
                   @if (n.detail) { <span style="font-size: 14px; overflow-wrap: anywhere">“{{ n.detail }}”</span> }
                   @if (n.rounds; as r) {
-                    <span class="muted" style="font-size: 13px">{{ r.courses.name }} · {{ i18n.date(r.tee_time) }}</span>
+                    <span class="muted" style="font-size: 13px">{{ r.courses.name }} · {{ i18n.date(r.tee_time, 'dayTime', r.courses.time_zone) }}</span>
                   }
                   <span class="muted" style="font-size: 12px">{{ i18n.ago(n.created_at) }}</span>
                 </span>
