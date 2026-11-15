@@ -4,6 +4,7 @@
 //
 //   node scripts/import-holes.mjs                          # all of Germany, in 1° tiles
 //   node scripts/import-holes.mjs --country FR             # all of mainland France and Corsica
+//   node scripts/import-holes.mjs --country GB-ENG         # England (with the Isles of Scilly)
 //   node scripts/import-holes.mjs --bbox 48.3,8.5,49.2,9.9 # one region (south,west,north,east)
 //   node scripts/import-holes.mjs --from-file supabase/holes_overpass.json   # reuse the saved responses
 //
@@ -20,7 +21,7 @@ const argValue = (flag) => (args.indexOf(flag) >= 0 ? args[args.indexOf(flag) + 
 const fromFile = argValue('--from-file');
 /** Bounding boxes (south,west,north,east) per country. Tiles also catch neighbours' courses; the SQL only keeps imported ones. */
 // Several boxes are separated by ';' (France: mainland, then Corsica).
-const COUNTRY_BBOX = { DE: '47.2,5.8,55.1,15.1', FR: '42.3,-4.9,51.1,8.3;41.3,8.5,43.1,9.6' };
+const COUNTRY_BBOX = { DE: '47.2,5.8,55.1,15.1', FR: '42.3,-4.9,51.1,8.3;41.3,8.5,43.1,9.6', 'GB-ENG': '49.8,-6.5,55.9,1.8' };
 const country = (argValue('--country') ?? 'DE').toUpperCase();
 if (!COUNTRY_BBOX[country]) throw new Error(`No bounding box for ${country}. Add it to COUNTRY_BBOX or pass --bbox.`);
 const boxes = (argValue('--bbox') ?? COUNTRY_BBOX[country]).split(';').map((b) => b.split(',').map(Number));
@@ -30,6 +31,7 @@ const OUT = new URL(`../supabase/course_holes_import${suffix}.sql`, import.meta.
 const RAW = new URL(`../supabase/holes_overpass${suffix}.json`, import.meta.url);
 
 const ENDPOINTS = [
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
   'https://overpass-api.de/api/interpreter',
   'https://overpass.private.coffee/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter'
