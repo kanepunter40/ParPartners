@@ -14,7 +14,7 @@
 //
 // Data (c) OpenStreetMap contributors, ODbL.
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 const args = process.argv.slice(2);
@@ -37,6 +37,9 @@ const boxes = (argValue('--bbox') ?? COUNTRY_BBOX[country]).split(';').map((b) =
 const suffix = country === 'DE' ? '' : `_${country.toLowerCase()}`;
 const OUT = new URL(`../supabase/course_holes_import${suffix}.sql`, import.meta.url);
 const RAW = new URL(`../supabase/holes_overpass${suffix}.json`, import.meta.url);
+// Each finished tile is saved here straight away, so a crash or restart carries on where it stopped.
+// Deleted once the whole import has finished. Pass --fresh to ignore it and start over.
+const PROGRESS = new URL(`../supabase/holes_overpass${suffix}.progress.json`, import.meta.url);
 
 const ENDPOINTS = [
   'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
@@ -66,10 +69,14 @@ export function tiles([s, w, n, e], size = 1) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/** Servers in the order to try them: one that just failed moves to the back, so a working one is asked first. */
+const servers = [...ENDPOINTS];
+const demote = (url) => servers.push(...servers.splice(servers.indexOf(url), 1));
+
 async function fetchTile(tile) {
   let lastErr;
   for (let attempt = 0; attempt < 6; attempt++) {
-    const url = ENDPOINTS[attempt % ENDPOINTS.length];
+    const url = servers[0];
     try {
       const res = await fetch(url, {
         method: 'POST',
@@ -81,7 +88,9 @@ async function fetchTile(tile) {
       return (await res.json()).elements ?? [];
     } catch (e) {
       lastErr = e;
-      await sleep(2000 * 2 ** attempt); // Overpass asks for exponential backoff when busy
+      demote(url);
+      // Another server is tried straight away; once every server has failed in a row, back off (Overpass asks for that)
+      if (attempt % servers.length === servers.length - 1) await sleep(5000 * 2 ** Math.floor(attempt / servers.length));
     }
   }
   throw lastErr;
@@ -139,20 +148,28 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     elements = JSON.parse(readFileSync(fromFile, 'utf8'));
   } else {
     const all = boxes.flatMap((b) => tiles(b));
-    elements = [];
-    const failed = [];
-    for (const [i, tile] of all.entries()) {
-      try {
-        elements.push(...(await fetchTile(tile)));
-        console.log(`Tile ${i + 1}/${all.length} done`);
-      } catch (e) {
-        failed.push(tile);
-        console.warn(`Tile ${i + 1}/${all.length} failed (${e.message}): --bbox ${tile.join(',')}`);
+    /** Tile "s,w,n,e" -> the elements Overpass returned for it */
+    const done = !args.includes('--fresh') && existsSync(PROGRESS) ? JSON.parse(readFileSync(PROGRESS, 'utf8')) : {};
+    if (Object.keys(done).length) console.log(`Carrying on: ${Object.keys(done).length}/${all.length} tiles already saved`);
+    // Two passes: tiles that fail in the first are tried once more at the end, when the servers may be less busy
+    for (const pass of [1, 2]) {
+      const todo = all.filter((t) => !done[t.join(',')]);
+      for (const [i, tile] of todo.entries()) {
+        try {
+          done[tile.join(',')] = await fetchTile(tile);
+          writeFileSync(PROGRESS, JSON.stringify(done));
+          console.log(`Pass ${pass}: tile ${i + 1}/${todo.length} done (${Object.keys(done).length}/${all.length} saved)`);
+        } catch (e) {
+          console.warn(`Pass ${pass}: tile ${i + 1}/${todo.length} failed (${e.message}): --bbox ${tile.join(',')}`);
+        }
+        await sleep(1000); // be polite to the public servers
       }
-      await sleep(1000); // be polite to the public servers
     }
+    elements = all.flatMap((t) => done[t.join(',')] ?? []);
     writeFileSync(RAW, JSON.stringify(elements));
-    if (failed.length) console.warn(`${failed.length} tiles failed. Re-run those with --bbox, or the whole import later.`);
+    const failed = all.filter((t) => !done[t.join(',')]);
+    if (failed.length) console.warn(`${failed.length} tiles still failed. Run the same command again later to fetch just those.`);
+    else rmSync(PROGRESS);
   }
   const rows = toRows(elements);
   if (!rows.length) {
