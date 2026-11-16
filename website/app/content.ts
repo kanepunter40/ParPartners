@@ -12,7 +12,7 @@ export const CONTENT = {
     title: 'PARtners: find people to play golf with',
     description: 'PARtners helps golfers find people to play with: see open rounds near you, ask to join, chat and keep score together.',
     other: 'Deutsch',
-    nav: { how: 'How it works', features: 'Features', questions: 'Questions', get: 'Get the app' },
+    nav: { how: 'How it works', features: 'Features', questions: 'Questions', get: 'Join the waitlist' },
     h1: 'Find people to play golf with.',
     lead: 'See open tee times at courses near you, ask to join, and keep score together on one card.',
     soon: 'Coming soon to',
@@ -64,11 +64,11 @@ export const CONTENT = {
         ['Which courses are in the app?', `${COURSES.en} courses in Germany, France, England and Australia.`],
         ['Who can see my profile?', 'Other players see your name, handicap, home course and the details you add, like your languages. Your age and gender stay hidden.'],
         ['Do I need a handicap?', 'No. You can play without one. Rounds show each player’s handicap, so you can pick one that suits you.'],
-        ['When can I download it?', 'PARtners is coming to Google Play soon.']
+        ['When can I download it?', 'PARtners is coming to Google Play soon. Join the waitlist and we’ll email you when it’s there.']
       ] as [string, string][]
     },
 
-    end: { h: 'Your next four‑ball is in the app.', p: 'Free to use. No ads, no trackers.' },
+    end: { h: 'Your next four‑ball is in the app.', p: 'Coming soon to Google Play. Free, with no ads and no trackers.' },
     links: [['/privacy/', 'Privacy'], ['/terms/', 'Terms'], ['/delete-account/', 'Delete account'], ['/imprint/', 'Imprint']] as [string, string][]
   },
 
@@ -76,7 +76,7 @@ export const CONTENT = {
     title: 'PARtners: Finde Leute zum Golfspielen',
     description: 'Mit PARtners findest du Leute zum Golfspielen: offene Runden in deiner Nähe sehen, mitspielen, chatten und gemeinsam Schläge zählen.',
     other: 'English',
-    nav: { how: 'So geht’s', features: 'Funktionen', questions: 'Fragen', get: 'App holen' },
+    nav: { how: 'So geht’s', features: 'Funktionen', questions: 'Fragen', get: 'Auf die Warteliste' },
     h1: 'Finde Leute zum Golfspielen.',
     lead: 'Sieh freie Startzeiten auf Plätzen in deiner Nähe, frag, ob du mitspielen kannst, und zählt gemeinsam auf einer Karte.',
     soon: 'Bald bei',
@@ -128,11 +128,11 @@ export const CONTENT = {
         ['Welche Plätze gibt es in der App?', `${COURSES.de} Plätze in Deutschland, Frankreich, England und Australien.`],
         ['Wer sieht mein Profil?', 'Andere sehen deinen Namen, dein Handicap, deinen Heimatplatz und die Angaben, die du ergänzt, etwa deine Sprachen. Alter und Geschlecht bleiben verborgen.'],
         ['Brauche ich ein Handicap?', 'Nein, du kannst auch ohne spielen. Bei jeder Runde steht das Handicap der Mitspieler, so findest du eine, die passt.'],
-        ['Wann kann ich die App laden?', 'PARtners kommt bald zu Google Play.']
+        ['Wann kann ich die App laden?', 'PARtners kommt bald zu Google Play. Trag dich in die Warteliste ein, dann schreiben wir dir, sobald es so weit ist.']
       ] as [string, string][]
     },
 
-    end: { h: 'Dein nächster Vierer wartet in der App.', p: 'Kostenlos. Ohne Werbung, ohne Tracker.' },
+    end: { h: 'Dein nächster Vierer wartet in der App.', p: 'Bald bei Google Play. Kostenlos, ohne Werbung und ohne Tracker.' },
     links: [['/privacy/', 'Datenschutz'], ['/terms/', 'Nutzungsbedingungen'], ['/delete-account/', 'Konto löschen'], ['/imprint/', 'Impressum']] as [string, string][]
   }
 };

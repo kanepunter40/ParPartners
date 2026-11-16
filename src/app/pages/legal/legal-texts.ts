@@ -12,7 +12,7 @@ export const ADDRESS = 'Augustenstraße 85, 70197 Stuttgart';
 
 export const PRIVACY: LegalDoc = {
   title: 'Privacy policy',
-  updated: '15 November 2026',
+  updated: '16 November 2026',
   intro: 'PARtners helps golfers find people to play with. This page explains what we store about you, who can see it, and what you can do about it. Short version: we only keep what the app needs to work, we never sell your data, and there are no ads or trackers.',
   sections: [
     {
@@ -44,6 +44,15 @@ export const PRIVACY: LegalDoc = {
         'If the app crashes or runs into an error, it sends a crash report to Firebase Crashlytics: what went wrong, the screen you were on, the app version, your phone model and Android version, and a random ID for this installation. Reports aren’t linked to your account. We use them only to find and fix bugs, and Crashlytics deletes them after 90 days.']
     },
     {
+      heading: 'The waitlist on our website',
+      body: [
+        'Before PARtners is on Google Play, you can join a waitlist on parpartners.app. We store your email address, the language you used, and when you signed up and confirmed. We first send you an email with a link to confirm the address is yours. Only once you click it are you on the list.',
+        'We use your address for one thing: to email you when PARtners is on Google Play. The legal basis is your consent (GDPR Article 6(1)(a)). You can withdraw it at any time with the link in every email we send, or by emailing us; we then delete your address straight away.',
+        'Addresses that are never confirmed are deleted after 30 days. We delete the whole list once the launch email has gone out.',
+        'To stop people misusing the form, we store a scrambled (hashed) version of your IP address with each sign-up attempt, never the address itself, and delete it after one day (Article 6(1)(f)).'
+      ]
+    },
+    {
       heading: 'Your location',
       body: ['If you allow it, the app uses your phone’s location to find rounds near you. It is sent with the search and not stored. You can always search by course instead.']
     },
@@ -67,6 +76,7 @@ export const PRIVACY: LegalDoc = {
         'Google (Google Ireland Ltd. and Google LLC, USA): if you choose "Continue with Google", Google handles that sign-in. Sign-in and confirmation emails are currently sent through a Gmail account, so Google processes your email address and the email’s content. Transfers to Google LLC are covered by the EU–US Data Privacy Framework.',
         'Firebase Cloud Messaging (Google) delivers push notifications to Android phones. It receives your phone’s token and the text of each notification (for example "Lena joined your round"). You can turn notifications off at any time in your phone’s settings.',
         'Firebase Crashlytics (Google) receives the crash reports described above. Google may process them outside the EU; this is covered by the EU-US Data Privacy Framework and the EU Standard Contractual Clauses.',
+        'Resend (Resend Inc., USA) sends the waitlist emails described above. It receives your email address and the email’s content, and works for us under a data processing agreement with the EU Standard Contractual Clauses.',
         'Golf course names and locations come from OpenStreetMap. No personal data is sent to OpenStreetMap.',
         'We don’t sell your data or share it with anyone else, unless the law requires us to.',
         'If you live in the UK or Australia, your data is sent to and stored in the EU (Frankfurt, Germany), and some of the services above may process it in the USA. The UK recognises the EU as giving adequate protection, and transfers to the USA are covered as described above. We protect your data the same way wherever you live.'

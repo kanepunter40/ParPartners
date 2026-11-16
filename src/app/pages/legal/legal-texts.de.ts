@@ -3,7 +3,7 @@ import { ADDRESS, CONTACT, LegalDoc, OPERATOR } from './legal-texts';
 
 export const PRIVACY_DE: LegalDoc = {
   title: 'Datenschutzerklärung',
-  updated: '15. November 2026',
+  updated: '16. November 2026',
   intro: 'PARtners hilft Golfern, Mitspieler zu finden. Hier erklären wir, was wir über dich speichern, wer es sehen kann und was du tun kannst. Kurz gesagt: Wir speichern nur, was die App zum Funktionieren braucht, verkaufen deine Daten nie, und es gibt weder Werbung noch Tracking.',
   sections: [
     {
@@ -35,6 +35,15 @@ export const PRIVACY_DE: LegalDoc = {
         'Wenn die App abstürzt oder auf einen Fehler stößt, schickt sie einen Absturzbericht an Firebase Crashlytics: was schiefging, den Bildschirm, auf dem du warst, die App-Version, dein Handymodell und deine Android-Version sowie eine zufällige ID für diese Installation. Die Berichte sind nicht mit deinem Konto verknüpft. Wir nutzen sie nur, um Fehler zu finden und zu beheben; Crashlytics löscht sie nach 90 Tagen.']
     },
     {
+      heading: 'Die Warteliste auf unserer Website',
+      body: [
+        'Bevor PARtners bei Google Play ist, kannst du dich auf parpartners.app in eine Warteliste eintragen. Wir speichern deine E-Mail-Adresse, die Sprache, die du genutzt hast, und wann du dich angemeldet und bestätigt hast. Zuerst schicken wir dir eine E-Mail mit einem Link, um zu bestätigen, dass die Adresse dir gehört (Double-Opt-in). Erst wenn du ihn anklickst, stehst du auf der Liste.',
+        'Wir nutzen deine Adresse nur für eines: um dir zu schreiben, sobald PARtners bei Google Play ist. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Du kannst sie jederzeit über den Link in jeder unserer E-Mails oder per E-Mail an uns widerrufen; dann löschen wir deine Adresse sofort.',
+        'Adressen, die nie bestätigt werden, löschen wir nach 30 Tagen. Die ganze Liste löschen wir, sobald die E-Mail zum Start verschickt ist.',
+        'Damit niemand das Formular missbraucht, speichern wir bei jedem Anmeldeversuch eine verschlüsselte (gehashte) Form deiner IP-Adresse, nie die Adresse selbst, und löschen sie nach einem Tag (Art. 6 Abs. 1 lit. f DSGVO).'
+      ]
+    },
+    {
       heading: 'Dein Standort',
       body: ['Wenn du es erlaubst, nutzt die App den Standort deines Handys, um Runden in deiner Nähe zu finden. Er wird mit der Suche übertragen und nicht gespeichert. Du kannst stattdessen jederzeit nach Platz suchen.']
     },
@@ -58,6 +67,7 @@ export const PRIVACY_DE: LegalDoc = {
         'Google (Google Ireland Ltd. und Google LLC, USA): Wenn du „Weiter mit Google“ wählst, übernimmt Google die Anmeldung. Anmelde- und Bestätigungs-E-Mails werden derzeit über ein Gmail-Konto verschickt; Google verarbeitet dabei deine E-Mail-Adresse und den Inhalt der E-Mail. Übermittlungen an Google LLC sind durch das EU-US Data Privacy Framework abgedeckt.',
         'Firebase Cloud Messaging (Google) stellt Push-Mitteilungen auf Android-Handys zu. Dabei erhält der Dienst das Token deines Handys und den Text jeder Mitteilung (zum Beispiel „Lena ist deiner Runde beigetreten“). Du kannst Mitteilungen jederzeit in den Einstellungen deines Handys ausschalten.',
         'Firebase Crashlytics (Google) erhält die oben beschriebenen Absturzberichte. Google kann sie außerhalb der EU verarbeiten; das ist durch das EU-US Data Privacy Framework und die EU-Standardvertragsklauseln abgesichert.',
+        'Resend (Resend Inc., USA) verschickt die oben beschriebenen E-Mails der Warteliste. Resend erhält deine E-Mail-Adresse und den Inhalt der E-Mail und arbeitet für uns auf Grundlage eines Auftragsverarbeitungsvertrags mit den EU-Standardvertragsklauseln.',
         'Namen und Lage der Golfplätze stammen von OpenStreetMap. An OpenStreetMap werden keine personenbezogenen Daten übermittelt.',
         'Wir verkaufen deine Daten nicht und geben sie an niemanden sonst weiter, außer wenn das Gesetz es verlangt.',
         'Wenn du im Vereinigten Königreich oder in Australien lebst, werden deine Daten in die EU übermittelt und dort gespeichert (Frankfurt am Main), und einige der oben genannten Dienste können sie in den USA verarbeiten. Das Vereinigte Königreich erkennt das Datenschutzniveau der EU als angemessen an; für Übermittlungen in die USA gilt, was oben steht. Wir schützen deine Daten gleich, egal wo du wohnst.'

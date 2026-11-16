@@ -5,7 +5,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { CONTENT, type Icon, type Lang, type Shot } from './content';
-import { Footer, Header, PlayBadge, useLang } from './chrome';
+import { Footer, Header, useLang } from './chrome';
+import { WaitlistForm } from './waitlist';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -60,7 +61,7 @@ export default function Home() {
           <div className="hero-copy">
             <h1 data-reveal>{t.h1}</h1>
             <p className="lead" data-reveal>{t.lead}</p>
-            <div data-reveal><PlayBadge lang={lang} /></div>
+            <div data-reveal><WaitlistForm lang={lang} /></div>
             <p className="meta" data-reveal>{t.meta}</p>
           </div>
           <div className="pair" data-reveal>
@@ -129,7 +130,7 @@ export default function Home() {
               <h2>{t.end.h}</h2>
               <p>{t.end.p}</p>
             </div>
-            <PlayBadge lang={lang} />
+            <WaitlistForm lang={lang} />
           </div>
         </section>
       </main>
