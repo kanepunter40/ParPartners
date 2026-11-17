@@ -25,8 +25,16 @@ const ICONS: Record<Icon, React.ReactNode> = {
   card: <><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></>,
   friends: <><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c1.8.7 3 2.5 3.5 5.2" /></>,
   bell: <path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0" />,
-  free: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4" /></>
+  free: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4" /></>,
+  clock: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,
+  weather: <><path d="M8 4.5v1.5M3.6 6.3l1 1M2 10.5h1.5M12.4 6.3l-1 1" /><path d="M5.2 12.3A3.5 3.5 0 1 1 11.3 9" /><path d="M8.5 19.5h9a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6.6 3.2 3.2 0 0 0 .2 6.4z" /></>,
+  host: <><circle cx="10" cy="8" r="3.5" /><path d="M3.5 20c.8-3.5 3.4-5.5 6.5-5.5 1.3 0 2.5.3 3.5 1M15.5 18l2 2 4-4" /></>,
+  calendar: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4M12 13v5M9.5 15.5h5" /></>
 };
+
+const Svg = ({ icon }: { icon: Icon }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[icon]}</svg>
+);
 
 export default function Home() {
   const [lang, choose] = useLang();
@@ -90,11 +98,11 @@ export default function Home() {
           <p className="sub" data-reveal>{t.round.p}</p>
           <div className="stage">
             <ul className="notes left">
-              {t.round.left.map(([b, s], i) => <li key={i} data-reveal><b>{b}</b><span>{s}</span></li>)}
+              {t.round.left.map(([icon, b, s], i) => <li key={i} data-reveal><span className="note-icon"><Svg icon={icon} /></span><span><b>{b}</b><span>{s}</span></span></li>)}
             </ul>
             <div className="stage-screen" data-reveal><Screen lang={lang} shot="round" alt={t.round.alt} /></div>
             <ul className="notes">
-              {t.round.right.map(([b, s], i) => <li key={i} data-reveal><b>{b}</b><span>{s}</span></li>)}
+              {t.round.right.map(([icon, b, s], i) => <li key={i} data-reveal><span className="note-icon"><Svg icon={icon} /></span><span><b>{b}</b><span>{s}</span></span></li>)}
             </ul>
           </div>
         </section>
@@ -105,7 +113,7 @@ export default function Home() {
             <ul className="group" data-reveal>
               {t.features.items.map(([icon, title, sub]) => (
                 <li key={icon}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[icon]}</svg>
+                  <Svg icon={icon} />
                   <span><b>{title}</b><small>{sub}</small></span>
                 </li>
               ))}

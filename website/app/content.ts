@@ -3,7 +3,7 @@
 
 export type Lang = 'en' | 'de';
 export type Shot = 'home' | 'find' | 'round' | 'chat' | 'scorecard' | 'notifications';
-export type Icon = 'find' | 'chat' | 'card' | 'friends' | 'bell' | 'free';
+export type Icon = 'find' | 'chat' | 'card' | 'friends' | 'bell' | 'free' | 'clock' | 'weather' | 'host' | 'calendar';
 
 const COURSES = { en: '5,294', de: '5.294' };
 
@@ -36,13 +36,13 @@ export const CONTENT = {
       p: 'Open a round and you see what you need to decide.',
       alt: 'A round: tee time, course, host, format and the weather at tee time',
       left: [
-        ['Tee time on the course’s clock', 'Playing abroad? Times show as the course sees them.'],
-        ['Weather at tee time', 'Chance of rain and wind for the hour you tee off.']
-      ] as [string, string][],
+        ['clock', 'Tee time on the course’s clock', 'Playing abroad? Times show as the course sees them.'],
+        ['weather', 'Weather at tee time', 'Chance of rain and wind for the hour you tee off.']
+      ] as [Icon, string, string][],
       right: [
-        ['Hosts decide who joins', 'Requests come in with the player’s name and handicap.'],
-        ['Add to calendar', 'One tap puts the tee time in your calendar.']
-      ] as [string, string][]
+        ['host', 'Hosts decide who joins', 'Requests come in with the player’s name and handicap.'],
+        ['calendar', 'Add to calendar', 'One tap puts the tee time in your calendar.']
+      ] as [Icon, string, string][]
     },
 
     features: {
@@ -100,13 +100,13 @@ export const CONTENT = {
       p: 'Öffne eine Runde und du siehst, was du zum Entscheiden brauchst.',
       alt: 'Eine Runde: Abschlag, Platz, Gastgeber, Spielform und das Wetter zur Abschlagszeit',
       left: [
-        ['Abschlag in der Uhrzeit des Platzes', 'Im Ausland? Zeiten stehen so da, wie der Platz sie sieht.'],
-        ['Wetter zur Abschlagszeit', 'Regenrisiko und Wind für die Stunde, in der du abschlägst.']
-      ] as [string, string][],
+        ['clock', 'Abschlag in der Uhrzeit des Platzes', 'Im Ausland? Zeiten stehen so da, wie der Platz sie sieht.'],
+        ['weather', 'Wetter zur Abschlagszeit', 'Regenrisiko und Wind für die Stunde, in der du abschlägst.']
+      ] as [Icon, string, string][],
       right: [
-        ['Gastgeber entscheiden, wer mitspielt', 'Anfragen kommen mit Name und Handicap.'],
-        ['In den Kalender', 'Ein Tippen trägt die Startzeit in deinen Kalender ein.']
-      ] as [string, string][]
+        ['host', 'Gastgeber entscheiden, wer mitspielt', 'Anfragen kommen mit Name und Handicap.'],
+        ['calendar', 'In den Kalender', 'Ein Tippen trägt die Startzeit in deinen Kalender ein.']
+      ] as [Icon, string, string][]
     },
 
     features: {
