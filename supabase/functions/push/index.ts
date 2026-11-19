@@ -30,6 +30,9 @@ const TEXT: Record<Locale, Record<string, string>> = {
     host_handover: "The host left PARtners. You're hosting this round now",
     round_reminder: 'Reminder: you tee off {when}',
     report_received: 'New report about {who}. Review it in Supabase > reports',
+    course_report: '{who} reported a course problem: {detail}',
+    course_request: '{who} asked for a missing course: {detail}',
+    feedback_received: 'Feedback from {who}: {detail}',
     round_alert: 'New round {when2} that matches your saved search. Posted by {who}',
     round_invite: '{who} invited you to their round {when2}',
     round_message: '{who}: {detail}',
@@ -51,6 +54,9 @@ const TEXT: Record<Locale, Record<string, string>> = {
     host_handover: 'Der Gastgeber hat PARtners verlassen. Du bist jetzt Gastgeber dieser Runde',
     round_reminder: 'Erinnerung: Abschlag {when}',
     report_received: 'Neue Meldung über {who}. Prüfe sie in Supabase > reports',
+    course_report: '{who} hat ein Problem mit einem Platz gemeldet: {detail}',
+    course_request: '{who} vermisst einen Platz: {detail}',
+    feedback_received: 'Feedback von {who}: {detail}',
     round_alert: 'Neue Runde {when2}, passend zu deiner gespeicherten Suche. Eingestellt von {who}',
     round_invite: '{who} hat dich zu einer Runde {when2} eingeladen',
     round_message: '{who}: {detail}',
@@ -63,7 +69,7 @@ const TEXT: Record<Locale, Record<string, string>> = {
 };
 
 /** Notification type -> group a player can turn off (same list as src/app/core/notification-settings.service.ts).
- *  Types not listed (report_received) are always sent. */
+ *  Types not listed (report_received and the other admin alerts) are always sent. */
 const GROUP: Record<string, string> = {
   request_received: 'your_rounds', player_joined: 'your_rounds', player_left: 'your_rounds', player_free: 'your_rounds',
   round_invite: 'joining', request_accepted: 'joining', request_declined: 'joining', waitlist_promoted: 'joining',
@@ -158,7 +164,7 @@ Deno.serve(async (req) => {
   const round = (n as any).rounds as { tee_time: string; courses: { name: string; time_zone: string | null } } | null;
   const tz = round?.courses.time_zone || 'Europe/Berlin';
   // player_free: the Invite button is in the notifications list. free_alert: Find lists free players.
-  const route = n.type === 'report_received' || n.type === 'player_free' ? '/notifications'
+  const route = ['report_received', 'course_report', 'course_request', 'feedback_received', 'player_free'].includes(n.type) ? '/notifications'
     : n.type === 'free_alert' ? '/tabs/find'
     : n.type === 'friend_request' || n.type === 'friend_accepted' ? '/friends'
     : n.type === 'round_message' && n.round_id ? `/round/${n.round_id}/chat`

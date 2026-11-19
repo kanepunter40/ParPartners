@@ -90,7 +90,8 @@ export class ScorecardsService {
     const rows = data ?? [];
     return {
       pars: new Map(rows.map((h) => [h.hole, h.par])),
-      locked: new Set(rows.filter((h) => h.source === 'osm').map((h) => h.hole))
+      // From the course data, or corrected by two players: changed only by suggesting a fix
+      locked: new Set(rows.filter((h) => h.source !== 'player').map((h) => h.hole))
     };
   }
 

@@ -3,6 +3,7 @@ import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonInput, IonSpinner } from '@ionic/angular/standalone';
+import { MissingCourseComponent } from '../../core/missing-course.component';
 import { ScorecardsService, HOLES_LABEL } from '../../core/scorecards.service';
 import { RoundsService } from '../../core/rounds.service';
 import { ProfileService } from '../../core/profile.service';
@@ -12,7 +13,7 @@ const MAX_GUESTS = 7;
 
 @Component({
   selector: 'app-scorecard-new',
-  imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonInput, IonSpinner],
+  imports: [MissingCourseComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonInput, IonSpinner],
   styles: [`
     .opts { display: flex; gap: 8px; margin-top: 8px; }
     .opts button { flex: 1; min-height: 48px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); font: inherit; font-weight: 600; color: var(--pp-ink); }
@@ -45,6 +46,7 @@ const MAX_GUESTS = 7;
             <div>
               <strong>{{ t('find.course') }}</strong>
               <ion-searchbar [placeholder]="t('find.searchCourse')" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="search($event)"></ion-searchbar>
+              @if (noMatch()) { <app-missing-course [query]="noMatch()" /> }
               @if (suggestions().length) {
                 <div style="border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); overflow: hidden">
                   @for (c of suggestions(); track c.id) {
@@ -115,6 +117,8 @@ export class ScorecardNewPage {
   checking = signal(true);
   course = signal<Course | null>(null);
   suggestions = signal<Course[]>([]);
+  /** The search text that found no course: offers "Can't find your course?". */
+  noMatch = signal('');
   holes = signal<CardHoles>('18');
   guests = signal<string[]>([]);
   busy = signal(false);
@@ -148,13 +152,16 @@ export class ScorecardNewPage {
 
   async search(ev: Event) {
     const q = (ev as CustomEvent).detail?.value ?? '';
-    if (q.length < 2 || q === this.course()?.name) { this.suggestions.set([]); return; }
-    this.suggestions.set(await this.rounds.searchCourses(q));
+    if (q.length < 2 || q === this.course()?.name) { this.suggestions.set([]); this.noMatch.set(''); return; }
+    const found = await this.rounds.searchCourses(q);
+    this.suggestions.set(found);
+    this.noMatch.set(found.length || q.trim().length < 3 ? '' : q.trim());
   }
 
   pick(c: Course) {
     this.course.set(c);
     this.suggestions.set([]);
+    this.noMatch.set('');
   }
 
   addGuest() { this.guests.update((g) => [...g, '']); }

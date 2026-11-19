@@ -2,6 +2,7 @@ import { Component, inject, input, signal, computed } from '@angular/core';
 import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonSpinner, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
+import { FeedbackService } from '../../core/feedback.service';
 import { ScorecardsService, holeNumbers, formatToPar, HOLES_LABEL } from '../../core/scorecards.service';
 import { SupabaseService } from '../../core/supabase.service';
 import { Scorecard, ScorecardPlayer } from '../../core/models';
@@ -19,7 +20,9 @@ const POLL_MS = 20_000;
     .hole-no { font-family: 'Newsreader Variable', serif; font-size: 44px; line-height: 1; margin: 0; }
     .par-btn { min-height: 44px; padding: 0 16px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); font: inherit; font-weight: 600; color: var(--pp-ink); }
     .par-btn.unknown { border-style: dashed; color: var(--pp-ink2); }
-    .par-btn:disabled { opacity: 1; border-color: transparent; background: transparent; }
+    .par-btn.locked { border-color: transparent; background: transparent; }
+    .course-problem { display: block; margin: 20px auto 8px; padding: 10px; font: inherit; font-size: 14px; color: var(--pp-deep);
+      background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; }
     .pars { display: flex; gap: 8px; }
     .pars button { flex: 1; min-height: 48px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); font: inherit; font-weight: 600; color: var(--pp-ink); }
     .pars button[aria-pressed="true"] { background: var(--pp-deep); border-color: var(--pp-deep); color: #fff; }
@@ -88,7 +91,8 @@ const POLL_MS = 20_000;
                 <div class="muted" style="font-size: 13px">{{ t('card.nOfM', { n: holeIndex() + 1, m: holes().length }) }}</div>
                 <h2 class="hole-no" aria-live="polite">{{ t('card.hole', { n: hole() }) }}</h2>
               </div>
-              <button type="button" class="par-btn" [class.unknown]="!parKnown(hole())" [disabled]="parLocked(hole())" [attr.aria-expanded]="parLocked(hole()) ? null : editingPar()" (click)="editingPar.set(!editingPar())">
+              <button type="button" class="par-btn" [class.unknown]="!parKnown(hole())" [class.locked]="parLocked(hole())" [attr.aria-expanded]="parLocked(hole()) ? null : editingPar()"
+                [attr.aria-label]="parLocked(hole()) ? t('courseFix.parButton', { par: par(hole()), n: hole() }) : null" (click)="parTapped()">
                 {{ t('card.par', { par: par(hole()) }) }}{{ parKnown(hole()) ? '' : '?' }}
               </button>
             </div>
@@ -197,6 +201,7 @@ const POLL_MS = 20_000;
               <ion-button fill="clear" color="medium" (click)="remove()">{{ confirmDelete() ? t('card.deleteConfirm') : t('card.delete') }}</ion-button>
             }
           }
+          <button type="button" class="course-problem" (click)="reportCourse()">{{ t('courseFix.link') }}</button>
         </div>
       } @else if (loading()) {
         <div style="display: flex; justify-content: center; padding: 64px"><ion-spinner></ion-spinner></div>
@@ -224,6 +229,7 @@ export class ScorecardPage {
   id = input.required<string>();
 
   private scorecards = inject(ScorecardsService);
+  private feedback = inject(FeedbackService);
   private sb = inject(SupabaseService);
   private router = inject(Router);
 
@@ -315,6 +321,34 @@ export class ScorecardPage {
   }
   parSum(from: number, to: number) {
     return this.holes().filter((h) => h >= from && h <= to).reduce((t, h) => t + this.par(h), 0);
+  }
+
+  /** A par from the course data can't be changed here: offer to suggest the right one instead. */
+  parTapped() {
+    if (this.parLocked(this.hole())) this.suggestPar();
+    else this.editingPar.set(!this.editingPar());
+  }
+
+  private course() {
+    const c = this.card()!;
+    return { id: c.course_id, name: c.courses?.name ?? '' };
+  }
+
+  async suggestPar() {
+    const key = this.parKey(this.hole());
+    this.applyFix(await this.feedback.suggestPar(this.course(), key, this.par(this.hole())));
+  }
+
+  async reportCourse() {
+    const key = this.parKey(this.hole());
+    this.applyFix(await this.feedback.reportCourse(this.course(), this.view() === 'hole' ? key : undefined, this.view() === 'hole' ? this.par(this.hole()) : undefined));
+  }
+
+  /** Two players agreed on a corrected par: show it straight away. */
+  private applyFix(fix: { hole: number; par: number } | null) {
+    if (!fix) return;
+    this.pars.update((m) => new Map(m).set(fix.hole, fix.par));
+    this.lockedPars.update((s) => new Set(s).add(fix.hole));
   }
 
   async setPar(p: number) {

@@ -90,7 +90,7 @@ export interface PlayerCard {
 }
 
 export type NotificationType = 'request_received' | 'request_accepted' | 'request_declined' | 'player_joined' | 'player_left' | 'round_cancelled'
-  | 'host_handover' | 'friend_request' | 'friend_accepted' | 'round_reminder' | 'report_received'
+  | 'host_handover' | 'friend_request' | 'friend_accepted' | 'round_reminder' | 'report_received' | 'course_report' | 'course_request' | 'feedback_received'
   | 'round_alert' | 'round_invite' | 'round_message' | 'waitlist_promoted' | 'player_free' | 'free_alert';
 
 export interface AppNotification {

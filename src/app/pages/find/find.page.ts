@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { I18nService } from '../../core/i18n.service';
 import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption, ActionSheetController } from '@ionic/angular/standalone';
+import { MissingCourseComponent } from '../../core/missing-course.component';
 import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 import { addIcons } from 'ionicons';
 import { locate, home, notificationsOutline, checkmark } from 'ionicons/icons';
@@ -44,7 +45,7 @@ const MY_LOCATION = '@me';
 
 @Component({
   selector: 'app-find',
-  imports: [RouterLink, AvatarComponent, PlayerMenuComponent, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
+  imports: [MissingCourseComponent, RouterLink, AvatarComponent, PlayerMenuComponent, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
   styles: [`
     .find { display: flex; flex-direction: column; gap: 28px; }
     .filters { display: flex; flex-direction: column; gap: 16px; }
@@ -106,6 +107,7 @@ const MY_LOCATION = '@me';
             <div class="group">
               <span class="group-label">{{ t('find.course') }}</span>
               <ion-searchbar [placeholder]="t('find.searchCourse')" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="searchCourse($event)"></ion-searchbar>
+              @if (noMatch()) { <app-missing-course [query]="noMatch()" /> }
               @if (suggestions().length) {
                 <div style="border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); overflow: hidden">
                   @for (c of suggestions(); track c.id) {
@@ -264,6 +266,8 @@ export class FindPage {
   course = signal<Course | null>(null);
   homeCourse = signal<Course | null>(null);
   suggestions = signal<Course[]>([]);
+  /** The search text that found no course: offers "Can't find your course?". */
+  noMatch = signal('');
   results = signal<RoundResult[]>([]);
   free = signal<FreePlayer[]>([]);
   invitedIds = signal(new Set<string>());
@@ -448,13 +452,16 @@ export class FindPage {
 
   async searchCourse(ev: Event) {
     const q = (ev as CustomEvent).detail?.value ?? '';
-    if (q.length < 2 || q === this.course()?.name) { this.suggestions.set([]); return; }
-    this.suggestions.set(await this.rounds.searchCourses(q, this.centre()));
+    if (q.length < 2 || q === this.course()?.name) { this.suggestions.set([]); this.noMatch.set(''); return; }
+    const found = await this.rounds.searchCourses(q, this.centre());
+    this.suggestions.set(found);
+    this.noMatch.set(found.length || q.trim().length < 3 ? '' : q.trim());
   }
 
   pickCourse(c: Course) {
     this.course.set(c);
     this.suggestions.set([]);
+    this.noMatch.set('');
     this.load();
   }
 

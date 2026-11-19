@@ -3,6 +3,7 @@ import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonSpinner } from '@ionic/angular/standalone';
+import { MissingCourseComponent } from '../../core/missing-course.component';
 import { ProfileService } from '../../core/profile.service';
 import { RoundsService } from '../../core/rounds.service';
 import { Course } from '../../core/models';
@@ -11,7 +12,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, genderKey,
 
 @Component({
   selector: 'app-profile-edit',
-  imports: [AvatarComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonSpinner],
+  imports: [MissingCourseComponent, AvatarComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonSpinner],
   styles: [`
     .wrap { display: flex; flex-direction: column; gap: 28px; }
     fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
@@ -68,6 +69,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, genderKey,
               <ion-button fill="clear" size="small" color="medium" style="align-self: flex-start" (click)="homeCourse.set(null)">{{ t('edit.removeHome') }}</ion-button>
             }
             <ion-searchbar [placeholder]="homeCourse() ? t('edit.searchChange') : t('find.searchCourse')" [debounce]="250" (ionInput)="searchCourses($event)"></ion-searchbar>
+            @if (noMatch()) { <app-missing-course [query]="noMatch()" /> }
             @for (c of courses(); track c.id) {
               @if (c.id !== homeCourse()?.id) {
                 <button type="button" class="row" (click)="pickCourse(c)"><strong>{{ c.name }}</strong><small>{{ c.city }}</small></button>
@@ -237,9 +239,14 @@ export class ProfileEditPage {
     }
   }
 
+  /** The search text that found no course: offers "Can't find your course?". */
+  noMatch = signal('');
+
   async searchCourses(ev: Event) {
     const q = ((ev as CustomEvent).detail?.value ?? '').trim();
-    this.courses.set(q ? await this.rounds.searchCourses(q) : []);
+    const found = q ? await this.rounds.searchCourses(q) : [];
+    this.courses.set(found);
+    this.noMatch.set(found.length || q.length < 3 ? '' : q);
   }
 
   pickCourse(c: Course) {

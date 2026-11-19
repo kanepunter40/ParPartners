@@ -9,10 +9,9 @@ import { SupabaseService } from '../../core/supabase.service';
 import { ProfileService } from '../../core/profile.service';
 import { PushService } from '../../core/push.service';
 import { Lang } from '../../core/i18n.service';
-import { appInfo } from '../../core/app-info';
+import { FeedbackService } from '../../core/feedback.service';
 
 const MIN_PASSWORD = 8;
-const FEEDBACK_TO = 'parpartners.app@gmail.com';
 
 @Component({
   selector: 'app-settings',
@@ -96,7 +95,7 @@ const FEEDBACK_TO = 'parpartners.app@gmail.com';
             <a class="item" routerLink="/legal/privacy"><span>{{ t('welcome.privacy') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
             <a class="item" routerLink="/legal/terms"><span>{{ t('settings.terms') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
             <a class="item" routerLink="/legal/imprint"><span>{{ t('settings.imprint') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
-            <a class="item" [href]="feedback()"><span>{{ t('settings.feedback') }}</span><span class="chev" aria-hidden="true">&#8250;</span></a>
+            <button type="button" class="item" (click)="feedback.sendFeedback()"><span>{{ t('settings.feedback') }}</span><span class="chev" aria-hidden="true">&#8250;</span></button>
             <a class="item" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">
               <span>{{ t('settings.courseData') }}</span><small>{{ t('settings.osm') }}</small>
             </a>
@@ -127,7 +126,8 @@ export class SettingsPage {
   private router = inject(Router);
 
   /** Pre-fills the app version and phone so testers' reports say what they ran it on. */
-  feedback = signal(`mailto:${FEEDBACK_TO}?subject=${encodeURIComponent('PARtners feedback')}`);
+  /** Settings > Send feedback: a form that lands in app_feedback, so it works without an email app. */
+  feedback = inject(FeedbackService);
   /** Language names are shown in their own language. */
   readonly langOptions: [Lang, string][] = [['en', 'English'], ['de', 'Deutsch']];
   private user = computed(() => this.sb.session()?.user);
@@ -149,14 +149,6 @@ export class SettingsPage {
   deleteError = signal('');
 
   async ionViewWillEnter() {
-    const info = await appInfo();
-    const body = `
-
-
----
-App: ${info.version}
-Phone: ${info.device}`;
-    this.feedback.set(`mailto:${FEEDBACK_TO}?subject=${encodeURIComponent('PARtners feedback')}&body=${encodeURIComponent(body)}`);
     if (Capacitor.isNativePlatform()) {
       const info = await App.getInfo();
       this.version.set(`${info.version} (${info.build})`);

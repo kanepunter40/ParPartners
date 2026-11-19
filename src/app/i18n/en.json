@@ -135,7 +135,10 @@
       "round_message": "{who} wrote in the round chat",
       "waitlist_promoted": "A spot opened up. You're in the round",
       "player_free": "{who} is free on {day} and your round has room",
-      "free_alert": "{who} is free to play on {day} near your saved search"
+      "free_alert": "{who} is free to play on {day} near your saved search",
+      "course_report": "{who} reported a problem with a course",
+      "course_request": "{who} asked for a missing course",
+      "feedback_received": "Feedback from {who}"
     },
     "inviteLabel": "Invite {who} to this round"
   },
@@ -565,7 +568,11 @@
     "teeFuture": "Pick a tee time in the future.",
     "teeYear": "Pick a tee time within the next year.",
     "tooManyRounds": "You've posted 10 rounds today. Try again tomorrow.",
-    "parLocked": "This par comes from the course data and can't be changed."
+    "parLocked": "This par comes from the course data and can't be changed.",
+    "tooManyCourseReports": "You’ve sent a lot of course reports today. Try again tomorrow.",
+    "tooMuchFeedback": "You’ve sent a lot of feedback today. Try again tomorrow.",
+    "courseName": "Enter the course name.",
+    "messageFirst": "Write a message first."
   },
   "safety": {
     "optionsFor": "More options for {name}",
@@ -743,5 +750,46 @@
       "title": "Saved searches",
       "text": "New rounds and free players that match a saved search"
     }
+  },
+  "courseFix": {
+    "link": "Problem with this course?",
+    "whatsWrong": "What’s wrong with {name}?",
+    "problem": {
+      "wrong_par": "A par is wrong",
+      "wrong_details": "Wrong name or location",
+      "closed": "The course has closed",
+      "other": "Something else"
+    },
+    "detailsText": "Tell us what’s wrong and we’ll fix it.",
+    "placeholder": {
+      "wrong_details": "The right name, town or address",
+      "closed": "When did it close?",
+      "other": "What’s wrong"
+    },
+    "whichHole": "Which hole?",
+    "holeNumber": "Hole number",
+    "parTitle": "Par for hole {n}",
+    "parText": "The course data says par {par}. If that’s wrong, pick the right par. It changes for everyone once another player confirms it.",
+    "parTextNoCurrent": "Pick the right par. It changes for everyone once another player confirms it.",
+    "parButton": "Par {par} for hole {n}, from the course data. Suggest a correction",
+    "parChanged": "Thanks. Hole {n} is now par {par} for everyone.",
+    "parReceived": "Thanks. It changes once another player confirms it, or when we’ve checked it.",
+    "send": "Send",
+    "thanks": "Thanks. We’ll look at it.",
+    "noCourse": "Can’t find “{query}”?",
+    "tellUs": "Tell us about the course",
+    "missingTitle": "Missing course",
+    "missingText": "Tell us its name and where it is, and we’ll add it.",
+    "courseName": "Course name",
+    "place": "Town",
+    "missingDetails": "Anything else, like a website (optional)",
+    "missingThanks": "Thanks. We’ll add the course and let it show up in search.",
+    "error": "Could not send it. Try again."
+  },
+  "feedback": {
+    "title": "Send feedback",
+    "text": "Something not working, or an idea? We read every message.",
+    "placeholder": "Your message",
+    "thanks": "Thanks for your feedback."
   }
 }

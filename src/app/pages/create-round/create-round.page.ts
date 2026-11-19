@@ -3,6 +3,7 @@ import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle } from '@ionic/angular/standalone';
+import { MissingCourseComponent } from '../../core/missing-course.component';
 import { RoundsService } from '../../core/rounds.service';
 import { deviceTimeZone, differsFromDevice, wallTimeToIso } from '../../core/time-zone';
 import { ProfileService } from '../../core/profile.service';
@@ -11,7 +12,7 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 
 @Component({
   selector: 'app-create-round',
-  imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle],
+  imports: [MissingCourseComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle],
   styles: [`
     .opt { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule); background: var(--pp-surface); text-align: left; color: var(--pp-ink); font-family: inherit; }
     .opt.on { background: var(--pp-deep-soft); border-color: var(--pp-deep); }
@@ -36,6 +37,7 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
         <div>
           <strong>{{ t('find.course') }}</strong>
           <ion-searchbar [placeholder]="t('find.searchCourse')" [value]="course()?.name ?? ''" [debounce]="250" (ionInput)="search($event)"></ion-searchbar>
+          @if (noMatch()) { <app-missing-course [query]="noMatch()" /> }
           @if (suggestions().length) {
             <div style="border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); overflow: hidden">
               @for (c of suggestions(); track c.id) {
@@ -121,6 +123,8 @@ export class CreateRoundPage {
 
   course = signal<Course | null>(null);
   suggestions = signal<Course[]>([]);
+  /** The search text that found no course: offers "Can't find your course?". */
+  noMatch = signal('');
   players = signal(4);
   visibility = signal<'nearby' | 'invite_only'>('nearby');
   readonly formats = ROUND_FORMATS;
@@ -153,13 +157,16 @@ export class CreateRoundPage {
 
   async search(ev: Event) {
     const q = (ev as CustomEvent).detail?.value ?? '';
-    if (q.length < 2 || q === this.course()?.name) { this.suggestions.set([]); return; }
-    this.suggestions.set(await this.rounds.searchCourses(q));
+    if (q.length < 2 || q === this.course()?.name) { this.suggestions.set([]); this.noMatch.set(''); return; }
+    const found = await this.rounds.searchCourses(q);
+    this.suggestions.set(found);
+    this.noMatch.set(found.length || q.trim().length < 3 ? '' : q.trim());
   }
 
   async pick(c: Course) {
     this.course.set(c);
     this.suggestions.set([]);
+    this.noMatch.set('');
     try {
       const zone = await this.rounds.courseTimeZone(c.id);
       this.zone.set(zone);

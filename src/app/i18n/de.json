@@ -135,7 +135,10 @@
       "round_message": "{who} hat im Runden-Chat geschrieben",
       "waitlist_promoted": "Ein Platz ist frei geworden. Du bist dabei",
       "player_free": "{who} hat am {day} Zeit und in deiner Runde ist noch Platz",
-      "free_alert": "{who} hat am {day} Zeit zum Spielen, passend zu deiner gespeicherten Suche"
+      "free_alert": "{who} hat am {day} Zeit zum Spielen, passend zu deiner gespeicherten Suche",
+      "course_report": "{who} hat ein Problem mit einem Platz gemeldet",
+      "course_request": "{who} vermisst einen Platz",
+      "feedback_received": "Feedback von {who}"
     },
     "inviteLabel": "{who} zu dieser Runde einladen"
   },
@@ -565,7 +568,11 @@
     "teeFuture": "Wähl eine Abschlagszeit in der Zukunft.",
     "teeYear": "Wähl eine Abschlagszeit innerhalb des nächsten Jahres.",
     "tooManyRounds": "Du hast heute schon 10 Runden eingestellt. Versuch es morgen wieder.",
-    "parLocked": "Dieses Par stammt aus den Platzdaten und kann nicht geändert werden."
+    "parLocked": "Dieses Par stammt aus den Platzdaten und kann nicht geändert werden.",
+    "tooManyCourseReports": "Du hast heute schon viele Platzmeldungen geschickt. Versuch es morgen wieder.",
+    "tooMuchFeedback": "Du hast heute schon viel Feedback geschickt. Versuch es morgen wieder.",
+    "courseName": "Gib den Namen des Platzes ein.",
+    "messageFirst": "Schreib zuerst eine Nachricht."
   },
   "safety": {
     "optionsFor": "Weitere Optionen für {name}",
@@ -743,5 +750,46 @@
       "title": "Gespeicherte Suchen",
       "text": "Neue Runden und freie Spieler, die zu einer gespeicherten Suche passen"
     }
+  },
+  "courseFix": {
+    "link": "Problem mit diesem Platz?",
+    "whatsWrong": "Was stimmt bei {name} nicht?",
+    "problem": {
+      "wrong_par": "Ein Par ist falsch",
+      "wrong_details": "Falscher Name oder Ort",
+      "closed": "Der Platz ist geschlossen",
+      "other": "Etwas anderes"
+    },
+    "detailsText": "Sag uns, was nicht stimmt, und wir korrigieren es.",
+    "placeholder": {
+      "wrong_details": "Der richtige Name, Ort oder die Adresse",
+      "closed": "Seit wann ist er geschlossen?",
+      "other": "Was nicht stimmt"
+    },
+    "whichHole": "Welches Loch?",
+    "holeNumber": "Lochnummer",
+    "parTitle": "Par für Loch {n}",
+    "parText": "Laut Platzdaten ist es Par {par}. Wenn das falsch ist, wähl das richtige Par. Es ändert sich für alle, sobald ein weiterer Spieler es bestätigt.",
+    "parTextNoCurrent": "Wähl das richtige Par. Es ändert sich für alle, sobald ein weiterer Spieler es bestätigt.",
+    "parButton": "Par {par} für Loch {n}, aus den Platzdaten. Korrektur vorschlagen",
+    "parChanged": "Danke. Loch {n} ist jetzt für alle Par {par}.",
+    "parReceived": "Danke. Es ändert sich, sobald ein weiterer Spieler es bestätigt oder wir es geprüft haben.",
+    "send": "Senden",
+    "thanks": "Danke. Wir schauen es uns an.",
+    "noCourse": "„{query}“ nicht gefunden?",
+    "tellUs": "Erzähl uns von dem Platz",
+    "missingTitle": "Fehlender Platz",
+    "missingText": "Sag uns den Namen und wo er liegt, dann fügen wir ihn hinzu.",
+    "courseName": "Name des Platzes",
+    "place": "Ort",
+    "missingDetails": "Sonst noch etwas, z. B. eine Website (optional)",
+    "missingThanks": "Danke. Wir fügen den Platz hinzu, dann findest du ihn in der Suche.",
+    "error": "Konnte nicht gesendet werden. Versuch es noch einmal."
+  },
+  "feedback": {
+    "title": "Feedback senden",
+    "text": "Funktioniert etwas nicht, oder hast du eine Idee? Wir lesen jede Nachricht.",
+    "placeholder": "Deine Nachricht",
+    "thanks": "Danke für dein Feedback."
   }
 }

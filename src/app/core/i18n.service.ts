@@ -44,6 +44,10 @@ const SERVER_ERRORS: [RegExp, string][] = [
   [/within the next year/i, 'server.teeYear'],
   [/too many rounds today/i, 'server.tooManyRounds'],
   [/comes from the course data/i, 'server.parLocked'],
+  [/course reports today/i, 'server.tooManyCourseReports'],
+  [/feedback today/i, 'server.tooMuchFeedback'],
+  [/enter the course name/i, 'server.courseName'],
+  [/write a message first/i, 'server.messageFirst'],
   [/failed to fetch|network ?error|load failed/i, 'server.offline'],
 ];
 
