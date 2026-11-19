@@ -152,7 +152,7 @@
   "find": {
     "title": "Find a round",
     "filters": "Search filters",
-    "near": "Near a location",
+    "near": "By location",
     "byCourse": "By course",
     "searchingAround": "Searching around",
     "myLocation": "My location",

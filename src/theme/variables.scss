@@ -61,7 +61,11 @@ h1 { font-weight: 300; letter-spacing: -0.035em; line-height: 0.98; }
 
 ion-button { --border-radius: var(--pp-radius-control); min-height: 48px; font-weight: 600; text-transform: none; letter-spacing: 0; }
 /* Segment switches (Find, Scorecard): readable sentence-case labels, not Ionic's small caps */
-ion-segment-button { font-size: 14px; font-weight: 600; letter-spacing: 0; text-transform: none; min-height: 40px; }
+/* Tabs inside a page (Find: by location / by course, scorecard views): green outline like the outline buttons,
+   the chosen tab filled green, so they stand out from the page background */
+ion-segment { --background: var(--pp-surface); border: 1px solid var(--ion-color-primary); border-radius: 10px; padding: 2px; }
+ion-segment-button { font-size: 14px; font-weight: 600; letter-spacing: 0; text-transform: none; min-height: 40px;
+  --color: var(--pp-deep); --color-checked: #fff; --indicator-color: var(--pp-deep); --indicator-box-shadow: none; --border-radius: 8px; }
 ion-card { margin: 0 0 12px; border-radius: var(--pp-radius-group); box-shadow: none; border: 1px solid var(--pp-rule); background: var(--pp-surface); }
 
 .page-pad { padding: 8px 18px 24px; }

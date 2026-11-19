@@ -152,7 +152,7 @@
   "find": {
     "title": "Runde finden",
     "filters": "Suchfilter",
-    "near": "In der Nähe",
+    "near": "Nach Ort",
     "byCourse": "Nach Platz",
     "searchingAround": "Suche rund um",
     "myLocation": "Mein Standort",
