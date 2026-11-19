@@ -9,8 +9,10 @@ const COURSES = { en: '5,294', de: '5.294' };
 
 export const CONTENT = {
   en: {
-    title: 'PARtners: find people to play golf with',
-    description: 'PARtners helps golfers find people to play with: see open rounds near you, ask to join, chat and keep score together.',
+    // Search result title and description: the words people search for ("golf partners", "near you")
+    title: 'Find golf partners near you | PARtners',
+    description: 'PARtners is a free app for finding golf partners: see open tee times near you, ask to join, chat and keep score together on one card.',
+    ogAlt: 'PARtners: find golf partners near you. Screens from the app showing open rounds and the home feed.',
     other: 'Deutsch',
     nav: { how: 'How it works', features: 'Features', questions: 'Questions', get: 'Join the waitlist' },
     h1: 'Find people to play golf with.',
@@ -73,8 +75,9 @@ export const CONTENT = {
   },
 
   de: {
-    title: 'PARtners: Finde Leute zum Golfspielen',
-    description: 'Mit PARtners findest du Leute zum Golfspielen: offene Runden in deiner Nähe sehen, mitspielen, chatten und gemeinsam Schläge zählen.',
+    title: 'Golfpartner finden: Mitspieler in deiner Nähe | PARtners',
+    description: 'Mit PARtners findest du Golfpartner in deiner Nähe: freie Startzeiten sehen, mitspielen, chatten und gemeinsam zählen. Kostenlos, ohne Werbung.',
+    ogAlt: 'PARtners: Golfpartner in deiner Nähe finden. Screens aus der App mit offenen Runden und dem Start-Feed.',
     other: 'English',
     nav: { how: 'So geht’s', features: 'Funktionen', questions: 'Fragen', get: 'Auf die Warteliste' },
     h1: 'Finde Leute zum Golfspielen.',

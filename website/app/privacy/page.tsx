@@ -1,7 +1,7 @@
-import { PRIVACY } from '../../../src/app/pages/legal/legal-texts';
-import { PRIVACY_DE } from '../../../src/app/pages/legal/legal-texts.de';
-import { Doc, LegalPage } from '../legal';
+import { Legal, legalMeta } from '../legal-pages';
+
+export const metadata = legalMeta('privacy', 'en');
 
 export default function Page() {
-  return <LegalPage slug="privacy" titles={['Privacy policy · PARtners', 'Datenschutzerklärung · PARtners']} en={<Doc doc={PRIVACY} lang="en" />} de={<Doc doc={PRIVACY_DE} lang="de" />} />;
+  return <Legal slug="privacy" lang="en" />;
 }

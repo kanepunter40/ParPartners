@@ -1,7 +1,7 @@
-import { TERMS } from '../../../src/app/pages/legal/legal-texts';
-import { TERMS_DE } from '../../../src/app/pages/legal/legal-texts.de';
-import { Doc, LegalPage } from '../legal';
+import { Legal, legalMeta } from '../legal-pages';
+
+export const metadata = legalMeta('terms', 'en');
 
 export default function Page() {
-  return <LegalPage slug="terms" titles={['Terms of service · PARtners', 'Nutzungsbedingungen · PARtners']} en={<Doc doc={TERMS} lang="en" />} de={<Doc doc={TERMS_DE} lang="de" />} />;
+  return <Legal slug="terms" lang="en" />;
 }

@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { CONTENT, type Icon, type Lang, type Shot } from './content';
-import { Footer, Header, useLang } from './chrome';
+import { Footer, Header, usePageLang } from './chrome';
 import { WaitlistForm } from './waitlist';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -36,8 +36,8 @@ const Svg = ({ icon }: { icon: Icon }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[icon]}</svg>
 );
 
-export default function Home() {
-  const [lang, choose] = useLang();
+export default function Home({ lang }: { lang: Lang }) {
+  usePageLang(lang);
   const root = useRef<HTMLDivElement>(null);
   const t = CONTENT[lang];
 
@@ -61,8 +61,7 @@ export default function Home() {
 
   return (
     <div ref={root}>
-      <title>{t.title}</title>
-      <Header lang={lang} choose={choose} />
+      <Header lang={lang} path="" />
 
       <main>
         <section className="hero wrap">

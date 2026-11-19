@@ -2,12 +2,12 @@
 
 // Legal pages: privacy, terms, imprint and account deletion.
 // The texts come straight from the app (src/app/pages/legal/legal-texts*.ts), so the two never drift apart.
-// Both languages are in the HTML; the German one shows for German browsers or with ?lang=de.
+// Each language has its own address: /privacy/ and /de/privacy/ (see legal-pages.tsx).
 
 import type { ReactNode } from 'react';
 import { CONTACT, type LegalDoc } from '../../src/app/pages/legal/legal-texts';
-import { Footer, Header, useLang, withLang } from './chrome';
-import { CONTENT } from './content';
+import { Footer, Header, usePageLang, withLang } from './chrome';
+import { CONTENT, type Lang } from './content';
 import en from '../../src/app/i18n/en.json';
 import de from '../../src/app/i18n/de.json';
 
@@ -43,20 +43,18 @@ export function Doc({ doc, lang }: { doc: LegalDoc; lang: 'en' | 'de' }) {
   );
 }
 
-export function LegalPage({ slug, titles, en: enBody, de: deBody }: { slug: string; titles: [string, string]; en: ReactNode; de: ReactNode }) {
-  const [lang, choose] = useLang();
+export function LegalPage({ slug, lang, children }: { slug: string; lang: Lang; children: ReactNode }) {
+  usePageLang(lang);
   return (
     <>
-      <title>{titles[lang === 'de' ? 1 : 0]}</title>
-      <Header lang={lang} choose={choose} />
+      <Header lang={lang} path={`${slug}/`} />
       <main className="legal wrap">
         <nav className="legal-nav">
           {CONTENT[lang].links.map(([href, label]) => (
             <a key={href} href={withLang(href, lang)} aria-current={href === `/${slug}/` ? 'page' : undefined}>{label}</a>
           ))}
         </nav>
-        <article lang="en" hidden={lang !== 'en'}>{enBody}</article>
-        <article lang="de" hidden={lang !== 'de'}>{deBody}</article>
+        <article>{children}</article>
       </main>
       <Footer lang={lang} current={`/${slug}/`} />
     </>
