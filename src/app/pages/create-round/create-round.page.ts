@@ -3,6 +3,7 @@ import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle } from '@ionic/angular/standalone';
+import { CoursePlaceComponent } from '../../core/course-place.component';
 import { MissingCourseComponent } from '../../core/missing-course.component';
 import { RoundsService } from '../../core/rounds.service';
 import { deviceTimeZone, differsFromDevice, wallTimeToIso } from '../../core/time-zone';
@@ -12,7 +13,7 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 
 @Component({
   selector: 'app-create-round',
-  imports: [MissingCourseComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle],
+  imports: [CoursePlaceComponent, MissingCourseComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonBackButton, IonSearchbar, IonDatetime, IonTextarea, IonSpinner, IonToggle],
   styles: [`
     .opt { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 16px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule); background: var(--pp-surface); text-align: left; color: var(--pp-ink); font-family: inherit; }
     .opt.on { background: var(--pp-deep-soft); border-color: var(--pp-deep); }
@@ -41,7 +42,7 @@ import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
           @if (suggestions().length) {
             <div style="border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); overflow: hidden">
               @for (c of suggestions(); track c.id) {
-                <button type="button" class="sug" (click)="pick(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px">{{ c.city }}</span></button>
+                <button type="button" class="sug" (click)="pick(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px"><app-course-place [city]="c.city" [country]="c.country" /></span></button>
               }
             </div>
           }

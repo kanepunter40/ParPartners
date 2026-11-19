@@ -6,6 +6,8 @@ export interface Course {
   id: string;
   name: string;
   city: string | null;
+  /** ISO code: DE, FR, GB, AU */
+  country?: string | null;
   lat: number;
   lng: number;
   distance_km?: number | null;

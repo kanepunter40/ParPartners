@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { I18nService } from '../../core/i18n.service';
 import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption, ActionSheetController } from '@ionic/angular/standalone';
+import { CoursePlaceComponent } from '../../core/course-place.component';
 import { MissingCourseComponent } from '../../core/missing-course.component';
 import { ROUND_FORMATS, RoundFormat } from '../../core/round-format';
 import { addIcons } from 'ionicons';
@@ -45,7 +46,7 @@ const MY_LOCATION = '@me';
 
 @Component({
   selector: 'app-find',
-  imports: [MissingCourseComponent, RouterLink, AvatarComponent, PlayerMenuComponent, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
+  imports: [CoursePlaceComponent, MissingCourseComponent, RouterLink, AvatarComponent, PlayerMenuComponent, NotificationsBellComponent, IllustrationComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonSegment, IonSegmentButton, IonLabel, IonSearchbar, IonButton, IonIcon, IonSelect, IonSelectOption],
   styles: [`
     .find { display: flex; flex-direction: column; gap: 28px; }
     .filters { display: flex; flex-direction: column; gap: 16px; }
@@ -111,7 +112,7 @@ const MY_LOCATION = '@me';
               @if (suggestions().length) {
                 <div style="border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); overflow: hidden">
                   @for (c of suggestions(); track c.id) {
-                    <button type="button" class="course-opt" (click)="pickCourse(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px">{{ c.city }}</span></button>
+                    <button type="button" class="course-opt" (click)="pickCourse(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px"><app-course-place [city]="c.city" [country]="c.country" /></span></button>
                   }
                 </div>
               }

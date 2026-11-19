@@ -3,6 +3,7 @@ import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonSpinner } from '@ionic/angular/standalone';
+import { CoursePlaceComponent } from '../../core/course-place.component';
 import { MissingCourseComponent } from '../../core/missing-course.component';
 import { ProfileService } from '../../core/profile.service';
 import { RoundsService } from '../../core/rounds.service';
@@ -12,7 +13,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, genderKey,
 
 @Component({
   selector: 'app-profile-edit',
-  imports: [MissingCourseComponent, AvatarComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonSpinner],
+  imports: [CoursePlaceComponent, MissingCourseComponent, AvatarComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonSpinner],
   styles: [`
     .wrap { display: flex; flex-direction: column; gap: 28px; }
     fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
@@ -72,7 +73,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, genderKey,
             @if (noMatch()) { <app-missing-course [query]="noMatch()" /> }
             @for (c of courses(); track c.id) {
               @if (c.id !== homeCourse()?.id) {
-                <button type="button" class="row" (click)="pickCourse(c)"><strong>{{ c.name }}</strong><small>{{ c.city }}</small></button>
+                <button type="button" class="row" (click)="pickCourse(c)"><strong>{{ c.name }}</strong><small><app-course-place [city]="c.city" [country]="c.country" /></small></button>
               }
             }
           </fieldset>

@@ -12,7 +12,7 @@ export const ADDRESS = 'Augustenstraße 85, 70197 Stuttgart';
 
 export const PRIVACY: LegalDoc = {
   title: 'Privacy policy',
-  updated: '16 November 2026',
+  updated: '19 November 2026',
   intro: 'PARtners helps golfers find people to play with. This page explains what we store about you, who can see it, and what you can do about it. Short version: we only keep what the app needs to work, we never sell your data, and there are no ads or trackers.',
   sections: [
     {
@@ -50,6 +50,14 @@ export const PRIVACY: LegalDoc = {
         'We use your address for one thing: to email you when PARtners is on Google Play. The legal basis is your consent (GDPR Article 6(1)(a)). You can withdraw it at any time with the link in every email we send, or by emailing us; we then delete your address straight away.',
         'Addresses that are never confirmed are deleted after 30 days. We delete the whole list once the launch email has gone out.',
         'To stop people misusing the form, we store a scrambled (hashed) version of your IP address with each sign-up attempt, never the address itself, and delete it after one day (Article 6(1)(f)).'
+      ]
+    },
+    {
+      heading: 'Feedback and course reports',
+      body: [
+        'When you send feedback in Settings, we store your message, your account, when you sent it, the app version and your phone model, so we can answer you and reproduce problems.',
+        'When you report a problem with a course or ask for a missing course, we store what you told us (for example the hole and the par you suggest, or the course name and town), your account and when you sent it. If you suggest a par, other players don’t see that it was you. Once two players suggest the same par, it changes for everyone.',
+        'We use this to improve the app and the course data, which is our legitimate interest (GDPR Article 6(1)(f)). We delete feedback and reports once we’ve dealt with them, and at the latest after 12 months. If you delete your account before then, they are no longer linked to you. Corrected pars stay part of the course data.'
       ]
     },
     {

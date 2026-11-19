@@ -3,6 +3,7 @@ import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonProgressBar, IonSpinner } from '@ionic/angular/standalone';
+import { CoursePlaceComponent } from '../../core/course-place.component';
 import { MissingCourseComponent } from '../../core/missing-course.component';
 import { ProfileService } from '../../core/profile.service';
 import { SupabaseService } from '../../core/supabase.service';
@@ -13,7 +14,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
 
 @Component({
   selector: 'app-onboarding',
-  imports: [MissingCourseComponent, FormsModule, IonContent, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonProgressBar, IonSpinner],
+  imports: [CoursePlaceComponent, MissingCourseComponent, FormsModule, IonContent, IonButton, IonInput, IonSearchbar, IonToggle, IonCheckbox, IonProgressBar, IonSpinner],
   styles: [`
     /* Progress bar + steps fill the screen exactly, so Continue sits at the bottom, above the phone's navigation bar */
     .page { display: flex; flex-direction: column; min-height: 100%; }
@@ -55,7 +56,7 @@ import { GENDERS, LANGUAGES, LENGTHS, RoundLength, VIBES, Vibe, WHEN, parseHandi
             <div style="display: flex; flex-direction: column; gap: 10px">
               @for (c of courses(); track c.id) {
                 <button type="button" class="row" [class.on]="homeCourse()?.id === c.id" [attr.aria-pressed]="homeCourse()?.id === c.id" (click)="homeCourse.set(c)">
-                  <strong>{{ c.name }}</strong><small>{{ c.city }}</small>
+                  <strong>{{ c.name }}</strong><small><app-course-place [city]="c.city" [country]="c.country" /></small>
                 </button>
               }
             </div>

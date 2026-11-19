@@ -3,7 +3,7 @@ import { ADDRESS, CONTACT, LegalDoc, OPERATOR } from './legal-texts';
 
 export const PRIVACY_DE: LegalDoc = {
   title: 'Datenschutzerklärung',
-  updated: '16. November 2026',
+  updated: '19. November 2026',
   intro: 'PARtners hilft Golfern, Mitspieler zu finden. Hier erklären wir, was wir über dich speichern, wer es sehen kann und was du tun kannst. Kurz gesagt: Wir speichern nur, was die App zum Funktionieren braucht, verkaufen deine Daten nie, und es gibt weder Werbung noch Tracking.',
   sections: [
     {
@@ -41,6 +41,14 @@ export const PRIVACY_DE: LegalDoc = {
         'Wir nutzen deine Adresse nur für eines: um dir zu schreiben, sobald PARtners bei Google Play ist. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Du kannst sie jederzeit über den Link in jeder unserer E-Mails oder per E-Mail an uns widerrufen; dann löschen wir deine Adresse sofort.',
         'Adressen, die nie bestätigt werden, löschen wir nach 30 Tagen. Die ganze Liste löschen wir, sobald die E-Mail zum Start verschickt ist.',
         'Damit niemand das Formular missbraucht, speichern wir bei jedem Anmeldeversuch eine verschlüsselte (gehashte) Form deiner IP-Adresse, nie die Adresse selbst, und löschen sie nach einem Tag (Art. 6 Abs. 1 lit. f DSGVO).'
+      ]
+    },
+    {
+      heading: 'Feedback und Meldungen zu Plätzen',
+      body: [
+        'Wenn du in den Einstellungen Feedback schickst, speichern wir deine Nachricht, dein Konto, den Zeitpunkt, die App-Version und dein Handymodell, damit wir dir antworten und Probleme nachvollziehen können.',
+        'Wenn du ein Problem mit einem Platz meldest oder einen fehlenden Platz vorschlägst, speichern wir deine Angaben (zum Beispiel das Loch und das Par, das du vorschlägst, oder den Namen und Ort des Platzes), dein Konto und den Zeitpunkt. Wenn du ein Par vorschlägst, sehen andere Spieler nicht, dass es von dir kommt. Sobald zwei Spieler dasselbe Par vorschlagen, ändert es sich für alle.',
+        'Wir nutzen diese Angaben, um die App und die Platzdaten zu verbessern; das ist unser berechtigtes Interesse (Art. 6 Abs. 1 lit. f DSGVO). Feedback und Meldungen löschen wir, sobald wir sie bearbeitet haben, spätestens nach 12 Monaten. Löschst du vorher dein Konto, sind sie nicht mehr mit dir verknüpft. Korrigierte Pars bleiben Teil der Platzdaten.'
       ]
     },
     {

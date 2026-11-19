@@ -3,6 +3,7 @@ import { I18nService } from '../../core/i18n.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonInput, IonSpinner } from '@ionic/angular/standalone';
+import { CoursePlaceComponent } from '../../core/course-place.component';
 import { MissingCourseComponent } from '../../core/missing-course.component';
 import { ScorecardsService, HOLES_LABEL } from '../../core/scorecards.service';
 import { RoundsService } from '../../core/rounds.service';
@@ -13,7 +14,7 @@ const MAX_GUESTS = 7;
 
 @Component({
   selector: 'app-scorecard-new',
-  imports: [MissingCourseComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonInput, IonSpinner],
+  imports: [CoursePlaceComponent, MissingCourseComponent, FormsModule, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonButton, IonSearchbar, IonInput, IonSpinner],
   styles: [`
     .opts { display: flex; gap: 8px; margin-top: 8px; }
     .opts button { flex: 1; min-height: 48px; border-radius: var(--pp-radius-control); border: 1px solid var(--pp-rule-strong); background: var(--pp-surface); font: inherit; font-weight: 600; color: var(--pp-ink); }
@@ -50,7 +51,7 @@ const MAX_GUESTS = 7;
               @if (suggestions().length) {
                 <div style="border: 1px solid var(--pp-rule); border-radius: var(--pp-radius-control); overflow: hidden">
                   @for (c of suggestions(); track c.id) {
-                    <button type="button" class="sug" (click)="pick(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px">{{ c.city }}</span></button>
+                    <button type="button" class="sug" (click)="pick(c)"><strong>{{ c.name }}</strong><br><span class="muted" style="font-size: 12px"><app-course-place [city]="c.city" [country]="c.country" /></span></button>
                   }
                 </div>
               }
